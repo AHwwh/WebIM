@@ -179,7 +179,7 @@ function updateSessImageDiv(sess_type, to_id, newImageUrl) {
     var faceImageId = "faceImg_" + to_id;
     var faceImage = document.getElementById(faceImageId);
     if (faceImage) {
-        nameDiv.innerHTML = webim.Tool.formatText2Html(newName);
+        nameDiv.innerHTML = webim.Tool.formatText2Html(newImageUrl);
     }
 }
 
