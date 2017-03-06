@@ -2698,6 +2698,7 @@ var webim = { // namespace object webim
     //上传图片或文件
     var proto_uploadPic = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
+        var cmdName;
         if (isAccessFormalEnv()) {
             cmdName = 'pic_up';
         } else {
