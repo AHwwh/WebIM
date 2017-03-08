@@ -37,12 +37,15 @@ function onProfileModifyNotify(notify) {
             case 'Tag_Profile_IM_AllowType':
                 allowType = profile.ValueBytes;
                 break;
+            case 'Tag_Profile_IM_Image':
+                image = profile.ValueBytes;
+                break;
             default:
                 webim.log.error('未知资料字段：' + JSON.stringify(profile));
                 break;
         }
     }
-    content += "最新资料：【昵称】：" + nick + ",【性别】：" + sex + ",【加好友方式】：" + allowType;
+    content += "最新资料：【昵称】：" + nick + ",【性别】：" + sex + ",【加好友方式】：" + allowType + ",【修改头像】：" + image;
     addProfileSystemMsg(notify.Type, typeCh, content);
 
     if (account != loginInfo.identifier) {//如果是好友资料更新
