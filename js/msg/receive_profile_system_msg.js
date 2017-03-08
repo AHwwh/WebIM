@@ -15,6 +15,10 @@
  {
  "Tag": "Tag_Profile_IM_AllowType",//加好友认证方式
  "ValueBytes": "AllowType_Type_NeedConfirm"
+ },
+ {
+ "Tag": "Tag_Profile_IM_Image",//用户头像
+ "ValueBytes": "img/image.png"
  }
  ]
  }
