@@ -3634,6 +3634,8 @@ var webim = { // namespace object webim
             var onProfileSystemNotifyCallbacks = {
                 "1": null
             };
+        
+            var onKickedEventCall = null;
 
             var onMsgReadCallback = null;
 
