@@ -1939,6 +1939,11 @@ var webim = { // namespace object webim
                     continue;
                     break;
             }
+            
+            if (msg.PushInfo) {
+                msgInfo.OfflinePushInfo = msg.PushInfo; //当android终端进程被杀掉时才走push，IOS退到后台即可
+            }
+            
             msgInfo.MsgBody.push({
                 'MsgType': msgType,
                 'MsgContent': msgContent
