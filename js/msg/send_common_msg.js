@@ -84,6 +84,20 @@ function handleMsgSend(msgContent){
             msg.addText(text_obj);
         }
     }
+    
+     msg.PushInfo = {
+        "PushFlag": 0,
+        "Desc": text_obj.text, //离线推送内容
+        "Ext": text_obj.text, //离线推送透传内容
+        "AndroidInfo": {
+            "Sound": "android.mp3" //离线推送声音文件路径。
+        },
+        "ApnsInfo": {
+            "Sound": "apns.mp3", //离线推送声音文件路径。
+            "BadgeMode": 1
+        }
+    };
+    
     msg.sending = 1;
     msg.originContent = msgContent;
     addMsg(msg);
