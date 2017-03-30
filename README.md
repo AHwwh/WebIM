@@ -6,3 +6,4 @@
 >支持C2C已读消息同步<br/>
 >优化Demo目录结构和代码<br/>
 >新增最近联系人列表<br/>
+>同步终端离线推送OfflinePushInfo内容<br/>
