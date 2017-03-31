@@ -18,5 +18,4 @@
 
 webdemo下载安装地址：<br/>
 
->npm install webimsdk-ten<br/>
->git clone https://github.com/Neallin/WebIM.git
+>npm install webimsdk-ten
