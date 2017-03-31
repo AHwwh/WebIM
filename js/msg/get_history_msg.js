@@ -130,6 +130,7 @@ var getLastGroupHistoryMsgs = function(cbOk) {
         selSess = null;
         webim.MsgStore.delSessByTypeId(selType, selToID);
         recentSessMap[webim.SESSION_TYPE.GROUP + "_" + selToID] = {};
+
         recentSessMap[webim.SESSION_TYPE.GROUP + "_" + selToID].MsgGroupReadedSeq = resp.GroupInfo && resp.GroupInfo[0] && resp.GroupInfo[0].MsgSeq;
         webim.syncGroupMsgs(
             options,

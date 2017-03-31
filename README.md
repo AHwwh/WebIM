@@ -9,5 +9,3 @@
 >同步终端离线推送OfflinePushInfo内容<br/>
 >- [OfflinePushInfo内容说明文档](https://cs.com)<br/>
 
-
-
