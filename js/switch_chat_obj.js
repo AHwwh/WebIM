@@ -1,4 +1,5 @@
 //更新最近会话的未读消息数
+
 function updateSessDiv(sess_type, to_id, name, unread_msg_count) {
     var badgeDiv = document.getElementById("badgeDiv_" + to_id);
     if (badgeDiv && unread_msg_count > 0) {
@@ -19,6 +20,7 @@ function updateSessDiv(sess_type, to_id, name, unread_msg_count) {
 }
 
 //新增一条最近会话
+
 function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, addPositonType) {
     var sessDivId = "sessDiv_" + to_id;
     var sessDiv = document.getElementById(sessDivId);
@@ -71,6 +73,7 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
 }
 
 //切换好友或群组聊天对象
+
 function onSelSess(sess_type, to_id) {
     if (selToID != null) {
 
@@ -152,6 +155,7 @@ function onSelSess(sess_type, to_id) {
 }
 
 //删除会话
+
 function deleteSessDiv(sess_type, to_id) {
     var sessDiv = document.getElementById("sessDiv_" + to_id);
     sessDiv && sessDiv.parentNode.removeChild(sessDiv);
@@ -159,6 +163,7 @@ function deleteSessDiv(sess_type, to_id) {
 
 
 //更新最近会话的名字
+
 function updateSessNameDiv(sess_type, to_id, newName) {
 
     var nameDivId = "nameDiv_" + to_id;
@@ -172,6 +177,7 @@ function updateSessNameDiv(sess_type, to_id, newName) {
 }
 
 //更新最近会话的头像
+
 function updateSessImageDiv(sess_type, to_id, newImageUrl) {
     if (!newImageUrl) {
         return;
@@ -179,7 +185,7 @@ function updateSessImageDiv(sess_type, to_id, newImageUrl) {
     var faceImageId = "faceImg_" + to_id;
     var faceImage = document.getElementById(faceImageId);
     if (faceImage) {
-        nameDiv.innerHTML = webim.Tool.formatText2Html(newImageUrl);
+        faceImage.innerHTML = webim.Tool.formatText2Html(newImageUrl);
     }
 }
 
