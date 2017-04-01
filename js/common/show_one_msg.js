@@ -1,4 +1,5 @@
 //聊天页面增加一条消息
+
 function addMsg(msg, prepend) {
     var isSelfSend, fromAccount, fromAccountNick, fromAccountImage, sessType, subType;
 
@@ -35,11 +36,11 @@ function addMsg(msg, prepend) {
             fromAccountNick = fromAccount;
         }
         //获取头像
-        //if(info && info.image){
-        //    fromAccountImage=info.image;
-        //}else{
-        //    fromAccountImage= friendHeadUrl;
-        //}
+        if (info && info.image) {
+            fromAccountImage = info.image;
+        } else {
+            fromAccountImage = friendHeadUrl;
+        }
     }
 
     var onemsg = document.createElement("div");
@@ -66,7 +67,7 @@ function addMsg(msg, prepend) {
     if (!isSelfSend)
         msghead.style.color = "blue";
     //昵称  消息时间
-    msghead.innerHTML = webim.Tool.formatText2Html(fromAccountNick + "&nbsp;&nbsp;" + webim.Tool.formatTimeStamp(msg.getTime()));
+    msghead.innerHTML = "<img class='headurlClass' src='" + fromAccountImage + "'>" + "&nbsp;&nbsp;" + webim.Tool.formatText2Html(fromAccountNick + "&nbsp;&nbsp;" + webim.Tool.formatTimeStamp(msg.getTime()));
 
 
     //解析消息
@@ -121,6 +122,7 @@ function addMsg(msg, prepend) {
 
 }
 //把消息转换成Html
+
 function convertMsgtoHtml(msg) {
     var html = "",
         elems, elem, type, content;
@@ -177,10 +179,12 @@ function convertMsgtoHtml(msg) {
 }
 
 //解析文本消息元素
+
 function convertTextMsgToHtml(content) {
     return content.getText();
 }
 //解析表情消息元素
+
 function convertFaceMsgToHtml(content) {
     var faceUrl = null;
     var data = content.getData();
@@ -197,6 +201,7 @@ function convertFaceMsgToHtml(content) {
     }
 }
 //解析图片消息元素
+
 function convertImageMsgToHtml(content, imageName) {
     var smallImage = content.getImage(webim.IMAGE_TYPE.SMALL); //小图
     var bigImage = content.getImage(webim.IMAGE_TYPE.LARGE); //大图
@@ -210,6 +215,7 @@ function convertImageMsgToHtml(content, imageName) {
     return "<img name='" + imageName + "' src='" + smallImage.getUrl() + "#" + bigImage.getUrl() + "#" + oriImage.getUrl() + "' style='CURSOR: hand' id='" + content.getImageId() + "' bigImgUrl='" + bigImage.getUrl() + "' onclick='imageClick(this)' />";
 }
 //解析语音消息元素
+
 function convertSoundMsgToHtml(content) {
     var second = content.getSecond(); //获取语音时长
     var downUrl = content.getDownUrl();
@@ -219,6 +225,7 @@ function convertSoundMsgToHtml(content) {
     return '<audio id="uuid_' + content.uuid + '" src="' + downUrl + '" controls="controls" onplay="onChangePlayAudio(this)" preload="none"></audio>';
 }
 //解析文件消息元素
+
 function convertFileMsgToHtml(content) {
     var fileSize, unitStr;
     fileSize = content.getSize();
@@ -232,10 +239,12 @@ function convertFileMsgToHtml(content) {
     return '<a href="javascript:;" onclick=\'webim.onDownFile("' + content.uuid + '")\' title="点击下载文件" ><i class="glyphicon glyphicon-file">&nbsp;' + content.name + '(' + fileSize + unitStr + ')</i></a>';
 }
 //解析位置消息元素
+
 function convertLocationMsgToHtml(content) {
     return '经度=' + content.getLongitude() + ',纬度=' + content.getLatitude() + ',描述=' + content.getDesc();
 }
 //解析自定义消息元素
+
 function convertCustomMsgToHtml(content) {
     var data = content.getData(); //自定义数据
     var desc = content.getDesc(); //描述信息
@@ -243,6 +252,7 @@ function convertCustomMsgToHtml(content) {
     return "data=" + data + ", desc=" + desc + ", ext=" + ext;
 }
 //解析群提示消息元素
+
 function convertGroupTipMsgToHtml(content) {
     var WEB_IM_GROUP_TIP_MAX_USER_COUNT = 10;
     var text = "";
