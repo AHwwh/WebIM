@@ -1,4 +1,5 @@
 //创建群菜单点击事件
+
 function createGroupMenuClick() {
     //重置表单
     $('#cg_form')[0].reset();
@@ -13,6 +14,7 @@ function createGroupMenuClick() {
     $('#create_group_dialog').modal('show');
 }
 //搜索群(按ID)菜单单击事件
+
 function searchGroupMenuClick() {
 
     $("#sg_form")[0].reset();
@@ -21,6 +23,7 @@ function searchGroupMenuClick() {
     $('#search_group_dialog').modal('show');
 }
 //搜索群(按名称)菜单单击事件
+
 function searchGroupByNameMenuClick() {
 
     $("#sgbn_form")[0].reset();
@@ -29,6 +32,7 @@ function searchGroupByNameMenuClick() {
     $('#search_group_by_name_dialog').modal('show');
 }
 //定义搜索群(按ID)结果表格每行的操作按钮
+
 function sgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="申请加入">',
@@ -54,6 +58,7 @@ window.sgOperateEvents = {
     }
 };
 //初始化搜索群(按ID)结果表格
+
 function initSearchGroupTable(data) {
     $('#search_group_table').bootstrapTable({
         method: 'get',
@@ -67,23 +72,57 @@ function initSearchGroupTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            { field: "GroupId", title: "ID", align: "center", valign: "middle", sortable: "true" },
-            { field: "TypeZh", title: "类型", align: "center", valign: "middle", sortable: "true" },
-            { field: "Type", title: "类型(英文)", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Name", title: "名称", align: "center", valign: "middle", sortable: "true" },
-            { field: "Owner_Account", title: "群主", align: "center", valign: "middle", sortable: "true" },
-            { field: "CreateTime", title: "创建时间", align: "center", valign: "middle", sortable: "true" },
-            { field: "MemberNum", title: "群成员数", align: "center", valign: "middle", sortable: "true" },
-            {
-                field: "sgOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "sgOperateFormatter",
-                events: "sgOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "GroupId",
+            title: "ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "TypeZh",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Type",
+            title: "类型(英文)",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Name",
+            title: "名称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Owner_Account",
+            title: "群主",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "CreateTime",
+            title: "创建时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MemberNum",
+            title: "群成员数",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "sgOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "sgOperateFormatter",
+            events: "sgOperateEvents"
+        }],
         data: data,
         formatNoMatches: function() {
             return '无符合条件的记录';
@@ -93,6 +132,7 @@ function initSearchGroupTable(data) {
 
 
 //定义搜索群（按名称）结果表格每行的操作按钮
+
 function sgbnOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="申请加入">',
@@ -118,6 +158,7 @@ window.sgbnOperateEvents = {
     }
 };
 //初始化搜索群（按名称）结果表格
+
 function initSearchGroupByNameTable(data) {
     $('#search_group_by_name_table').bootstrapTable({
         method: 'get',
@@ -131,24 +172,64 @@ function initSearchGroupByNameTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            { field: "GroupId", title: "ID", align: "center", valign: "middle", sortable: "true" },
-            { field: "TypeZh", title: "类型", align: "center", valign: "middle", sortable: "true" },
-            { field: "Type", title: "类型(英文)", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Name", title: "名称", align: "center", valign: "middle", sortable: "true" },
-            { field: "FaceUrl", title: "群头像", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Owner_Account", title: "群主", align: "center", valign: "middle", sortable: "true" },
-            { field: "CreateTime", title: "创建时间", align: "center", valign: "middle", sortable: "true" },
-            { field: "MemberNum", title: "群成员数", align: "center", valign: "middle", sortable: "true" },
-            {
-                field: "sgbnOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "sgbnOperateFormatter",
-                events: "sgbnOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "GroupId",
+            title: "ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "TypeZh",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Type",
+            title: "类型(英文)",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Name",
+            title: "名称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "FaceUrl",
+            title: "群头像",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Owner_Account",
+            title: "群主",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "CreateTime",
+            title: "创建时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MemberNum",
+            title: "群成员数",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "sgbnOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "sgbnOperateFormatter",
+            events: "sgbnOperateEvents"
+        }],
         data: data,
         formatNoMatches: function() {
             return '无符合条件的记录';
@@ -158,6 +239,7 @@ function initSearchGroupByNameTable(data) {
 
 
 //定义我的群组表格每行的操作按钮
+
 function gmgOperateFormatter(value, row, index) {
     return [
         '<a class="plus ml10" href="javascript:void(0)" title="邀请成员">',
@@ -232,7 +314,7 @@ window.gmgOperateEvents = {
     },
     'click .pencil': function(e, value, row, index) {
 
-        //成员可以修改讨论组的基本资料
+        //成员可以修改私有群的基本资料
         if (row.Role == '成员' && row.Type != 'Private') {
             alert('你不是群主或管理员，无法进行此操作');
             return;
@@ -264,7 +346,7 @@ window.gmgOperateEvents = {
             alert('你不是群主，无法进行此操作');
         } else {
             if (row.TypeEn == 'Private') {
-                alert('您是群主，不能解散讨论组');
+                alert('您是群主，不能解散私有群');
                 return;
             }
             if (confirm("确定解散该群组吗？")) {
@@ -280,6 +362,7 @@ window.gmgOperateEvents = {
     }
 };
 //初始化我的群组表格
+
 function initGetMyGroupTable(data) {
     $('#get_my_group_table').bootstrapTable({
         method: 'get',
@@ -293,36 +376,98 @@ function initGetMyGroupTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            { field: "GroupId", title: "ID", align: "center", valign: "middle", sortable: "true" },
-            { field: "Type", title: "类型", align: "center", valign: "middle", sortable: "true" },
-            { field: "TypeEn", title: "类型(英文)", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "FaceUrl", title: "群头像", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Name", title: "名称", align: "center", valign: "middle", sortable: "true" },
-            { field: "RoleEn", title: "角色(英文)", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Role", title: "角色", align: "center", valign: "middle", sortable: "true" },
-            {
-                field: "MsgFlagEn",
-                title: "消息提示类型(英文)",
-                align: "center",
-                valign: "middle",
-                sortable: "true",
-                visible: false
-            },
-            { field: "MsgFlag", title: "消息提示类型", align: "center", valign: "middle", sortable: "true" },
-            { field: "JoinTime", title: "加入时间", align: "center", valign: "middle", sortable: "true" },
-            { field: "MemberNum", title: "成员数", align: "center", valign: "middle", sortable: "true" },
-            { field: "Notification", title: "公告", align: "center", valign: "middle", sortable: "true", visible: false },
-            { field: "Introduction", title: "简介", align: "center", valign: "middle", sortable: "true", visible: false },
-            {
-                field: "gmgOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "gmgOperateFormatter",
-                events: "gmgOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "GroupId",
+            title: "ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Type",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "TypeEn",
+            title: "类型(英文)",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "FaceUrl",
+            title: "群头像",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Name",
+            title: "名称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "RoleEn",
+            title: "角色(英文)",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Role",
+            title: "角色",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MsgFlagEn",
+            title: "消息提示类型(英文)",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "MsgFlag",
+            title: "消息提示类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "JoinTime",
+            title: "加入时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MemberNum",
+            title: "成员数",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Notification",
+            title: "公告",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "Introduction",
+            title: "简介",
+            align: "center",
+            valign: "middle",
+            sortable: "true",
+            visible: false
+        }, {
+            field: "gmgOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "gmgOperateFormatter",
+            events: "gmgOperateEvents"
+        }],
         data: data,
         formatNoMatches: function() {
             return '无符合条件的记录';
@@ -330,6 +475,7 @@ function initGetMyGroupTable(data) {
     });
 }
 //定义邀请好友加群表格每行的操作按钮
+
 function gmfgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="邀请加入">',
@@ -347,6 +493,7 @@ window.gmfgOperateEvents = {
     }
 };
 //初始化邀请好友加群表格
+
 function initGetMyFriendGroupTable(data) {
     $('#get_my_friend_group_table').bootstrapTable({
         method: 'get',
@@ -360,18 +507,26 @@ function initGetMyFriendGroupTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            { field: "Info_Account", title: "账号", align: "center", valign: "middle", sortable: "true" },
-            { field: "Nick", title: "昵称", align: "center", valign: "middle", sortable: "true" },
-            {
-                field: "gmfgOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "gmfgOperateFormatter",
-                events: "gmfgOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "Info_Account",
+            title: "账号",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Nick",
+            title: "昵称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "gmfgOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "gmfgOperateFormatter",
+            events: "gmfgOperateEvents"
+        }],
         data: data,
         formatNoMatches: function() {
             return '无符合条件的记录';
@@ -575,7 +730,7 @@ var createGroup = function() {
     if (faceurl) {
         options.FaceUrl = faceurl;
     }
-    if (groupType != 'Private') { //非讨论组才支持ApplyJoinOption属性
+    if (groupType != 'Private') { //非私有群才支持ApplyJoinOption属性
         options.ApplyJoinOption = $('input[name="cg_ajp_type_radio"]:checked').val();
     }
     webim.createGroup(
@@ -1006,6 +1161,7 @@ var selectMyFriendGroup = function() {
 };
 
 //定义（创建群之前）选择好友表格每行按钮
+
 function smfgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="选中">',
@@ -1068,6 +1224,7 @@ window.smfgOperateEvents = {
     }
 };
 //初始化（创建群之前）选择好友表格
+
 function initSelectMyFriendGroupTable(data) {
     $('#select_my_friend_group_table').bootstrapTable({
         method: 'get',
@@ -1081,18 +1238,26 @@ function initSelectMyFriendGroupTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            { field: "Info_Account", title: "账号", align: "center", valign: "middle", sortable: "true" },
-            { field: "Nick", title: "昵称", align: "center", valign: "middle", sortable: "true" },
-            {
-                field: "smfgOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "smfgOperateFormatter",
-                events: "smfgOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "Info_Account",
+            title: "账号",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Nick",
+            title: "昵称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "smfgOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "smfgOperateFormatter",
+            events: "smfgOperateEvents"
+        }],
         data: data,
         formatNoMatches: function() {
             return '无符合条件的记录';
@@ -1101,6 +1266,7 @@ function initSelectMyFriendGroupTable(data) {
 }
 
 //从我的群组列表中发群消息
+
 function sendGroupMsg() {
 
     toAccount = $("#sgm_to_groupid").val();

@@ -1000,7 +1000,7 @@ var webim = { // namespace object webim
                         type_ch = '聊天室';
                         break;
                     case 'Private':
-                        type_ch = '讨论组';
+                        type_ch = '私有群'; //即讨论组
                         break;
                     case 'AVChatRoom':
                         type_ch = '直播聊天室';
@@ -1021,7 +1021,7 @@ var webim = { // namespace object webim
                     case '聊天室':
                         type_en = 'ChatRoom';
                         break;
-                    case '讨论组':
+                    case '私有群': //即讨论组
                         type_en = 'Private';
                         break;
                     case '直播聊天室':
@@ -2066,7 +2066,7 @@ var webim = { // namespace object webim
     var proto_createGroup = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
         var opt = {
-            //必填    群组形态，包括Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（互动直播聊天室）。
+            //必填    群组形态，包括Public（公开群），Private（私有群），ChatRoom（聊天室），AVChatRoom（互动直播聊天室）。
             'Type': options.Type,
             //必填    群名称，最长30字节。
             'Name': options.Name
