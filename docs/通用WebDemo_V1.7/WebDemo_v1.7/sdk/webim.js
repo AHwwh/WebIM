@@ -1591,6 +1591,7 @@ var webim = { // namespace object webim
 
         if (options) opt = options;
         if (opt.isAccessFormalEnv == false) {
+            log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
         }
         if (opt.isLogOn == false) {

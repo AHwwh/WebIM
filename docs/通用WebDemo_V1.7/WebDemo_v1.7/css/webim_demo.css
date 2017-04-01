@@ -454,3 +454,9 @@ body {
     transform: scale(1.0);
   }
 }
+
+.headurlClass{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
