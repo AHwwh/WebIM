@@ -1,4 +1,5 @@
 //定义群组成员表格每行的按钮
+
 function ggmOperateFormatter(value, row, index) {
     return [
         '<a class="pencil ml10" href="javascript:void(0)" title="修改群成员角色">',
@@ -15,7 +16,7 @@ function ggmOperateFormatter(value, row, index) {
 }
 //定义群组成员表格每行的按钮单击事件
 window.ggmOperateEvents = {
-    'click .remove': function (e, value, row, index) {
+    'click .remove': function(e, value, row, index) {
         switch ($('#ggm_my_role').val()) {
             case '成员':
                 alert('你不是管理员，无法进行此操作');
@@ -40,7 +41,7 @@ window.ggmOperateEvents = {
                 break;
         }
     },
-    'click .pencil': function (e, value, row, index) {
+    'click .pencil': function(e, value, row, index) {
 
 
         switch ($('#ggm_my_role').val()) {
@@ -52,7 +53,7 @@ window.ggmOperateEvents = {
                 break;
             case '群主':
                 if ($('#ggm_group_type').val() == 'Private') {
-                    alert('讨论组不支持设置群成员角色操作');
+                    alert('私有群不支持设置群成员角色操作');
                     return;
                 }
                 if (row.Role == '群主') {
@@ -76,7 +77,7 @@ window.ggmOperateEvents = {
                 break;
         }
     },
-    'click .time': function (e, value, row, index) {
+    'click .time': function(e, value, row, index) {
         switch ($('#ggm_my_role').val()) {
             case '成员':
                 alert('你不是管理员，无法进行此操作');
@@ -135,6 +136,7 @@ window.ggmOperateEvents = {
     }
 };
 //初始化群组成员表格
+
 function initGetGroupMemberTable(data) {
     $('#get_group_member_table').bootstrapTable({
         method: 'get',
@@ -148,30 +150,53 @@ function initGetGroupMemberTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            {field: "GroupId", title: "群ID", align: "center", valign: "middle", sortable: "true"},
-            {field: "Member_Account", title: "帐号", align: "center", valign: "middle", sortable: "true"},
-            {field: "Role", title: "角色", align: "center", valign: "middle", sortable: "true"},
-            {field: "JoinTime", title: "入群时间", align: "center", valign: "middle", sortable: "true"},
-            {field: "ShutUpUntil", title: "禁言截至时间", align: "center", valign: "middle", sortable: "true"},
-            {
-                field: "ggmOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "ggmOperateFormatter",
-                events: "ggmOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "GroupId",
+            title: "群ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Member_Account",
+            title: "帐号",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Role",
+            title: "角色",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "JoinTime",
+            title: "入群时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "ShutUpUntil",
+            title: "禁言截至时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "ggmOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "ggmOperateFormatter",
+            events: "ggmOperateEvents"
+        }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
 }
 
 //读取群组成员
-var getGroupMemberInfo = function (group_id) {
+var getGroupMemberInfo = function(group_id) {
     initGetGroupMemberTable([]);
     var options = {
         'GroupId': group_id,
@@ -187,7 +212,7 @@ var getGroupMemberInfo = function (group_id) {
     };
     webim.getGroupMemberInfo(
         options,
-        function (resp) {
+        function(resp) {
             if (resp.MemberNum <= 0) {
                 alert('该群组目前没有成员');
                 return;
@@ -203,7 +228,7 @@ var getGroupMemberInfo = function (group_id) {
                 }
                 data.push({
                     GId: group_id,
-                    GroupId:  webim.Tool.formatText2Html(group_id),
+                    GroupId: webim.Tool.formatText2Html(group_id),
                     Member_Account: webim.Tool.formatText2Html(account),
                     Role: role,
                     JoinTime: join_time,
@@ -213,14 +238,14 @@ var getGroupMemberInfo = function (group_id) {
             $('#get_group_member_table').bootstrapTable('load', data);
             $('#get_group_member_dialog').modal('show');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //修改群组成员角色
-var modifyGroupMemberRole = function () {
+var modifyGroupMemberRole = function() {
     var role_en = $('input[name="mgm_role_radio"]:checked').val();
     var role_zh = webim.Tool.groupRoleEn2Ch(role_en);
     var options = {
@@ -230,7 +255,7 @@ var modifyGroupMemberRole = function () {
     };
     webim.modifyGroupMember(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中修改对应的行
             $('#get_group_member_table').bootstrapTable('updateRow', {
                 index: $('#mgm_sel_row_index').val(),
@@ -241,13 +266,13 @@ var modifyGroupMemberRole = function () {
             $('#modify_group_member_dialog').modal('hide');
             alert('修改群成员角色成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //设置成员禁言时间
-var forbidSendMsg = function () {
+var forbidSendMsg = function() {
     if (!webim.Tool.validNumber($('#fsm_shut_up_time').val())) {
         alert('您输入的禁言时间非法,只能是数字(0-31536000)');
         return;
@@ -263,13 +288,13 @@ var forbidSendMsg = function () {
         shut_up_until = webim.Tool.formatTimeStamp(Math.round(new Date().getTime() / 1000) + shut_up_time);
     }
     var options = {
-        'GroupId': $('#fsm_group_id').val(),//群id
-        'Members_Account': [$('#fsm_account').val()],//被禁言的成员帐号列表
-        'ShutUpTime': shut_up_time//禁言时间，单位：秒
+        'GroupId': $('#fsm_group_id').val(), //群id
+        'Members_Account': [$('#fsm_account').val()], //被禁言的成员帐号列表
+        'ShutUpTime': shut_up_time //禁言时间，单位：秒
     };
     webim.forbidSendMsg(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中修改对应的行
             $('#get_group_member_table').bootstrapTable('updateRow', {
                 index: $('#fsm_sel_row_index').val(),
@@ -280,14 +305,14 @@ var forbidSendMsg = function () {
             $('#forbid_send_msg_dialog').modal('hide');
             alert('设置成员禁言时间成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //修改群消息提示类型
-var modifyGroupMsgFlag = function () {
+var modifyGroupMsgFlag = function() {
     var msg_flag_en = $('input[name="mgmf_msg_flag_radio"]:checked').val();
     var msg_flag_zh = webim.Tool.groupMsgFlagEn2Ch(msg_flag_en);
     var options = {
@@ -297,7 +322,7 @@ var modifyGroupMsgFlag = function () {
     };
     webim.modifyGroupMember(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中修改对应的行
             $('#get_my_group_table').bootstrapTable('updateRow', {
                 index: $('#mgmf_sel_row_index').val(),
@@ -309,13 +334,13 @@ var modifyGroupMsgFlag = function () {
             $('#modify_group_msg_flag_dialog').modal('hide');
             alert('设置群消息提示类型成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //删除群组成员
-var deleteGroupMember = function () {
+var deleteGroupMember = function() {
     if (!confirm("确定移除该成员吗？")) {
         return;
     }
@@ -326,7 +351,7 @@ var deleteGroupMember = function () {
     };
     webim.deleteGroupMember(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中删除对应的行
             $('#get_group_member_table').bootstrapTable('remove', {
                 field: 'Member_Account',
@@ -335,17 +360,16 @@ var deleteGroupMember = function () {
             $('#delete_group_member_dialog').modal('hide');
             alert('移除群成员成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //邀请好友加群
-var addGroupMember = function () {
+var addGroupMember = function() {
     var options = {
         'GroupId': $('#agm_group_id').val(),
-        'MemberList': [
-            {
+        'MemberList': [{
                 'Member_Account': $('#agm_account').val()
             }
 
@@ -353,7 +377,7 @@ var addGroupMember = function () {
     };
     webim.addGroupMember(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中删除对应的行
             $('#get_my_friend_group_table').bootstrapTable('remove', {
                 field: 'Info_Account',
@@ -362,7 +386,7 @@ var addGroupMember = function () {
             $('#add_group_member_dialog').modal('hide');
             alert('邀请好友加群成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
