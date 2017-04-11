@@ -1,9 +1,11 @@
 //弹出发自定义消息对话框
+
 function showEditCustomMsgDialog() {
     $('#ecm_form')[0].reset();
     $('#edit_custom_msg_dialog').modal('show');
 }
 //发送自定义消息
+
 function sendCustomMsg() {
     if (!selToID) {
         alert("您还没有好友或群组，暂不能聊天");
@@ -40,17 +42,15 @@ function sendCustomMsg() {
     msg.addCustom(custom_obj);
     //调用发送消息接口
     msg.sending = 1;
-    webim.sendMsg(msg, function (resp) {
+    webim.sendMsg(msg, function(resp) {
         addMsg(msg);
+        $("#id_" + msg.random).find(".spinner").remove();
         // if (selType == webim.SESSION_TYPE.C2C) {
         //     //私聊时，在聊天窗口手动添加一条发的消息，群聊时，长轮询接口会返回自己发的消息
         //     addMsg(msg);
         // }
         $('#edit_custom_msg_dialog').modal('hide');
-    }, function (err) {
+    }, function(err) {
         alert(err.ErrorInfo);
     });
 }
-
-
-
