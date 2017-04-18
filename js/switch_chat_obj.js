@@ -108,48 +108,57 @@ function onSelSess(sess_type, to_id) {
         bindScrollHistoryEvent.reset();
 
 
-        if (sess_type == webim.SESSION_TYPE.GROUP) {
-            if (selType == webim.SESSION_TYPE.C2C) {
-                selType = webim.SESSION_TYPE.GROUP;
+        var sessMap = webim.MsgStore.sessMap(); //获取到之前已经保存的消息
+        var sessCS = webim.SESSION_TYPE.GROUP + selToID;
+        if (sessMap && sessMap[sessCS]) { //判断之前是否保存过消息
+            getHistoryMsgCallback(sessMap[sessCS]._impl.msgs);
+            for (var i = 0; i < sessMap[sessCS]._impl.msgs.length; i++) {
+                addMsg(sessMap[sessCS]._impl.msgs[i]); //显示已经保存的消息
             }
-            selSess = null;
-            webim.MsgStore.delSessByTypeId(selType, selToID);
-
-            getLastGroupHistoryMsgs(function(msgList) {
-                getHistoryMsgCallback(msgList);
-                bindScrollHistoryEvent.init();
-            }, function(err) {
-                alert(err.ErrorInfo);
-            });
         } else {
-            if (selType == webim.SESSION_TYPE.GROUP) {
-                selType = webim.SESSION_TYPE.C2C;
-            }
-
-            //如果是管理员账号，则为全员推送，没有历史消息
-            if (selToID == AdminAcount) {
-                var sess = webim.MsgStore.sessByTypeId(selType, selToID);
-                if (sess && sess.msgs() && sess.msgs().length > 0) {
-                    getHistoryMsgCallback(sess.msgs());
-                } else {
-                    getLastC2CHistoryMsgs(function(msgList) {
-                        getHistoryMsgCallback(msgList);
-                        bindScrollHistoryEvent.init();
-                    }, function(err) {
-                        alert(err.ErrorInfo);
-                    });
+            if (sess_type == webim.SESSION_TYPE.GROUP) {
+                if (selType == webim.SESSION_TYPE.C2C) {
+                    selType = webim.SESSION_TYPE.GROUP;
                 }
-                return;
-            }
+                selSess = null;
+                webim.MsgStore.delSessByTypeId(selType, selToID);
 
-            //拉取漫游消息
-            getLastC2CHistoryMsgs(function(msgList) {
-                getHistoryMsgCallback(msgList);
-                //绑定滚动操作
-                bindScrollHistoryEvent.init();
-            }, function(err) {
-                alert(err.ErrorInfo);
-            });
+                getLastGroupHistoryMsgs(function(msgList) {
+                    getHistoryMsgCallback(msgList);
+                    bindScrollHistoryEvent.init();
+                }, function(err) {
+                    alert(err.ErrorInfo);
+                });
+
+            } else {
+                if (selType == webim.SESSION_TYPE.GROUP) {
+                    selType = webim.SESSION_TYPE.C2C;
+                }
+                //如果是管理员账号，则为全员推送，没有历史消息
+                if (selToID == AdminAcount) {
+                    var sess = webim.MsgStore.sessByTypeId(selType, selToID);
+                    if (sess && sess.msgs() && sess.msgs().length > 0) {
+                        getHistoryMsgCallback(sess.msgs());
+                    } else {
+                        getLastC2CHistoryMsgs(function(msgList) {
+                            getHistoryMsgCallback(msgList);
+                            bindScrollHistoryEvent.init();
+                        }, function(err) {
+                            alert(err.ErrorInfo);
+                        });
+                    }
+                    return;
+                }
+
+                //拉取漫游消息
+                getLastC2CHistoryMsgs(function(msgList) {
+                    getHistoryMsgCallback(msgList);
+                    //绑定滚动操作
+                    bindScrollHistoryEvent.init();
+                }, function(err) {
+                    alert(err.ErrorInfo);
+                });
+            }
         }
     }
 }
