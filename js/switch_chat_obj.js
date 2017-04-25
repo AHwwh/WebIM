@@ -113,11 +113,18 @@ function onSelSess(sess_type, to_id) {
         if (sessMap && sessMap[sessCS]) { //判断之前是否保存过消息
             selType = webim.SESSION_TYPE.GROUP
             bindScrollHistoryEvent.init();
-            for (var i = 0; i < sessMap[sessCS]._impl.msgs.length; i++) {
-                addMsg(sessMap[sessCS]._impl.msgs[i]); //显示已经保存的消息
+
+            function compare(property) {
+                return function(a, b) {
+                    var value1 = a[property];
+                    var value2 = b[property];
+                    return value1 - value2;
+                }
             }
-            for (var i = 0; i < sessMap[sessCS]._impl.msgs.length; i++) {
-                addMsg(sessMap[sessCS]._impl.msgs[i]); //显示已经保存的消息
+            var sessMapOld = sessMap[sessCS]._impl.msgs.sort(compare('time'));
+
+            for (var i = 0; i < sessMapOld.length; i++) {
+                addMsg(sessMapOld[i]); //显示已经保存的消息
             }
         } else {
             if (sess_type == webim.SESSION_TYPE.GROUP) {
