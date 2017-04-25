@@ -111,7 +111,11 @@ function onSelSess(sess_type, to_id) {
         var sessMap = webim.MsgStore.sessMap(); //获取到之前已经保存的消息
         var sessCS = webim.SESSION_TYPE.GROUP + selToID;
         if (sessMap && sessMap[sessCS]) { //判断之前是否保存过消息
-            getHistoryMsgCallback(sessMap[sessCS]._impl.msgs);
+            selType = webim.SESSION_TYPE.GROUP
+            bindScrollHistoryEvent.init();
+            for (var i = 0; i < sessMap[sessCS]._impl.msgs.length; i++) {
+                addMsg(sessMap[sessCS]._impl.msgs[i]); //显示已经保存的消息
+            }
             for (var i = 0; i < sessMap[sessCS]._impl.msgs.length; i++) {
                 addMsg(sessMap[sessCS]._impl.msgs[i]); //显示已经保存的消息
             }
