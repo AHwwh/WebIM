@@ -92,6 +92,27 @@
     <!--聊天部分 end-->
 </div>
 
+<div id="login_dialog">
+    <div id="login_dialog_all">
+        <div class="install_div">
+            <p for="login_account" class="login_dialog_p">identifier</p>
+            <input type="text" class="" id="login_account" value="" placeholder="请输入identifier" maxlength="100">
+        </div>
+        <div class="install_div">
+            <p for="login_pwd" class="login_dialog_p">UserSig</p>
+            <input type="password" class="l" id="login_pwd" value="" placeholder="请输入UserSig">
+        </div>
+    </div>
+    <div class="install_button_div">
+        <button type="button" class="" onclick="colseLogin()">
+            关闭
+        </button>
+            <button type="button" class="" onclick="independentModeLogin()">
+            确定
+        </button>
+    </div>
+</div>
+
 <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
 <!--引入webim sdk-->
 <script type="text/javascript" src="sdk/webim.js?v=1"></script>
@@ -105,13 +126,13 @@
 <script type="text/javascript">
 
     //帐号模式，0-表示独立模式，1-表示托管模式
-    var accountMode = 1;
+    var accountMode = 0;
 
     //官方 demo appid,需要开发者自己修改（托管模式）
-    var sdkAppID = 1400001692;
-    var accountType = 884;
+    var sdkAppID = 1400027849;
+    var accountType = 11656;
 
-    var avChatRoomId = '@TGS#aJIPTVAEE'; //默认房间群ID，群类型必须是直播聊天室（AVChatRoom），这个为官方测试ID(托管模式)
+    var avChatRoomId = '10028'; //默认房间群ID，群类型必须是直播聊天室（AVChatRoom），这个为官方测试ID(托管模式)
 
     if (webim.Tool.getQueryString("groupid")) {
         avChatRoomId = webim.Tool.getQueryString("groupid");//用户自定义房间群id
@@ -211,11 +232,15 @@
             sdkLogin();
         }
     } else {//独立模式
-        //sdk登录
-        sdkLogin();
+        //$('#login_dialog').show();
+        //sdkLogin();
     }
     if(/debug/gi.test(location.hash)){
         document.write('<script src="http://sdklog.isd.com/js/vconsole.min.js"></scr'+'ipt>');
+    }
+
+    function colseLogin(){
+        $('#login_dialog').hide();
     }
 </script>
 </body>
