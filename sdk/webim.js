@@ -4455,7 +4455,7 @@ var webim = { // namespace object webim
                     if (err.ErrorCode != longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
-
+                        LongPollingId = null;
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
