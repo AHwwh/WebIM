@@ -1582,6 +1582,9 @@ var webim = { // namespace object webim
         apiReportItems = [];
 
         MsgManager.clear();
+
+        //重置longpollingId 
+        longpollingId = null;
     };
 
     //登录
