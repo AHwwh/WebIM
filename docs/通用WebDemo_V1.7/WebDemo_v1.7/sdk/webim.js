@@ -1582,6 +1582,9 @@ var webim = { // namespace object webim
         apiReportItems = [];
 
         MsgManager.clear();
+
+        //重置longpollingId 
+        LongPollingId = null;
     };
 
     //登录
@@ -4455,7 +4458,7 @@ var webim = { // namespace object webim
                     if (err.ErrorCode != longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
-
+                        LongPollingId = null;
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
