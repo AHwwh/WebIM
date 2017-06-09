@@ -773,7 +773,8 @@ var modifyGroup = function() {
         'GroupId': $('#mg_group_id').val(),
         'Name': $('#mg_name').val(),
         'Notification': $('#mg_notification').val(),
-        'Introduction': $('#mg_introduction').val()
+        'Introduction': $('#mg_introduction').val(),
+        'ShutUpAllMember': $('#shut_up_all_member').val()
     };
     if (faceurl) {
         options.FaceUrl = faceurl;
@@ -996,7 +997,8 @@ var getGroupInfo = function(group_id, cbOK, cbErr) {
             'NextMsgSeq',
             'MemberNum',
             'MaxMemberNum',
-            'ApplyJoinOption'
+            'ApplyJoinOption',
+            'ShutUpAllMember'
         ],
         'MemberInfoFilter': [
             'Account',
@@ -1009,6 +1011,9 @@ var getGroupInfo = function(group_id, cbOK, cbErr) {
     webim.getGroupInfo(
         options,
         function(resp) {
+            if (resp.GroupInfo[0].ShutUpAllMember == 'Open') {
+                alert('该群组已开启全局禁言');
+            }
             if (cbOK) {
                 cbOK(resp);
             }
