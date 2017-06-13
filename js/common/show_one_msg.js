@@ -32,12 +32,16 @@ function addMsg(msg, prepend) {
         var info = infoMap[key];
         if (info && info.name) {
             fromAccountNick = info.name;
+        } else if (msg.getFromAccountNick()) {
+            fromAccountNick = msg.getFromAccountNick();
         } else {
             fromAccountNick = fromAccount;
         }
         //获取头像
         if (info && info.image) {
             fromAccountImage = info.image;
+        } else if (msg.fromAccountHeadurl) {
+            fromAccountImage = msg.fromAccountHeadurl;
         } else {
             fromAccountImage = friendHeadUrl;
         }

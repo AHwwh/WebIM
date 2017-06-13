@@ -5091,7 +5091,7 @@ var webim = { // namespace object webim
                 if (msgInfo.IsPlaceMsg || !msgInfo.From_Account || !msgInfo.MsgBody || msgInfo.MsgBody.length == 0) {
                     return null;
                 }
-                var isSendMsg, id, headUrl, fromAccountNick;
+                var isSendMsg, id, headUrl, fromAccountNick, fromAccountHeadurl;
                 var group_id = msgInfo.ToGroupId;
                 var group_name = group_id;
                 if (msgInfo.GroupInfo) { //取出群名称
@@ -5101,9 +5101,16 @@ var webim = { // namespace object webim
                 }
                 //取出成员昵称
                 fromAccountNick = msgInfo.From_Account;
+                //fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
                 if (msgInfo.GroupInfo) {
                     if (msgInfo.GroupInfo.From_AccountNick) {
                         fromAccountNick = msgInfo.GroupInfo.From_AccountNick;
+
+                    }
+                    if (msgInfo.GroupInfo.From_AccountHeadurl) {
+                        fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
+                    } else {
+                        fromAccountHeadurl = null;
                     }
                 }
                 if (msgInfo.From_Account == ctx.identifier) { //当前用户发送的消息
@@ -5140,7 +5147,7 @@ var webim = { // namespace object webim
                     }
 
                 }
-                var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick);
+                var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick, fromAccountHeadurl);
                 var msgBody = null;
                 var msgContent = null;
                 var msgType = null;
