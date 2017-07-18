@@ -272,10 +272,10 @@ function gmgOperateFormatter(value, row, index) {
 //我的群组表格每行的操作按钮点击事件
 window.gmgOperateEvents = {
     'click .plus': function(e, value, row, index) {
-        if (row.TypeEn != 'Private') {
-            alert('公开群或聊天室不支持直接拉人操作');
-            return;
-        }
+        // if (row.TypeEn != 'Private') {
+        //    alert('公开群或聊天室不支持直接拉人操作');
+        //     return;
+        // }
         $('#gmfg_group_id').val(row.GId);
         getMyFriendGroup();
     },

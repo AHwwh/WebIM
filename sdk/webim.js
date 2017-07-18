@@ -744,7 +744,8 @@ var webim = { // namespace object webim
         "CANCEL_ADMIN": 10, //取消管理员(被取消者接收)
         "REVOKE": 11, //群已被回收(全员接收, 不展示)
         "READED": 15, //群消息已读同步
-        "CUSTOM": 255 //用户自定义通知(默认全员接收)
+        "CUSTOM": 255, //用户自定义通知(默认全员接收)
+        "INVITED_JOIN_GROUP_REQUEST_AGREE": 12, //邀请加群(被邀请者需同意)
     };
 
     //好友系统通知子类型
@@ -4076,6 +4077,7 @@ var webim = { // namespace object webim
                         case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                         case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                        case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需同意)
                         case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                         case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
@@ -4244,6 +4246,7 @@ var webim = { // namespace object webim
                     case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                     case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需要同意)
                     case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                     case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)

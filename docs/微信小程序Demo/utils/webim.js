@@ -1308,7 +1308,7 @@ var webim = { // namespace object webim
             var json = null;
             //if (resp) eval('json=('+resp+');');//将返回的json字符串转换成json对象
             //if (resp) json=eval('('+resp+')');//将返回的json字符串转换成json对象
-            if (resp) json = resp;//将返回的json字符串转换成json对象
+            if (resp) json = JSON.parse(resp); //将返回的json字符串转换成json对象
             if (cbOk) cbOk(json);
         }, cbErr);
     }
@@ -1481,6 +1481,9 @@ var webim = { // namespace object webim
         apiReportItems = [];
 
         MsgManager.clear();
+
+        //重置longpollingId 
+        LongPollingId = null;
     };
 
     //登录
@@ -1490,6 +1493,7 @@ var webim = { // namespace object webim
 
         if (options) opt = options;
         if (opt.isAccessFormalEnv == false) {
+            log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
         }
         if (opt.isLogOn == false) {
@@ -1542,12 +1546,13 @@ var webim = { // namespace object webim
         if (ctx.identifier && ctx.userSig) {//带登录态
             //登录
             proto_login(
-                function (identifierNick) {
+                function(identifierNick, headurl) {
                     MsgManager.init(
                         listeners,
                         function (mmInitResp) {
                             if (cbOk) {
                                 mmInitResp.identifierNick = identifierNick;
+                                mmInitResp.headurl = headurl;
                                 cbOk(mmInitResp);
                             }
                         }, cbErr
@@ -1659,7 +1664,8 @@ var webim = { // namespace object webim
                     }
                 }
                 var tag_list = [
-                    "Tag_Profile_IM_Nick"
+                    "Tag_Profile_IM_Nick",
+                    "Tag_Profile_IM_Image"
                 ];
                 var options = {
                     'From_Account': ctx.identifier,
@@ -1679,11 +1685,15 @@ var webim = { // namespace object webim
                                             nick = resp.UserProfileItem[i].ProfileItem[j].Value;
                                             if (nick) ctx.identifierNick = nick;
                                             break;
+                                        case 'Tag_Profile_IM_Image':
+                                            image = resp.UserProfileItem[i].ProfileItem[j].Value;
+                                            if (image) ctx.headurl = image;
+                                            break;
                                     }
                                 }
                             }
                         }
-                        if (cbOk) cbOk(ctx.identifierNick);//回传当前用户昵称
+                        if (cbOk) cbOk(ctx.identifierNick, ctx.headurl); //回传当前用户昵称
                     }, cbErr);
             }
             , cbErr);
@@ -1813,7 +1823,15 @@ var webim = { // namespace object webim
                     continue;
                     break;
             }
-            msgInfo.MsgBody.push({'MsgType': msgType, 'MsgContent': msgContent});
+
+            if (msg.PushInfoBoolean) {
+                msgInfo.OfflinePushInfo = msg.PushInfo; //当android终端进程被杀掉时才走push，IOS退到后台即可
+            }
+
+            msgInfo.MsgBody.push({
+                'MsgType': msgType,
+                'MsgContent': msgContent
+            });
         }
         if (msg.sess.type() == SESSION_TYPE.C2C) {//私聊
             ConnManager.apiCall(SRV_NAME.OPEN_IM, "sendmsg", msgInfo, cbOk, cbErr);
@@ -2566,6 +2584,7 @@ var webim = { // namespace object webim
     //上传图片或文件
     var proto_uploadPic = function (options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
+        var cmdName;
         if (isAccessFormalEnv()) {
             cmdName = 'pic_up';
         } else {
@@ -3499,7 +3518,9 @@ var webim = { // namespace object webim
             "1" :null
         };
 
-        var onMsgReadCallback = null;
+            var onKickedEventCall = null;
+
+            var onMsgReadCallback = null;
 
         //普通长轮询
         var longPollingOn = false;//是否开启普通长轮询
@@ -4396,7 +4417,8 @@ var webim = { // namespace object webim
         var handlerOrdinaryAndTipC2cMsgs = function (eventType, C2cMsgArray) {
                 //处理c2c消息
                 var notifyInfo = [];
-                msgInfos = C2cMsgArray;//返回的消息列表
+                var msgInfos = [];
+                msgInfos = C2cMsgArray; //返回的消息列表
                 // MsgStore.cookie = resp.Cookie;//cookies，记录当前读到的最新消息位置
 
                 for (var i in msgInfos) {
@@ -4737,6 +4759,7 @@ var webim = { // namespace object webim
             //读取c2c漫游消息
             proto_getC2CHistoryMsgs(opts, function (resp) {
                 var msgObjList = [];
+ var msgInfos = [];
                 //处理c2c消息
                 msgInfos = resp.MsgList;//返回的消息列表
                 var sess = MsgStore.sessByTypeId(SESSION_TYPE.C2C, options.Peer_Account);
