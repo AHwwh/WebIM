@@ -1036,6 +1036,84 @@
     </div>
     <!-- /.modal -->
 
+     <!-- 模态框（Modal） -->
+    <div class="modal fade" id="handle_invite_join_group_request" tabindex="-1" role="dialog" aria-labelledby="handle_invite_join_group_request_label" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                    <h4 class="modal-title" id="handle_invite_join_group_request_label">
+                        处理被邀请进群申请
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                    <form class="form-horizontal" role="form" onkeydown="if(event.keyCode==13)return false;">
+                        <input type="hidden" id="hijg_authentication">
+                        <input type="hidden" id="hijg_msg_key">
+                        <input type="hidden" id="hijg_user_defined_field">
+
+                        <input type="hidden" id="hijg_from_account">
+                        <input type="hidden" id="hijg_msg_seq">
+                        <input type="hidden" id="hijg_msg_random">
+
+                        <div class="form-group">
+                            <label for="hijg_group_id" class="col-sm-2 control-label">群ID</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="hijg_group_id" placeholder="" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hijg_to_account" class="col-sm-2 control-label">邀请人</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="hijg_to_account" placeholder="" readonly="readonly">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hijg_action_radio" class="col-sm-2 control-label">操作</label>
+
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                <input type="radio" name="hijg_action_radio" id="hijg_action_agree_radio"
+                                       value="Agree" checked> 同意
+                            </label>
+                                <label class="radio-inline">
+                                <input type="radio" name="hijg_action_radio" id="hijg_action_reject_radio"
+                                       value="Reject"> 拒绝
+                            </label>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hijg_approval_msg" class="col-sm-2 control-label">附言</label>
+
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="hijg_approval_msg" rows="3"></textarea>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                    <button type="button" class="btn btn-primary" onclick="handleInviteJoinGroupRequest()">
+                    提交
+                </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
     <div class="modal fade" id="modify_group_dialog" tabindex="-1" role="dialog" aria-labelledby="modify_group_dialog_label" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
