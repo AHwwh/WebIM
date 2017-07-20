@@ -7,7 +7,7 @@ const version = "1.7";
 gulp.task('default', function() {
 
 
-  gulp.src(['sdk/webim.js','sdk/webim_no_emotion.js'])
+  gulp.src(['sdk/webim.js','sdk/webim_no_emotion.js','sdk/webim_wx.js'])
     .pipe(uglify())
     .pipe(rename(function (path) {
         path.dirname += "./sdk/";
