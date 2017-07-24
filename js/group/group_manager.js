@@ -272,10 +272,10 @@ function gmgOperateFormatter(value, row, index) {
 //我的群组表格每行的操作按钮点击事件
 window.gmgOperateEvents = {
     'click .plus': function(e, value, row, index) {
-        if (row.TypeEn != 'Private') {
-            alert('公开群或聊天室不支持直接拉人操作');
-            return;
-        }
+        // if (row.TypeEn != 'Private') {
+        //    alert('公开群或聊天室不支持直接拉人操作');
+        //     return;
+        // }
         $('#gmfg_group_id').val(row.GId);
         getMyFriendGroup();
     },
@@ -773,7 +773,8 @@ var modifyGroup = function() {
         'GroupId': $('#mg_group_id').val(),
         'Name': $('#mg_name').val(),
         'Notification': $('#mg_notification').val(),
-        'Introduction': $('#mg_introduction').val()
+        'Introduction': $('#mg_introduction').val(),
+        'ShutUpAllMember': $('#shut_up_all_member').val()
     };
     if (faceurl) {
         options.FaceUrl = faceurl;
@@ -996,7 +997,8 @@ var getGroupInfo = function(group_id, cbOK, cbErr) {
             'NextMsgSeq',
             'MemberNum',
             'MaxMemberNum',
-            'ApplyJoinOption'
+            'ApplyJoinOption',
+            'ShutUpAllMember'
         ],
         'MemberInfoFilter': [
             'Account',
@@ -1009,6 +1011,9 @@ var getGroupInfo = function(group_id, cbOK, cbErr) {
     webim.getGroupInfo(
         options,
         function(resp) {
+            if (resp.GroupInfo[0].ShutUpAllMember == 'Open') {
+                alert('该群组已开启全局禁言');
+            }
             if (cbOK) {
                 cbOK(resp);
             }

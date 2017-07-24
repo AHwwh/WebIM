@@ -1188,6 +1188,17 @@ var webim = { // namespace object webim
      */
     deleteGroupMember: function(options, cbOk, cbErr) {},
 
+    /* function getPendencyGroup
+     *   获取群组未决列表
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroup: function(options, cbOk, cbErr) {},
+
     /* function sendCustomGroupNotify
      *   发送自定义群通知
      * params:
@@ -1543,7 +1554,8 @@ var webim = { // namespace object webim
         "CANCEL_ADMIN": 10, //取消管理员(被取消者接收)
         "REVOKE": 11, //群已被回收(全员接收, 不展示)
         "READED": 15, //群消息已读同步
-        "CUSTOM": 255 //用户自定义通知(默认全员接收)
+        "CUSTOM": 255, //用户自定义通知(默认全员接收)
+        "INVITED_JOIN_GROUP_REQUEST_AGREE": 12, //邀请加群(被邀请者需同意)
     };
 
     //好友系统通知子类型
@@ -3011,6 +3023,42 @@ var webim = { // namespace object webim
         );
     };
 
+    //获取群组未决列表
+    var proto_getPendencyGroup = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "get_pendency", {
+                'StartTime': options.StartTime,
+                'Limit': options.Limit,
+                'Handle_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+    //处理被邀请进群申请(同意或拒绝)
+    var proto_handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "handle_invite_join_group", {
+                'GroupId': options.GroupId,
+                'Inviter_Account': options.Inviter_Account,
+                'HandleMsg': options.HandleMsg,
+                'Authentication': options.Authentication,
+                'MsgKey': options.MsgKey,
+                'ApprovalMsg': options.ApprovalMsg,
+                'UserDefinedField': options.UserDefinedField
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
     //主动退群
     var proto_quitGroup = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -3387,6 +3435,10 @@ var webim = { // namespace object webim
     //资料接口
     //查看个人资料
     var proto_getProfilePortrait = function(options, cbOk, cbErr) {
+        if (options.To_Account.length > 100) {
+            options.To_Account.length = 100;
+            log.error('获取用户资料人数不能超过100人')
+        }
         if (!checkLogin(cbErr, true)) return;
         ConnManager.apiCall(SRV_NAME.PROFILE, "portrait_get", {
                 'From_Account': ctx.identifier,
@@ -4461,7 +4513,8 @@ var webim = { // namespace object webim
                 "10": null,
                 "11": null,
                 "15": null,
-                "255": null
+                "255": null,
+                "12": null,
             };
             //监听好友系统通知函数
             var onFriendSystemNotifyCallbacks = {
@@ -4567,7 +4620,8 @@ var webim = { // namespace object webim
                     "10": null, //取消管理员(被取消者接收)
                     "11": null, //群已被回收(全员接收)
                     "15": null, //群已被回收(全员接收)
-                    "255": null //用户自定义通知(默认全员接收)
+                    "255": null, //用户自定义通知(默认全员接收)
+                    "12": null, //邀请加群(被邀请者需要同意)
                 };
                 onFriendSystemNotifyCallbacks = {
                     "1": null, //好友表增加
@@ -4911,6 +4965,7 @@ var webim = { // namespace object webim
                         case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                         case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                        case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需同意)
                         case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                         case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
@@ -5079,6 +5134,7 @@ var webim = { // namespace object webim
                     case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                     case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需要同意)
                     case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                     case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
@@ -5293,7 +5349,6 @@ var webim = { // namespace object webim
                     if (err.ErrorCode != longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
-                        LongPollingId = null;
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
@@ -5354,7 +5409,6 @@ var webim = { // namespace object webim
                 } else if (errObj.ErrorCode == longPollingKickedErrorCode) {
                     //登出
                     log.error("多实例登录，被kick");
-                    LongPollingId = null;
                     if (onKickedEventCall) {
                         onKickedEventCall();
                     }
@@ -5928,7 +5982,7 @@ var webim = { // namespace object webim
                 if (msgInfo.IsPlaceMsg || !msgInfo.From_Account || !msgInfo.MsgBody || msgInfo.MsgBody.length == 0) {
                     return null;
                 }
-                var isSendMsg, id, headUrl, fromAccountNick;
+                var isSendMsg, id, headUrl, fromAccountNick, fromAccountHeadurl;
                 var group_id = msgInfo.ToGroupId;
                 var group_name = group_id;
                 if (msgInfo.GroupInfo) { //取出群名称
@@ -5938,9 +5992,16 @@ var webim = { // namespace object webim
                 }
                 //取出成员昵称
                 fromAccountNick = msgInfo.From_Account;
+                //fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
                 if (msgInfo.GroupInfo) {
                     if (msgInfo.GroupInfo.From_AccountNick) {
                         fromAccountNick = msgInfo.GroupInfo.From_AccountNick;
+
+                    }
+                    if (msgInfo.GroupInfo.From_AccountHeadurl) {
+                        fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
+                    } else {
+                        fromAccountHeadurl = null;
                     }
                 }
                 if (msgInfo.From_Account == ctx.identifier) { //当前用户发送的消息
@@ -5977,7 +6038,7 @@ var webim = { // namespace object webim
                     }
 
                 }
-                var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick);
+                var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick, fromAccountHeadurl);
                 var msgBody = null;
                 var msgContent = null;
                 var msgType = null;
@@ -6784,6 +6845,16 @@ var webim = { // namespace object webim
     //处理加群申请(同意或拒绝)
     webim.handleApplyJoinGroupPendency = function(options, cbOk, cbErr) {
         return proto_handleApplyJoinGroupPendency(options, cbOk, cbErr);
+    };
+
+    //获取群组未决列表
+    webim.getPendencyGroup = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroup(options, cbOk, cbErr);
+    };
+
+    //处理邀请进群申请(同意或拒绝)
+    webim.handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        return proto_handleInviteJoinGroupRequest(options, cbOk, cbErr);
     };
 
     //删除加群申请
