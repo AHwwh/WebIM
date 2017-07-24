@@ -3384,6 +3384,15 @@ var webim = { // namespace object webim
             },
             cbOk, cbErr);
     };
+    //好友申请已读上报
+    var proto_getPendencyReport = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+        ConnManager.apiCall(SRV_NAME.FRIEND, "PendencyReport", {
+                "From_Account": ctx.identifier,
+                "LatestPendencyTimeStamp": options.LatestPendencyTimeStamp
+            },
+            cbOk, cbErr);
+    };
     //删除好友申请
     var proto_deletePendency = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -5580,6 +5589,7 @@ var webim = { // namespace object webim
             var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
                 for (var i in eventArray) {
                     var e = eventArray[i];
+                    handlerGroupSystemMsgs(e, true);
                     switch (e.Event) {
                         case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                             log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
@@ -6950,6 +6960,10 @@ var webim = { // namespace object webim
     //获取好友申请列表
     webim.getPendency = function(options, cbOk, cbErr) {
         return proto_getPendency(options, cbOk, cbErr);
+    };
+    //好友申请列表已读上报
+    webim.getPendencyReport = function(options, cbOk, cbErr) {
+        return proto_getPendencyReport(options, cbOk, cbErr);
     };
     //删除好友申请
     webim.deletePendency = function(options, cbOk, cbErr) {
