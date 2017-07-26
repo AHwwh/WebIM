@@ -1,13 +1,14 @@
 (function(global, factory) {
 
-        global["Long"] = factory();
+    global["Long"] = factory();
 
 })(this, function() {
     "use strict";
+
     function Long(low, high, unsigned) {
         this.low = low | 0;
         this.high = high | 0;
-        this.unsigned = !!unsigned;
+        this.unsigned = !! unsigned;
     }
     Long.prototype.__isLong__;
 
@@ -16,12 +17,14 @@
         enumerable: false,
         configurable: false
     });
+
     function isLong(obj) {
         return (obj && obj["__isLong__"]) === true;
     }
     Long.isLong = isLong;
     var INT_CACHE = {};
     var UINT_CACHE = {};
+
     function fromInt(value, unsigned) {
         var obj, cachedObj, cache;
         if (unsigned) {
@@ -49,6 +52,7 @@
         }
     }
     Long.fromInt = fromInt;
+
     function fromNumber(value, unsigned) {
         if (isNaN(value) || !isFinite(value))
             return unsigned ? UZERO : ZERO;
@@ -68,11 +72,13 @@
         return fromBits((value % TWO_PWR_32_DBL) | 0, (value / TWO_PWR_32_DBL) | 0, unsigned);
     }
     Long.fromNumber = fromNumber;
+
     function fromBits(lowBits, highBits, unsigned) {
         return new Long(lowBits, highBits, unsigned);
     }
     Long.fromBits = fromBits;
     var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
+
     function fromString(str, unsigned, radix) {
         if (str.length === 0)
             throw Error('empty string');
@@ -113,6 +119,7 @@
         return result;
     }
     Long.fromString = fromString;
+
     function fromValue(val) {
         if (val /* is compatible */ instanceof Long)
             return val;
@@ -140,11 +147,11 @@
     Long.UONE = UONE;
     var NEG_ONE = fromInt(-1);
     Long.NEG_ONE = NEG_ONE;
-    var MAX_VALUE = fromBits(0xFFFFFFFF|0, 0x7FFFFFFF|0, false);
+    var MAX_VALUE = fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0, false);
     Long.MAX_VALUE = MAX_VALUE;
-    var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF|0, 0xFFFFFFFF|0, true);
+    var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF | 0, 0xFFFFFFFF | 0, true);
     Long.MAX_UNSIGNED_VALUE = MAX_UNSIGNED_VALUE;
-    var MIN_VALUE = fromBits(0, 0x80000000|0, false);
+    var MIN_VALUE = fromBits(0, 0x80000000 | 0, false);
     Long.MIN_VALUE = MIN_VALUE;
     var LongPrototype = Long.prototype;
     LongPrototype.toInt = function toInt() {
@@ -235,7 +242,7 @@
     };
     LongPrototype.eq = LongPrototype.equals;
     LongPrototype.notEquals = function notEquals(other) {
-        return !this.eq(/* validates */ other);
+        return !this.eq( /* validates */ other);
     };
     LongPrototype.neq = LongPrototype.notEquals;
 
@@ -245,7 +252,7 @@
      * @returns {boolean}
      */
     LongPrototype.lessThan = function lessThan(other) {
-        return this.comp(/* validates */ other) < 0;
+        return this.comp( /* validates */ other) < 0;
     };
 
     /**
@@ -262,7 +269,7 @@
      * @returns {boolean}
      */
     LongPrototype.lessThanOrEqual = function lessThanOrEqual(other) {
-        return this.comp(/* validates */ other) <= 0;
+        return this.comp( /* validates */ other) <= 0;
     };
 
     /**
@@ -279,7 +286,7 @@
      * @returns {boolean}
      */
     LongPrototype.greaterThan = function greaterThan(other) {
-        return this.comp(/* validates */ other) > 0;
+        return this.comp( /* validates */ other) > 0;
     };
 
     /**
@@ -296,7 +303,7 @@
      * @returns {boolean}
      */
     LongPrototype.greaterThanOrEqual = function greaterThanOrEqual(other) {
-        return this.comp(/* validates */ other) >= 0;
+        return this.comp( /* validates */ other) >= 0;
     };
 
     /**
@@ -378,7 +385,10 @@
         var b16 = addend.low >>> 16;
         var b00 = addend.low & 0xFFFF;
 
-        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        var c48 = 0,
+            c32 = 0,
+            c16 = 0,
+            c00 = 0;
         c00 += a00 + b00;
         c16 += c00 >>> 16;
         c00 &= 0xFFFF;
@@ -454,7 +464,10 @@
         var b16 = multiplier.low >>> 16;
         var b00 = multiplier.low & 0xFFFF;
 
-        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        var c48 = 0,
+            c32 = 0,
+            c16 = 0,
+            c00 = 0;
         c00 += a00 * b00;
         c16 += c00 >>> 16;
         c00 &= 0xFFFF;
@@ -505,7 +518,7 @@
             // closure library as a whole.
             if (this.eq(MIN_VALUE)) {
                 if (divisor.eq(ONE) || divisor.eq(NEG_ONE))
-                    return MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE
+                    return MIN_VALUE; // recall that -MIN_VALUE == MIN_VALUE
                 else if (divisor.eq(MIN_VALUE))
                     return ONE;
                 else {
@@ -557,8 +570,8 @@
             var log2 = Math.ceil(Math.log(approx) / Math.LN2),
                 delta = (log2 <= 48) ? 1 : pow_dbl(2, log2 - 48),
 
-            // Decrease the approximation until it is smaller than the remainder.  Note
-            // that if it is too large, the product overflows and is negative.
+                // Decrease the approximation until it is smaller than the remainder.  Note
+                // that if it is too large, the product overflows and is negative.
                 approxRes = fromNumber(approx),
                 approxRem = approxRes.mul(divisor);
             while (approxRem.isNegative() || approxRem.gt(rem)) {
@@ -762,14 +775,8 @@
         var hi = this.high,
             lo = this.low;
         return [
-             lo         & 0xff,
-            (lo >>>  8) & 0xff,
-            (lo >>> 16) & 0xff,
-            (lo >>> 24) & 0xff,
-             hi         & 0xff,
-            (hi >>>  8) & 0xff,
-            (hi >>> 16) & 0xff,
-            (hi >>> 24) & 0xff
+            lo & 0xff, (lo >>> 8) & 0xff, (lo >>> 16) & 0xff, (lo >>> 24) & 0xff,
+            hi & 0xff, (hi >>> 8) & 0xff, (hi >>> 16) & 0xff, (hi >>> 24) & 0xff
         ];
     }
 
@@ -781,14 +788,9 @@
         var hi = this.high,
             lo = this.low;
         return [
-            (hi >>> 24) & 0xff,
-            (hi >>> 16) & 0xff,
-            (hi >>>  8) & 0xff,
-             hi         & 0xff,
-            (lo >>> 24) & 0xff,
-            (lo >>> 16) & 0xff,
-            (lo >>>  8) & 0xff,
-             lo         & 0xff
+            (hi >>> 24) & 0xff, (hi >>> 16) & 0xff, (hi >>> 8) & 0xff,
+            hi & 0xff, (lo >>> 24) & 0xff, (lo >>> 16) & 0xff, (lo >>> 8) & 0xff,
+            lo & 0xff
         ];
     }
 
@@ -1337,6 +1339,7 @@ var webim = { // namespace object webim
     var SDK = {
         'VERSION': '1.7.0', //sdk版本号
         'APPID': '537048168' //web im sdk 版本 APPID
+        'PLAATFORM': "10" //发送请求时判断其是来自web端的请求
     };
 
     //是否启用正式环境，默认启用
@@ -2268,7 +2271,7 @@ var webim = { // namespace object webim
             }
         }
 
-        var url = srvHost + '/' + SRV_NAME_VER[srvName] + '/' + srvName + '/' + cmd + '?websdkappid=' + SDK.APPID + "&v=" + SDK.VERSION;
+        var url = srvHost + '/' + SRV_NAME_VER[srvName] + '/' + srvName + '/' + cmd + '?websdkappid=' + SDK.APPID + "&v=" + SDK.VERSION + "&platform=" + SDK.PLAATFORM;;
 
         if (isLogin()) {
             if (cmd == 'login') {
@@ -3031,6 +3034,22 @@ var webim = { // namespace object webim
                 'StartTime': options.StartTime,
                 'Limit': options.Limit,
                 'Handle_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+
+    //群组未决已经上报
+    var proto_getPendencyGroupRead = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "report_pendency", {
+                'ReportTime': options.StartTime,
+                'From_Account': ctx.identifier
             },
             cbOk,
             function(err) {
@@ -3824,23 +3843,23 @@ var webim = { // namespace object webim
         this.lastedMsgTime = lastedMsgTime;
     }
 
-    var calcUniqId = function(num1 , num2){
+    var calcUniqId = function(num1, num2) {
         var str1 = parseInt(num1).toString(2) + '00000000000000000000000000000000';
         var str2 = parseInt(num2).toString(2);
         var arr1 = str1.split('').reverse();
         var arr2 = str2.split('').reverse();
         var res = [];
         var length = arr1.length > arr2.length ? arr1.length : arr2.length;
-        for(var a = 0 ; a<length ;a++){
-            sig = Number(arr1[a] || 0) || Number(arr2[a]|| 0);
+        for (var a = 0; a < length; a++) {
+            sig = Number(arr1[a] || 0) || Number(arr2[a] || 0);
             res.push(sig);
         }
         var numstr = res.reverse().join("");
         var long = {
-            high : "0x"+parseInt(numstr.substr(0,numstr.length - 32),2).toString(16),
-            low : "0x"+parseInt(numstr.substr(numstr.length - 32 - 1),2).toString(16)
+            high: "0x" + parseInt(numstr.substr(0, numstr.length - 32), 2).toString(16),
+            low: "0x" + parseInt(numstr.substr(numstr.length - 32 - 1), 2).toString(16)
         }
-        var longVal = new Long(long.low, long.high ,true);
+        var longVal = new Long(long.low, long.high, true);
         return longVal.toString();
     };
     // class Msg
@@ -3855,13 +3874,13 @@ var webim = { // namespace object webim
         this.time = time >= 0 ? time : unixtime();
         this.elems = [];
         var type = sess.type();
-        switch(type){
+        switch (type) {
             case SESSION_TYPE.GROUP:
-                this.uniqueId = calcUniqId( this.seq , this.random );
+                this.uniqueId = calcUniqId(this.seq, this.random);
                 break;
             case SESSION_TYPE.C2C:
             default:
-                this.uniqueId = calcUniqId( this.time , this.random );
+                this.uniqueId = calcUniqId(this.time, this.random);
                 break;
         }
 
@@ -6860,6 +6879,11 @@ var webim = { // namespace object webim
     //获取群组未决列表
     webim.getPendencyGroup = function(options, cbOk, cbErr) {
         return proto_getPendencyGroup(options, cbOk, cbErr);
+    };
+
+    //群未决已读上报
+    webim.getPendencyGroupRead = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroupRead(options, cbOk, cbErr);
     };
 
     //处理邀请进群申请(同意或拒绝)
