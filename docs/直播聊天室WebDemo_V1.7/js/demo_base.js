@@ -186,6 +186,9 @@ function showMsg(msg) {
         case webim.GROUP_MSG_SUB_TYPE.TIP: //群提示消息
             contentSpan.innerHTML = "[群提示消息]" + convertMsgtoHtml(msg);
             break;
+        default:
+            contentSpan.innerHTML = msg.tipText;
+            break;
     }
     textDiv.appendChild(nickNameSpan);
     textDiv.appendChild(contentSpan);

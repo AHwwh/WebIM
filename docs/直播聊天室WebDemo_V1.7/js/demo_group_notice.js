@@ -8,6 +8,7 @@ function onApplyJoinGroupRequestNotify(notify) {
 }
 
 //监听 申请加群被同意 系统消息
+
 function onApplyJoinGroupAcceptNotify(notify) {
     webim.Log.warn("执行 申请加群被同意 回调：" + JSON.stringify(notify));
     var reportTypeCh = "[申请加群被同意]";
@@ -15,6 +16,7 @@ function onApplyJoinGroupAcceptNotify(notify) {
     showGroupSystemMsg(notify.ReportType, reportTypeCh, notify.GroupId, notify.GroupName, content, notify.MsgTime);
 }
 //监听 申请加群被拒绝 系统消息
+
 function onApplyJoinGroupRefuseNotify(notify) {
     webim.Log.warn("执行 申请加群被拒绝 回调：" + JSON.stringify(notify));
     var reportTypeCh = "[申请加群被拒绝]";

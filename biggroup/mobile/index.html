@@ -92,6 +92,27 @@
     <!--聊天部分 end-->
 </div>
 
+<div id="login_dialog">
+    <div id="login_dialog_all">
+        <div class="install_div">
+            <p for="login_account" class="login_dialog_p">identifier</p>
+            <input type="text" class="" id="login_account" value="" placeholder="请输入identifier" maxlength="100">
+        </div>
+        <div class="install_div">
+            <p for="login_pwd" class="login_dialog_p">UserSig</p>
+            <input type="password" class="l" id="login_pwd" value="" placeholder="请输入UserSig">
+        </div>
+    </div>
+    <div class="install_button_div">
+        <button type="button" class="" onclick="colseLogin()">
+            关闭
+        </button>
+            <button type="button" class="" onclick="independentModeLogin()">
+            确定
+        </button>
+    </div>
+</div>
+
 <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
 <!--引入webim sdk-->
 <script type="text/javascript" src="sdk/webim.js?v=1"></script>
@@ -175,7 +196,7 @@
         "onConnNotify": onConnNotify, //选填
         "jsonpCallback": jsonpCallback, //IE9(含)以下浏览器用到的jsonp回调函数,移动端可不填，pc端必填
         "onBigGroupMsgNotify": onBigGroupMsgNotify, //监听新消息(大群)事件，必填
-      //  "onMsgNotify": onMsgNotify,//监听新消息(私聊(包括普通消息和全员推送消息)，普通群(非直播聊天室)消息)事件，必填
+        "onMsgNotify": onMsgNotify,//监听新消息(私聊(包括普通消息和全员推送消息)，普通群(非直播聊天室)消息)事件，必填
         "onGroupSystemNotifys": onGroupSystemNotifys, //监听（多终端同步）群系统消息事件，必填
         "onGroupInfoChangeNotify": onGroupInfoChangeNotify//监听群资料变化事件，选填
     };
@@ -186,7 +207,7 @@
         isAccessFormalEnv = false;//访问测试环境
     }
 
-    var isLogOn = false;//是否在浏览器控制台打印sdk日志
+    var isLogOn = true;//是否在浏览器控制台打印sdk日志
 
     //其他对象，选填
     var options = {
@@ -200,7 +221,6 @@
 
     if (accountMode == 1) {//托管模式
         //判断是否已经拿到临时身份凭证
-       // debugger
         if (webim.Tool.getQueryString('tmpsig')) {
             if (loginInfo.identifier == null) {
                 webim.Log.info('start fetchUserSig');
@@ -212,13 +232,16 @@
             sdkLogin();
         }
     } else {//独立模式
-        //sdk登录
-        sdkLogin();
+        $('#login_dialog').show();
+        //sdkLogin();
     }
     if(/debug/gi.test(location.hash)){
         document.write('<script src="http://sdklog.isd.com/js/vconsole.min.js"></scr'+'ipt>');
     }
 
+    function colseLogin(){
+        $('#login_dialog').hide();
+    }
 </script>
 </body>
 </html>

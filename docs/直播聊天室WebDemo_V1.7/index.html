@@ -125,14 +125,14 @@
 
 <script type="text/javascript">
 
-      //帐号模式，0-表示独立模式，1-表示托管模式
+       //帐号模式，0-表示独立模式，1-表示托管模式
     var accountMode = 1;
 
     //官方 demo appid,需要开发者自己修改（托管模式）
-    var sdkAppID = 1400001692;
-    var accountType = 884;
+    var sdkAppID = 1400001533;
+    var accountType = 792;
 
-    var avChatRoomId = '@TGS#aJIPTVAEE';  //默认房间群ID，群类型必须是直播聊天室（AVChatRoom），这个为官方测试ID(托管模式)
+    var avChatRoomId = '@TGS#aRZ7BT3EB';  //默认房间群ID，群类型必须是直播聊天室（AVChatRoom），这个为官方测试ID(托管模式)
 
     if (webim.Tool.getQueryString("groupid")) {
         avChatRoomId = webim.Tool.getQueryString("groupid");//用户自定义房间群id
@@ -232,7 +232,7 @@
             sdkLogin();
         }
     } else {//独立模式
-        //$('#login_dialog').show();
+        $('#login_dialog').show();
         //sdkLogin();
     }
     if(/debug/gi.test(location.hash)){
