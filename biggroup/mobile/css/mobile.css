@@ -411,20 +411,3 @@ em, i {
 #MAXIM {
     content: "tig201605241501026"
 }
-
-#login_dialog{
-    display: none;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    position: absolute;
-}
-
-.login_dialog_p{display: inline-block;color: #fff;text-align: right;width: 54px;}
-
-#login_dialog_all{margin-top: 200px;margin-left: 50px;}
-
-.install_div{margin:10px;}
-.install_div input{padding: 5px;width: 60%;}
-.install_button_div{width:100%;text-align: center;}
-.install_button_div button{color: #fff;border-radius: 4px;background: red;padding: 4px 20px;}

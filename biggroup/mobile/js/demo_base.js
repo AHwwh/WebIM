@@ -8,6 +8,7 @@ function jsonpCallback(rspData) {
 //监听大群新消息（普通，点赞，提示，红包）
 
 function onBigGroupMsgNotify(msgList) {
+    //console.info(msgList + '1')
     for (var i = msgList.length - 1; i >= 0; i--) { //遍历消息，按照时间从后往前
         var msg = msgList[i];
         //console.warn(msg);
@@ -21,6 +22,8 @@ function onBigGroupMsgNotify(msgList) {
 //newMsgList 为新消息数组，结构为[Msg]
 
 function onMsgNotify(newMsgList) {
+
+    //console.info(newMsgList + '2')
     var newMsg;
     for (var j in newMsgList) { //遍历新消息
         newMsg = newMsgList[j];
@@ -78,6 +81,7 @@ function handlderMsg(msg) {
 //sdk登录
 
 function sdkLogin() {
+    // debugger
     //web sdk 登录
     webim.login(loginInfo, listeners, options,
         function(identifierNick) {
@@ -185,6 +189,9 @@ function showMsg(msg) {
             break;
         case webim.GROUP_MSG_SUB_TYPE.TIP: //群提示消息
             contentSpan.innerHTML = "[群提示消息]" + convertMsgtoHtml(msg);
+            break;
+        default:
+            contentSpan.innerHTML = msg.tipText;
             break;
     }
     textDiv.appendChild(nickNameSpan);
@@ -439,6 +446,7 @@ function convertGroupTipMsgToHtml(content) {
 //tls登录
 
 function tlsLogin() {
+    //debugger
     //跳转到TLS登录页面
     TLSHelper.goLogin({
         sdkappid: loginInfo.sdkAppID,
@@ -449,6 +457,7 @@ function tlsLogin() {
 //第三方应用需要实现这个函数，并在这里拿到UserSig
 
 function tlsGetUserSig(res) {
+    //  debugger
     //成功拿到凭证
     if (res.ErrorCode == webim.TLS_ERROR_CODE.OK) {
         //从当前URL中获取参数为identifier的值
@@ -514,7 +523,6 @@ function smsPicClick() {
             tlsLogin();
         } else { //独立模式
             alert('请填写帐号和票据');
-            $('#login_dialog').show();
         }
         return;
     } else {
@@ -535,7 +543,6 @@ function onSendMsg() {
             tlsLogin();
         } else { //独立模式
             alert('请填写帐号和票据');
-            $('#login_dialog').show();
         }
         return;
     }
@@ -649,7 +656,6 @@ function sendGroupLoveMsg() {
             tlsLogin();
         } else { //独立模式
             alert('请填写帐号和票据');
-            $('#login_dialog').show();
         }
         return;
     }
@@ -809,21 +815,4 @@ function logout() {
             window.location.href = indexUrl;
         }
     );
-}
-
-//点击登录按钮(独立模式)
-
-function independentModeLogin() {
-    if ($("#login_account").val().length == 0) {
-        alert('请输入帐号');
-        return;
-    }
-    if ($("#login_pwd").val().length == 0) {
-        alert('请输入UserSig');
-        return;
-    }
-    loginInfo.identifier = $('#login_account').val();
-    loginInfo.userSig = $('#login_pwd').val();
-    $('#login_dialog').hide();
-    sdkLogin();
 }
