@@ -43,6 +43,7 @@ function webimLogin() {
         loginInfo, listeners, options,
         function (resp) {
             loginInfo.identifierNick = resp.identifierNick;//设置当前用户昵称
+            loginInfo.headurl = resp.headurl;//设置当前用户头像
             initDemoApp();
         },
         function (err) {

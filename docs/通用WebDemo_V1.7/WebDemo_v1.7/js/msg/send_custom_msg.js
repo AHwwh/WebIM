@@ -42,6 +42,7 @@ function sendCustomMsg() {
     msg.sending = 1;
     webim.sendMsg(msg, function (resp) {
         addMsg(msg);
+        $("#id_" + msg.random).find(".spinner").remove();
         // if (selType == webim.SESSION_TYPE.C2C) {
         //     //私聊时，在聊天窗口手动添加一条发的消息，群聊时，长轮询接口会返回自己发的消息
         //     addMsg(msg);

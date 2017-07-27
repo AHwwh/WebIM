@@ -68,6 +68,18 @@ function onInvitedJoinGroupNotify(notify) {
     var content = "你被管理员" + notify.Operator_Account + "邀请加入该群";
     addGroupSystemMsg(notify.ReportType, reportTypeCh, notify.GroupId, notify.GroupName, content, notify.MsgTime);
 }
+
+//监听 被邀请加群(用户需要同意) 系统消息
+
+function onInvitedJoinGroupNotifyRequest(notify) {
+    var timestamp = notify.MsgTime;
+    notify.MsgTimeStamp = timestamp;
+    notify.MsgTime = webim.Tool.formatTimeStamp(notify.MsgTime);
+    data.push(notify);
+    $('#get_apply_join_group_pendency_dialog').modal('show');
+    addGroupSystemMsg(notify.ReportType, reportTypeCh, notify.GroupId, notify.GroupName, content, timestamp);
+}
+
 //监听 主动退群 系统消息
 function onQuitGroupNotify(notify) {
     webim.Log.info("执行 主动退群  回调： " + JSON.stringify(notify));
@@ -127,19 +139,26 @@ function onGroupInfoChangeNotify(notify) {
 }
 
 //已读消息同步
-//告诉你那个类型的那个群组已读消息的情况
-function onReadedSyncGroupNotify(notify){
-    var seq = notify.groupReportTypeMsg.MsgReadedSeq;
+//告诉你哪个类型的那个群组已读消息的情况
 
+function onReadedSyncGroupNotify(notify) {
+    var seq = notify.LastReadMsgSeq;
     //更新当前的seq
-    var currentUnRead = recentSessMap[webim.SESSION_TYPE.GROUP+"_"+notify.GroupId].MsgGroupReadedSeq;
-    var unread = seq - currentUnRead;
-        unread = unread > 0 ? unread : 0;
-    webim.Log.info("群消息同步的回调:已读消息情况 ## 未读数：GroupId:["+notify.GroupId + "]:"+unread,currentUnRead,seq);
-    if(unread > 0 ){
-        $(document.getElementById("badgeDiv_"+notify.GroupId)).text(unread).show();
-    }else{
-        $(document.getElementById("badgeDiv_"+notify.GroupId)).val("").hide();
+    var currentUnRead = recentSessMap[webim.SESSION_TYPE.GROUP + "_" + notify.GroupId].MsgGroupReadedSeq;
+    var unread = currentUnRead - seq;
+    unread = unread > 0 ? unread : 0;
+    recentSessMap[webim.SESSION_TYPE.GROUP + "_" + notify.GroupId].MsgGroupReadedSeq = seq;
+
+
+    //更新未读数
+    var sess = webim.MsgStore.sessByTypeId(webim.SESSION_TYPE.GROUP, notify.GroupId);
+    sess.unread(unread);
+
+    webim.Log.info("群消息同步的回调:已读消息情况 ## 未读数：GroupId:[" + notify.GroupId + "]:" + unread, currentUnRead, seq);
+    if (unread > 0) {
+        $(document.getElementById("badgeDiv_" + notify.GroupId)).text(unread).show();
+    } else {
+        $(document.getElementById("badgeDiv_" + notify.GroupId)).val("").hide();
     }
 }
 
@@ -157,14 +176,44 @@ function initGetMyGroupSystemMsgs(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            {field: "ReportType", title: "类型", align: "center", valign: "middle", sortable: "false", visible: false},
-            {field: "ReportTypeCh", title: "类型", align: "center", valign: "middle", sortable: "true"},
-            {field: "GroupId", title: "群ID", align: "center", valign: "middle", sortable: "true"},
-            {field: "GroupName", title: "群名称", align: "center", valign: "middle", sortable: "true"},
-            {field: "MsgContent", title: "内容", align: "center", valign: "middle", sortable: "true"},
-            {field: "MsgTime", title: "时间", align: "center", valign: "middle", sortable: "true"}
-        ],
+        columns: [{
+            field: "ReportType",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "false",
+            visible: false
+        }, {
+            field: "ReportTypeCh",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "GroupId",
+            title: "群ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "GroupName",
+            title: "群名称",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MsgContent",
+            title: "内容",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MsgTime",
+            title: "时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }],
         data: data,
         formatNoMatches: function () {
             return '无符合条件的记录';

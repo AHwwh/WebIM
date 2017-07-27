@@ -52,7 +52,7 @@ window.ggmOperateEvents = {
                 break;
             case '群主':
                 if ($('#ggm_group_type').val() == 'Private') {
-                    alert('讨论组不支持设置群成员角色操作');
+                    alert('私有群不支持设置群成员角色操作');
                     return;
                 }
                 if (row.Role == '群主') {
@@ -148,21 +148,44 @@ function initGetGroupMemberTable(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            {field: "GroupId", title: "群ID", align: "center", valign: "middle", sortable: "true"},
-            {field: "Member_Account", title: "帐号", align: "center", valign: "middle", sortable: "true"},
-            {field: "Role", title: "角色", align: "center", valign: "middle", sortable: "true"},
-            {field: "JoinTime", title: "入群时间", align: "center", valign: "middle", sortable: "true"},
-            {field: "ShutUpUntil", title: "禁言截至时间", align: "center", valign: "middle", sortable: "true"},
-            {
-                field: "ggmOperate",
-                title: "操作",
-                align: "center",
-                valign: "middle",
-                formatter: "ggmOperateFormatter",
-                events: "ggmOperateEvents"
-            }
-        ],
+        columns: [{
+            field: "GroupId",
+            title: "群ID",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Member_Account",
+            title: "帐号",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "Role",
+            title: "角色",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "JoinTime",
+            title: "入群时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "ShutUpUntil",
+            title: "禁言截至时间",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "ggmOperate",
+            title: "操作",
+            align: "center",
+            valign: "middle",
+            formatter: "ggmOperateFormatter",
+            events: "ggmOperateEvents"
+        }],
         data: data,
         formatNoMatches: function () {
             return '无符合条件的记录';
@@ -344,8 +367,7 @@ var deleteGroupMember = function () {
 var addGroupMember = function () {
     var options = {
         'GroupId': $('#agm_group_id').val(),
-        'MemberList': [
-            {
+        'MemberList': [{
                 'Member_Account': $('#agm_account').val()
             }
 

@@ -31,15 +31,19 @@ function addMsg(msg,prepend) {
         var info = infoMap[key];
         if (info && info.name) {
             fromAccountNick = info.name;
+        } else if (msg.getFromAccountNick()) {
+            fromAccountNick = msg.getFromAccountNick();
         } else {
             fromAccountNick = fromAccount;
         }
         //获取头像
-        //if(info && info.image){
-        //    fromAccountImage=info.image;
-        //}else{
-        //    fromAccountImage= friendHeadUrl;
-        //}
+        if (info && info.image) {
+            fromAccountImage = info.image;
+        } else if (msg.fromAccountHeadurl) {
+            fromAccountImage = msg.fromAccountHeadurl;
+        } else {
+            fromAccountImage = friendHeadUrl;
+        }
     }
 
     var onemsg = document.createElement("div");
@@ -66,7 +70,7 @@ function addMsg(msg,prepend) {
     if (!isSelfSend)
         msghead.style.color = "blue";
     //昵称  消息时间
-    msghead.innerHTML = webim.Tool.formatText2Html(fromAccountNick + "&nbsp;&nbsp;" + webim.Tool.formatTimeStamp(msg.getTime()));
+    msghead.innerHTML = "<img class='headurlClass' src='" + fromAccountImage + "'>" + "&nbsp;&nbsp;" + webim.Tool.formatText2Html(fromAccountNick + "&nbsp;&nbsp;" + webim.Tool.formatTimeStamp(msg.getTime()));
 
 
     //解析消息
@@ -122,8 +126,9 @@ function addMsg(msg,prepend) {
 }
 //把消息转换成Html
 function convertMsgtoHtml(msg) {
-    var html = "", elems, elem, type, content;
-    elems = msg.getElems();//获取消息包含的元素数组
+    var html = "",
+        elems, elem, type, content;
+    elems = msg.getElems(); //获取消息包含的元素数组
     var count = elems.length;
     for (var i = 0; i < count; i++) {
         elem = elems[i];
@@ -131,9 +136,9 @@ function convertMsgtoHtml(msg) {
         content = elem.getContent();//获取元素对象
         switch (type) {
             case webim.MSG_ELEMENT_TYPE.TEXT:
-                html += convertTextMsgToHtml(content);
+                var eleHtml = convertTextMsgToHtml(content);
                 //转义，防XSS
-                html = webim.Tool.formatText2Html(html);
+                html += webim.Tool.formatText2Html(eleHtml);
                 break;
             case webim.MSG_ELEMENT_TYPE.FACE:
                 html += convertFaceMsgToHtml(content);
@@ -158,14 +163,14 @@ function convertMsgtoHtml(msg) {
                 html += convertLocationMsgToHtml(content);
                 break;
             case webim.MSG_ELEMENT_TYPE.CUSTOM:
-                html += convertCustomMsgToHtml(content);
+                var eleHtml = convertCustomMsgToHtml(content);
                 //转义，防XSS
-                html = webim.Tool.formatText2Html(html);
+                html += webim.Tool.formatText2Html(eleHtml);
                 break;
             case webim.MSG_ELEMENT_TYPE.GROUP_TIP:
-                html += convertGroupTipMsgToHtml(content);
+                var eleHtml = convertGroupTipMsgToHtml(content);
                 //转义，防XSS
-                html = webim.Tool.formatText2Html(html);
+                html += webim.Tool.formatText2Html(eleHtml);
                 break;
             default:
                 webim.Log.error('未知消息元素类型: elemType=' + type);

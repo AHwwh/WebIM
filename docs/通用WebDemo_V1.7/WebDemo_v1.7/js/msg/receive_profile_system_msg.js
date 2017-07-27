@@ -15,6 +15,10 @@
  {
  "Tag": "Tag_Profile_IM_AllowType",//加好友认证方式
  "ValueBytes": "AllowType_Type_NeedConfirm"
+ },
+ {
+ "Tag": "Tag_Profile_IM_Image",//用户头像
+ "ValueBytes": "img/image.png"
  }
  ]
  }
@@ -37,12 +41,15 @@ function onProfileModifyNotify(notify) {
             case 'Tag_Profile_IM_AllowType':
                 allowType = profile.ValueBytes;
                 break;
+            case 'Tag_Profile_IM_Image':
+                image = profile.ValueBytes;
+                break;
             default:
                 webim.log.error('未知资料字段：' + JSON.stringify(profile));
                 break;
         }
     }
-    content += "最新资料：【昵称】：" + nick + ",【性别】：" + sex + ",【加好友方式】：" + allowType;
+    content += "最新资料：【昵称】：" + nick + ",【性别】：" + sex + ",【加好友方式】：" + allowType + ",【修改头像】：" + image;
     addProfileSystemMsg(notify.Type, typeCh, content);
 
     if (account != loginInfo.identifier) {//如果是好友资料更新
@@ -70,11 +77,26 @@ function initGetMyProfileSystemMsgs(data) {
         search: true,
         showColumns: true,
         clickToSelect: true,
-        columns: [
-            {field: "Type", title: "类型", align: "center", valign: "middle", sortable: "false", visible: false},
-            {field: "TypeCh", title: "类型", align: "center", valign: "middle", sortable: "true"},
-            {field: "MsgContent", title: "内容", align: "center", valign: "middle", sortable: "true"}
-        ],
+        columns: [{
+            field: "Type",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "false",
+            visible: false
+        }, {
+            field: "TypeCh",
+            title: "类型",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }, {
+            field: "MsgContent",
+            title: "内容",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
+        }],
         data: data,
         formatNoMatches: function () {
             return '无符合条件的记录';
