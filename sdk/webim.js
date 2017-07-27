@@ -1338,7 +1338,7 @@ var webim = { // namespace object webim
     //sdk版本
     var SDK = {
         'VERSION': '1.7.0', //sdk版本号
-        'APPID': '537048168' //web im sdk 版本 APPID
+        'APPID': '537048168', //web im sdk 版本 APPID
         'PLAATFORM': "10" //发送请求时判断其是来自web端的请求
     };
 

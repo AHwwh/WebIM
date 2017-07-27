@@ -297,17 +297,15 @@ var initRecentContactList = function(cbOK, cbErr) {
                         };
 
                         //在左侧最近会话列表框中增加一个会话div
-                        addSess(sessType, sessionId, webim.Tool.formatText2Html(sessionNick), sessionImage, item.UnreadMsgCount, 'sesslist');
+                        addSess(sessType,webim.Tool.formatText2Html(sessionId), webim.Tool.formatText2Html(sessionNick), sessionImage, item.UnreadMsgCount, 'sesslist');
                     }
 
                 }
                 //清空聊天界面
                 document.getElementsByClassName("msgflow")[0].innerHTML = "";
 
-                tempSess = recentSessMap[firstSessType + "_" + firstSessId]; //选中第一个会话
-                if(tempSess){
-
-                    selType = tempSess.SessionType; //初始化当前聊天类型
+                tempSess = recentSessMap[firstSessType+"_"+firstSessId];//选中第一个会话
+                selType = tempSess.SessionType;//初始化当前聊天类型
 
                     selToID = tempSess.SessionId; //初始化当前聊天对象id
 
@@ -318,9 +316,8 @@ var initRecentContactList = function(cbOK, cbErr) {
                     webim.syncMsgs(initUnreadMsgCount); //初始化最近会话的消息未读数
 
 
-                    if (cbOK) //回调
-                        cbOK();
-                }
+                if (cbOK)//回调
+                    cbOK();
 
             }
 
