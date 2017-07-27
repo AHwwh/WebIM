@@ -1,4 +1,7 @@
 //监听新消息事件
+var msgList = [];
+var dateStart = null;
+var dateEnd = null;
 //newMsgList 为新消息数组，结构为[Msg]
 function onMsgNotify(newMsgList) {
     //console.warn(newMsgList);
@@ -27,6 +30,7 @@ function onMsgNotify(newMsgList) {
             //console.warn(newMsg);
             addMsg(newMsg);
         }
+        msgList.push(newMsg.elems[0].content.text);
     }
     //消息已读上报，以及设置会话自动已读标记
     webim.setAutoRead(selSess, true, true);
@@ -34,9 +38,12 @@ function onMsgNotify(newMsgList) {
     for (var i in sessMap) {
         sess = sessMap[i];
         if (selToID != sess.id()) {//更新其他聊天对象的未读消息数
+            if(!dateStart){
+                dateStart = new Date();
+            }
             updateSessDiv(sess.type(), sess.id(), sess.name(), sess.unread());
-            console.debug(sess.unread());
-            // stopPolling = true;
+            console.debug(sess.id(),sess.unread());
+            dateEnd = new Date();
         }
     }
 }
@@ -55,31 +62,25 @@ function onBigGroupMsgNotify(newMsgList) {
 }
 
 
-//处理已读消息
-function handleC2cMsgReadedNotify(item){
-    var sessMap = webim.MsgStore.sessMap()[webim.SESSION_TYPE.C2C+item.From_Account];
+//消息已读通知
+function onMsgReadedNotify(notify) {
+    var sessMap = webim.MsgStore.sessMap()[webim.SESSION_TYPE.C2C+notify.From_Account];
     if(sessMap){
         var msgs = _.clone(sessMap.msgs());
         var rm_msgs = _.remove(msgs,function(m){
-            return m.time <= item.LastReadTime
+            return m.time <= notify.LastReadTime
         });
         var unread = sessMap.unread()  - rm_msgs.length;
         unread = unread > 0 ? unread : 0;
         //更新sess的未读数
         sessMap.unread( unread );
-        // console.debug('更新C2C未读数:',item.From_Account,unread);
+        // console.debug('更新C2C未读数:',notify.From_Account,unread);
         //更新页面的未读数角标
         if(unread > 0 ){
-            $("#badgeDiv_"+item.From_Account).text(unread).show();
+            $("#badgeDiv_"+notify.From_Account).text(unread).show();
         }else{
-            $("#badgeDiv_"+item.From_Account).val("").hide();
+            $("#badgeDiv_"+notify.From_Account).val("").hide();
         }
     }
-}
-//消息已读通知
-function onMsgReadedNotify(notify) {
-    _.each(notify.ReadC2cMsgNotify.UinPairReadArray,function(item){
-        handleC2cMsgReadedNotify(item);
-    });
 }
 
