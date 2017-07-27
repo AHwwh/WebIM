@@ -1,4 +1,13 @@
 # WebIM
+
+### IM Web SDK1.7 2017-07-27
+>新增接口请求判断其是web来源<br/>
+>新增群未决列表接口<br/>
+>新增群未决已读上报与好友未决已读上报<br/>
+>同步托管模式下发群消息体中带用户昵称<br/>
+>新增互动直播demo的独立模式登录<br/>
+>修改demo在切换会话时白屏<br/>
+
 ### IM Web SDK1.7 2016-12-20
 >支持多实例互踢<br/>
 >同时支持多实例同时在线<br/>
@@ -16,6 +25,4 @@
 >[最近联系人说明](https://www.qcloud.com/document/product/269/1597#.E8.8E.B7.E5.8F.96.E6.9C.80.E8.BF.91.E8.81.94.E7.B3.BB.E4.BA.BA)<br/>
 >[OfflinePushInfo内容说明]()<br/>
 
-webdemo下载安装地址：<br/>
 
->npm install webimsdk-ten
