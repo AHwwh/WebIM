@@ -2397,7 +2397,7 @@ var webim = { // namespace object webim
 
         MsgManager.clear();
 
-        //重置longpollingId
+        //重置longpollingId 
         LongPollingId = null;
     };
 
@@ -2837,7 +2837,6 @@ var webim = { // namespace object webim
         ConnManager.apiCall(SRV_NAME.OPEN_IM, "deletemsg", options,
             cbOk, cbErr);
     };
-
 
     //拉取c2c历史消息接口
     var proto_getC2CHistoryMsgs = function(options, cbOk, cbErr) {
@@ -4941,8 +4940,8 @@ var webim = { // namespace object webim
             //处理新的群系统消息
             //isNeedValidRepeatMsg 是否需要判重
             var handlerGroupSystemMsgs = function(groupSystemMsgs, isNeedValidRepeatMsg) {
-                for (var k in groupSystemMsgs) {
-                    var groupTip = groupSystemMsgs[k];
+                for (var k in groupSystemMsgs.GroupTips) {
+                    var groupTip = groupSystemMsgs.GroupTips[k];
                     var groupReportTypeMsg = groupTip.MsgBody;
                     var reportType = groupReportTypeMsg.ReportType;
                     //当长轮询返回的群系统消息，才需要更新群消息通知seq
