@@ -1201,6 +1201,28 @@ var webim = { // namespace object webim
      */
     getPendencyGroup: function(options, cbOk, cbErr) {},
 
+    /* function getPendencyReport
+     *   好友未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyReport: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyGroupRead
+     *   群组未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroupRead: function(options, cbOk, cbErr) {},
+
     /* function sendCustomGroupNotify
      *   发送自定义群通知
      * params:
@@ -3047,7 +3069,7 @@ var webim = { // namespace object webim
         if (!checkLogin(cbErr, true)) return;
 
         ConnManager.apiCall(SRV_NAME.GROUP, "report_pendency", {
-                'ReportTime': options.StartTime,
+                'ReportTime': options.ReportTime,
                 'From_Account': ctx.identifier
             },
             cbOk,
