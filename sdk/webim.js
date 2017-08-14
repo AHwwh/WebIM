@@ -5395,7 +5395,7 @@ var webim = { // namespace object webim
                         //记录长轮询返回错误次数
                         curBigGroupLongPollingRetErrorCount++;
                     }
-                    if (err.ErrorCode != longPollingKickedErrorCode) {
+                    if (err.ErrorCode == longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
                         if (onKickedEventCall) {
