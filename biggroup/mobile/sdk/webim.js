@@ -4582,9 +4582,7 @@ var webim = { // namespace object webim
                 "1": null
             };
 
-            var onKickedEventCall = null;
 
-            var onMsgReadCallback = null;
 
             //普通长轮询
             var longPollingOn = false; //是否开启普通长轮询
@@ -4599,6 +4597,12 @@ var webim = { // namespace object webim
             var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
             var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
             var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
+            var onC2cEventCallbacks={
+                "92":null, //消息已读通知,
+                "96":null
+            };;
+            var onKickedEventCall = null; //多实例登录回调
+            var onAppliedDownloadUrl = null;
 
 
             var getLostGroupMsgCount = 0; //补拉丢失的群消息次数
@@ -5408,10 +5412,6 @@ var webim = { // namespace object webim
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
-                        /*    return;
-                    proto_logout(function(){
-                        if (onKickedEventCall) {onKickedEventCall();}
-                    });*/
                     }
                     //累计超过一定次数，不再发起长轮询请求
                     if (curBigGroupLongPollingRetErrorCount < LONG_POLLING_MAX_RET_ERROR_COUNT) {
@@ -5468,10 +5468,6 @@ var webim = { // namespace object webim
                     if (onKickedEventCall) {
                         onKickedEventCall();
                     }
-                    //     return;
-                    // proto_logout(function(){
-                    //     if (onKickedEventCall) {onKickedEventCall();}
-                    // });
                 } else {
                     //记录长轮询返回解析json错误次数
                     curLongPollingRetErrorCount++;

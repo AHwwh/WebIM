@@ -1,13 +1,14 @@
 (function(global, factory) {
 
-        global["Long"] = factory();
+    global["Long"] = factory();
 
 })(this, function() {
     "use strict";
+
     function Long(low, high, unsigned) {
         this.low = low | 0;
         this.high = high | 0;
-        this.unsigned = !!unsigned;
+        this.unsigned = !! unsigned;
     }
     Long.prototype.__isLong__;
 
@@ -16,12 +17,14 @@
         enumerable: false,
         configurable: false
     });
+
     function isLong(obj) {
         return (obj && obj["__isLong__"]) === true;
     }
     Long.isLong = isLong;
     var INT_CACHE = {};
     var UINT_CACHE = {};
+
     function fromInt(value, unsigned) {
         var obj, cachedObj, cache;
         if (unsigned) {
@@ -49,6 +52,7 @@
         }
     }
     Long.fromInt = fromInt;
+
     function fromNumber(value, unsigned) {
         if (isNaN(value) || !isFinite(value))
             return unsigned ? UZERO : ZERO;
@@ -68,11 +72,13 @@
         return fromBits((value % TWO_PWR_32_DBL) | 0, (value / TWO_PWR_32_DBL) | 0, unsigned);
     }
     Long.fromNumber = fromNumber;
+
     function fromBits(lowBits, highBits, unsigned) {
         return new Long(lowBits, highBits, unsigned);
     }
     Long.fromBits = fromBits;
     var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
+
     function fromString(str, unsigned, radix) {
         if (str.length === 0)
             throw Error('empty string');
@@ -113,6 +119,7 @@
         return result;
     }
     Long.fromString = fromString;
+
     function fromValue(val) {
         if (val /* is compatible */ instanceof Long)
             return val;
@@ -140,11 +147,11 @@
     Long.UONE = UONE;
     var NEG_ONE = fromInt(-1);
     Long.NEG_ONE = NEG_ONE;
-    var MAX_VALUE = fromBits(0xFFFFFFFF|0, 0x7FFFFFFF|0, false);
+    var MAX_VALUE = fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0, false);
     Long.MAX_VALUE = MAX_VALUE;
-    var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF|0, 0xFFFFFFFF|0, true);
+    var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF | 0, 0xFFFFFFFF | 0, true);
     Long.MAX_UNSIGNED_VALUE = MAX_UNSIGNED_VALUE;
-    var MIN_VALUE = fromBits(0, 0x80000000|0, false);
+    var MIN_VALUE = fromBits(0, 0x80000000 | 0, false);
     Long.MIN_VALUE = MIN_VALUE;
     var LongPrototype = Long.prototype;
     LongPrototype.toInt = function toInt() {
@@ -235,7 +242,7 @@
     };
     LongPrototype.eq = LongPrototype.equals;
     LongPrototype.notEquals = function notEquals(other) {
-        return !this.eq(/* validates */ other);
+        return !this.eq( /* validates */ other);
     };
     LongPrototype.neq = LongPrototype.notEquals;
 
@@ -245,7 +252,7 @@
      * @returns {boolean}
      */
     LongPrototype.lessThan = function lessThan(other) {
-        return this.comp(/* validates */ other) < 0;
+        return this.comp( /* validates */ other) < 0;
     };
 
     /**
@@ -262,7 +269,7 @@
      * @returns {boolean}
      */
     LongPrototype.lessThanOrEqual = function lessThanOrEqual(other) {
-        return this.comp(/* validates */ other) <= 0;
+        return this.comp( /* validates */ other) <= 0;
     };
 
     /**
@@ -279,7 +286,7 @@
      * @returns {boolean}
      */
     LongPrototype.greaterThan = function greaterThan(other) {
-        return this.comp(/* validates */ other) > 0;
+        return this.comp( /* validates */ other) > 0;
     };
 
     /**
@@ -296,7 +303,7 @@
      * @returns {boolean}
      */
     LongPrototype.greaterThanOrEqual = function greaterThanOrEqual(other) {
-        return this.comp(/* validates */ other) >= 0;
+        return this.comp( /* validates */ other) >= 0;
     };
 
     /**
@@ -378,7 +385,10 @@
         var b16 = addend.low >>> 16;
         var b00 = addend.low & 0xFFFF;
 
-        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        var c48 = 0,
+            c32 = 0,
+            c16 = 0,
+            c00 = 0;
         c00 += a00 + b00;
         c16 += c00 >>> 16;
         c00 &= 0xFFFF;
@@ -454,7 +464,10 @@
         var b16 = multiplier.low >>> 16;
         var b00 = multiplier.low & 0xFFFF;
 
-        var c48 = 0, c32 = 0, c16 = 0, c00 = 0;
+        var c48 = 0,
+            c32 = 0,
+            c16 = 0,
+            c00 = 0;
         c00 += a00 * b00;
         c16 += c00 >>> 16;
         c00 &= 0xFFFF;
@@ -505,7 +518,7 @@
             // closure library as a whole.
             if (this.eq(MIN_VALUE)) {
                 if (divisor.eq(ONE) || divisor.eq(NEG_ONE))
-                    return MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE
+                    return MIN_VALUE; // recall that -MIN_VALUE == MIN_VALUE
                 else if (divisor.eq(MIN_VALUE))
                     return ONE;
                 else {
@@ -557,8 +570,8 @@
             var log2 = Math.ceil(Math.log(approx) / Math.LN2),
                 delta = (log2 <= 48) ? 1 : pow_dbl(2, log2 - 48),
 
-            // Decrease the approximation until it is smaller than the remainder.  Note
-            // that if it is too large, the product overflows and is negative.
+                // Decrease the approximation until it is smaller than the remainder.  Note
+                // that if it is too large, the product overflows and is negative.
                 approxRes = fromNumber(approx),
                 approxRem = approxRes.mul(divisor);
             while (approxRem.isNegative() || approxRem.gt(rem)) {
@@ -762,14 +775,8 @@
         var hi = this.high,
             lo = this.low;
         return [
-             lo         & 0xff,
-            (lo >>>  8) & 0xff,
-            (lo >>> 16) & 0xff,
-            (lo >>> 24) & 0xff,
-             hi         & 0xff,
-            (hi >>>  8) & 0xff,
-            (hi >>> 16) & 0xff,
-            (hi >>> 24) & 0xff
+            lo & 0xff, (lo >>> 8) & 0xff, (lo >>> 16) & 0xff, (lo >>> 24) & 0xff,
+            hi & 0xff, (hi >>> 8) & 0xff, (hi >>> 16) & 0xff, (hi >>> 24) & 0xff
         ];
     }
 
@@ -781,14 +788,9 @@
         var hi = this.high,
             lo = this.low;
         return [
-            (hi >>> 24) & 0xff,
-            (hi >>> 16) & 0xff,
-            (hi >>>  8) & 0xff,
-             hi         & 0xff,
-            (lo >>> 24) & 0xff,
-            (lo >>> 16) & 0xff,
-            (lo >>>  8) & 0xff,
-             lo         & 0xff
+            (hi >>> 24) & 0xff, (hi >>> 16) & 0xff, (hi >>> 8) & 0xff,
+            hi & 0xff, (lo >>> 24) & 0xff, (lo >>> 16) & 0xff, (lo >>> 8) & 0xff,
+            lo & 0xff
         ];
     }
 
@@ -1188,6 +1190,39 @@ var webim = { // namespace object webim
      */
     deleteGroupMember: function(options, cbOk, cbErr) {},
 
+    /* function getPendencyGroup
+     *   获取群组未决列表
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroup: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyReport
+     *   好友未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyReport: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyGroupRead
+     *   群组未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroupRead: function(options, cbOk, cbErr) {},
+
     /* function sendCustomGroupNotify
      *   发送自定义群通知
      * params:
@@ -1325,7 +1360,8 @@ var webim = { // namespace object webim
     //sdk版本
     var SDK = {
         'VERSION': '1.7.0', //sdk版本号
-        'APPID': '537048168' //web im sdk 版本 APPID
+        'APPID': '537048168', //web im sdk 版本 APPID
+        'PLAATFORM': "10" //发送请求时判断其是来自web端的请求
     };
 
     //是否启用正式环境，默认启用
@@ -1491,7 +1527,8 @@ var webim = { // namespace object webim
     };
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
-        "READED": 92 //已读消息同步
+        "READED": 92, //已读消息同步
+        "KICKEDOUT" : 96
     };
 
     //群消息子类型
@@ -1543,7 +1580,8 @@ var webim = { // namespace object webim
         "CANCEL_ADMIN": 10, //取消管理员(被取消者接收)
         "REVOKE": 11, //群已被回收(全员接收, 不展示)
         "READED": 15, //群消息已读同步
-        "CUSTOM": 255 //用户自定义通知(默认全员接收)
+        "CUSTOM": 255, //用户自定义通知(默认全员接收)
+        "INVITED_JOIN_GROUP_REQUEST_AGREE": 12, //邀请加群(被邀请者需同意)
     };
 
     //好友系统通知子类型
@@ -2220,7 +2258,7 @@ var webim = { // namespace object webim
             }
         }
 
-        var url = srvHost + '/' + SRV_NAME_VER[srvName] + '/' + srvName + '/' + cmd + '?websdkappid=' + SDK.APPID + "&v=" + SDK.VERSION;
+        var url = srvHost + '/' + SRV_NAME_VER[srvName] + '/' + srvName + '/' + cmd + '?websdkappid=' + SDK.APPID + "&v=" + SDK.VERSION + "&platform=" + SDK.PLAATFORM;;
 
         if (isLogin()) {
             if (cmd == 'login') {
@@ -2787,7 +2825,6 @@ var webim = { // namespace object webim
             cbOk, cbErr);
     };
 
-
     //拉取c2c历史消息接口
     var proto_getC2CHistoryMsgs = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -2971,6 +3008,58 @@ var webim = { // namespace object webim
                 } else {
                     if (cbErr) cbErr(err);
                 }
+            }
+        );
+    };
+
+    //获取群组未决列表
+    var proto_getPendencyGroup = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "get_pendency", {
+                'StartTime': options.StartTime,
+                'Limit': options.Limit,
+                'Handle_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+
+    //群组未决已经上报
+    var proto_getPendencyGroupRead = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "report_pendency", {
+                'ReportTime': options.ReportTime,
+                'From_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+    //处理被邀请进群申请(同意或拒绝)
+    var proto_handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "handle_invite_join_group", {
+                'GroupId': options.GroupId,
+                'Inviter_Account': options.Inviter_Account,
+                'HandleMsg': options.HandleMsg,
+                'Authentication': options.Authentication,
+                'MsgKey': options.MsgKey,
+                'ApprovalMsg': options.ApprovalMsg,
+                'UserDefinedField': options.UserDefinedField
+            },
+            cbOk,
+            function(err) {
+
             }
         );
     };
@@ -3300,6 +3389,15 @@ var webim = { // namespace object webim
             },
             cbOk, cbErr);
     };
+    //好友申请已读上报
+    var proto_getPendencyReport = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+        ConnManager.apiCall(SRV_NAME.FRIEND, "PendencyReport", {
+                "From_Account": ctx.identifier,
+                "LatestPendencyTimeStamp": options.LatestPendencyTimeStamp
+            },
+            cbOk, cbErr);
+    };
     //删除好友申请
     var proto_deletePendency = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -3351,6 +3449,10 @@ var webim = { // namespace object webim
     //资料接口
     //查看个人资料
     var proto_getProfilePortrait = function(options, cbOk, cbErr) {
+        if (options.To_Account.length > 100) {
+            options.To_Account.length = 100;
+            log.error('获取用户资料人数不能超过100人')
+        }
         if (!checkLogin(cbErr, true)) return;
         ConnManager.apiCall(SRV_NAME.PROFILE, "portrait_get", {
                 'From_Account': ctx.identifier,
@@ -3727,23 +3829,23 @@ var webim = { // namespace object webim
         this.lastedMsgTime = lastedMsgTime;
     }
 
-    var calcUniqId = function(num1 , num2){
+    var calcUniqId = function(num1, num2) {
         var str1 = parseInt(num1).toString(2) + '00000000000000000000000000000000';
         var str2 = parseInt(num2).toString(2);
         var arr1 = str1.split('').reverse();
         var arr2 = str2.split('').reverse();
         var res = [];
         var length = arr1.length > arr2.length ? arr1.length : arr2.length;
-        for(var a = 0 ; a<length ;a++){
-            sig = Number(arr1[a] || 0) || Number(arr2[a]|| 0);
+        for (var a = 0; a < length; a++) {
+            sig = Number(arr1[a] || 0) || Number(arr2[a] || 0);
             res.push(sig);
         }
         var numstr = res.reverse().join("");
         var long = {
-            high : "0x"+parseInt(numstr.substr(0,numstr.length - 32),2).toString(16),
-            low : "0x"+parseInt(numstr.substr(numstr.length - 32 - 1),2).toString(16)
+            high: "0x" + parseInt(numstr.substr(0, numstr.length - 32), 2).toString(16),
+            low: "0x" + parseInt(numstr.substr(numstr.length - 32 - 1), 2).toString(16)
         }
-        var longVal = new Long(long.low, long.high ,true);
+        var longVal = new Long(long.low, long.high, true);
         return longVal.toString();
     };
     // class Msg
@@ -3758,13 +3860,13 @@ var webim = { // namespace object webim
         this.time = time >= 0 ? time : unixtime();
         this.elems = [];
         var type = sess.type();
-        switch(type){
+        switch (type) {
             case SESSION_TYPE.GROUP:
-                this.uniqueId = calcUniqId( this.seq , this.random );
+                this.uniqueId = calcUniqId(this.seq, this.random);
                 break;
             case SESSION_TYPE.C2C:
             default:
-                this.uniqueId = calcUniqId( this.time , this.random );
+                this.uniqueId = calcUniqId(this.time, this.random);
                 break;
         }
 
@@ -4425,7 +4527,8 @@ var webim = { // namespace object webim
                 "10": null,
                 "11": null,
                 "15": null,
-                "255": null
+                "255": null,
+                "12": null,
             };
             //监听好友系统通知函数
             var onFriendSystemNotifyCallbacks = {
@@ -4443,9 +4546,7 @@ var webim = { // namespace object webim
                 "1": null
             };
 
-            var onKickedEventCall = null;
 
-            var onMsgReadCallback = null;
 
             //普通长轮询
             var longPollingOn = false; //是否开启普通长轮询
@@ -4460,6 +4561,12 @@ var webim = { // namespace object webim
             var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
             var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
             var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
+            var onC2cEventCallbacks={
+                "92":null, //消息已读通知,
+                "96":null
+            };;
+            var onKickedEventCall = null; //多实例登录回调
+            var onAppliedDownloadUrl = null;
 
 
             var getLostGroupMsgCount = 0; //补拉丢失的群消息次数
@@ -4531,7 +4638,8 @@ var webim = { // namespace object webim
                     "10": null, //取消管理员(被取消者接收)
                     "11": null, //群已被回收(全员接收)
                     "15": null, //群已被回收(全员接收)
-                    "255": null //用户自定义通知(默认全员接收)
+                    "255": null, //用户自定义通知(默认全员接收)
+                    "12": null, //邀请加群(被邀请者需要同意)
                 };
                 onFriendSystemNotifyCallbacks = {
                     "1": null, //好友表增加
@@ -4823,8 +4931,8 @@ var webim = { // namespace object webim
             //处理新的群系统消息
             //isNeedValidRepeatMsg 是否需要判重
             var handlerGroupSystemMsgs = function(groupSystemMsgs, isNeedValidRepeatMsg) {
-                for (var k in groupSystemMsgs) {
-                    var groupTip = groupSystemMsgs[k];
+                for (var k in groupSystemMsgs.GroupTips) {
+                    var groupTip = groupSystemMsgs.GroupTips[k];
                     var groupReportTypeMsg = groupTip.MsgBody;
                     var reportType = groupReportTypeMsg.ReportType;
                     //当长轮询返回的群系统消息，才需要更新群消息通知seq
@@ -4875,6 +4983,7 @@ var webim = { // namespace object webim
                         case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                         case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                        case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需同意)
                         case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                         case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                         case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
@@ -5043,6 +5152,7 @@ var webim = { // namespace object webim
                     case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
                     case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需要同意)
                     case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
                     case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
                     case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
@@ -5073,19 +5183,25 @@ var webim = { // namespace object webim
                 var subType = notify.SubMsgType;
                 switch (subType) {
                     case C2C_EVENT_SUB_TYPE.READED: //已读通知
+                        // stopPolling = true;
+                        //回调onMsgReadCallback
+                        if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
+                            for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
+                                var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
+                                onC2cEventCallbacks[subType](item);
+                            }
+                        }
+                        break;
+                    case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
+                        if(onC2cEventCallbacks[subType]){
+                            onC2cEventCallbacks[subType]();
+                        }
                         break;
                     default:
-                        log.error("未知C2c系统消息：reportType=" + reportType);
+                        log.error("未知C2c系统消息：subType=" + subType);
                         break;
                 }
-                // stopPolling = true;
-                //回调onMsgReadCallback
-                if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
-                    for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
-                        var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
-                        onC2cEventCallbacks[subType](item);
-                    }
-                }
+
             };
 
             //长轮询
@@ -5254,16 +5370,12 @@ var webim = { // namespace object webim
                         //记录长轮询返回错误次数
                         curBigGroupLongPollingRetErrorCount++;
                     }
-                    if (err.ErrorCode != longPollingKickedErrorCode) {
+                    if (err.ErrorCode == longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
-                        /*    return;
-                    proto_logout(function(){
-                        if (onKickedEventCall) {onKickedEventCall();}
-                    });*/
                     }
                     //累计超过一定次数，不再发起长轮询请求
                     if (curBigGroupLongPollingRetErrorCount < LONG_POLLING_MAX_RET_ERROR_COUNT) {
@@ -5320,10 +5432,6 @@ var webim = { // namespace object webim
                     if (onKickedEventCall) {
                         onKickedEventCall();
                     }
-                    //     return;
-                    // proto_logout(function(){
-                    //     if (onKickedEventCall) {onKickedEventCall();}
-                    // });
                 } else {
                     //记录长轮询返回解析json错误次数
                     curLongPollingRetErrorCount++;
@@ -5488,6 +5596,7 @@ var webim = { // namespace object webim
             var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
                 for (var i in eventArray) {
                     var e = eventArray[i];
+                    handlerGroupSystemMsgs(e, true);
                     switch (e.Event) {
                         case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                             log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
@@ -6755,6 +6864,21 @@ var webim = { // namespace object webim
         return proto_handleApplyJoinGroupPendency(options, cbOk, cbErr);
     };
 
+    //获取群组未决列表
+    webim.getPendencyGroup = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroup(options, cbOk, cbErr);
+    };
+
+    //群未决已读上报
+    webim.getPendencyGroupRead = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroupRead(options, cbOk, cbErr);
+    };
+
+    //处理邀请进群申请(同意或拒绝)
+    webim.handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        return proto_handleInviteJoinGroupRequest(options, cbOk, cbErr);
+    };
+
     //删除加群申请
     webim.deleteApplyJoinGroupPendency = function(options, cbOk, cbErr) {
         return proto_deleteC2CMsg(options, cbOk, cbErr);
@@ -6848,6 +6972,10 @@ var webim = { // namespace object webim
     //获取好友申请列表
     webim.getPendency = function(options, cbOk, cbErr) {
         return proto_getPendency(options, cbOk, cbErr);
+    };
+    //好友申请列表已读上报
+    webim.getPendencyReport = function(options, cbOk, cbErr) {
+        return proto_getPendencyReport(options, cbOk, cbErr);
     };
     //删除好友申请
     webim.deletePendency = function(options, cbOk, cbErr) {
