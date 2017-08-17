@@ -1527,7 +1527,8 @@ var webim = { // namespace object webim
     };
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
-        "READED": 92 //已读消息同步
+        "READED": 92, //已读消息同步
+        "KICKEDOUT" : 96
     };
 
     //群消息子类型
@@ -2419,7 +2420,7 @@ var webim = { // namespace object webim
 
         MsgManager.clear();
 
-        //重置longpollingId 
+        //重置longpollingId
         LongPollingId = null;
     };
 
@@ -5214,19 +5215,25 @@ var webim = { // namespace object webim
                 var subType = notify.SubMsgType;
                 switch (subType) {
                     case C2C_EVENT_SUB_TYPE.READED: //已读通知
+                        // stopPolling = true;
+                        //回调onMsgReadCallback
+                        if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
+                            for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
+                                var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
+                                onC2cEventCallbacks[subType](item);
+                            }
+                        }
+                        break;
+                    case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
+                        if(onC2cEventCallbacks[subType]){
+                            onC2cEventCallbacks[subType]();
+                        }
                         break;
                     default:
-                        log.error("未知C2c系统消息：reportType=" + reportType);
+                        log.error("未知C2c系统消息：subType=" + subType);
                         break;
                 }
-                // stopPolling = true;
-                //回调onMsgReadCallback
-                if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
-                    for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
-                        var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
-                        onC2cEventCallbacks[subType](item);
-                    }
-                }
+
             };
 
             //长轮询
