@@ -1,4 +1,5 @@
 //创建群菜单点击事件
+
 function createGroupMenuClick() {
     //重置表单
     $('#cg_form')[0].reset();
@@ -13,6 +14,7 @@ function createGroupMenuClick() {
     $('#create_group_dialog').modal('show');
 }
 //搜索群(按ID)菜单单击事件
+
 function searchGroupMenuClick() {
 
     $("#sg_form")[0].reset();
@@ -21,6 +23,7 @@ function searchGroupMenuClick() {
     $('#search_group_dialog').modal('show');
 }
 //搜索群(按名称)菜单单击事件
+
 function searchGroupByNameMenuClick() {
 
     $("#sgbn_form")[0].reset();
@@ -29,6 +32,7 @@ function searchGroupByNameMenuClick() {
     $('#search_group_by_name_dialog').modal('show');
 }
 //定义搜索群(按ID)结果表格每行的操作按钮
+
 function sgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="申请加入">',
@@ -39,13 +43,13 @@ function sgOperateFormatter(value, row, index) {
 }
 //搜索群(按ID)结果表格按钮事件
 window.sgOperateEvents = {
-    'click .plus': function (e, value, row, index) {
+    'click .plus': function(e, value, row, index) {
 
         $("#ajg_group_id").val(row.GId);
         $("#ajg_group_type").val(row.Type);
         $("#ajg_group_name").val(row.Name);
 
-        if (row.Type == 'ChatRoom') {//聊天室直接申请加入
+        if (row.Type == 'ChatRoom') { //聊天室直接申请加入
             applyJoinGroup();
         } else {
             $("#ajg_apply_msg").val('你好，我想加入贵群~');
@@ -54,6 +58,7 @@ window.sgOperateEvents = {
     }
 };
 //初始化搜索群(按ID)结果表格
+
 function initSearchGroupTable(data) {
     $('#search_group_table').bootstrapTable({
         method: 'get',
@@ -119,7 +124,7 @@ function initSearchGroupTable(data) {
             events: "sgOperateEvents"
         }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
@@ -127,6 +132,7 @@ function initSearchGroupTable(data) {
 
 
 //定义搜索群（按名称）结果表格每行的操作按钮
+
 function sgbnOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="申请加入">',
@@ -137,13 +143,13 @@ function sgbnOperateFormatter(value, row, index) {
 }
 //搜索群（按名称）结果表格按钮事件
 window.sgbnOperateEvents = {
-    'click .plus': function (e, value, row, index) {
+    'click .plus': function(e, value, row, index) {
 
         $("#ajg_group_id").val(row.GId);
         $("#ajg_group_type").val(row.Type);
         $("#ajg_group_name").val(row.Name);
 
-        if (row.Type == 'ChatRoom') {//聊天室直接申请加入
+        if (row.Type == 'ChatRoom') { //聊天室直接申请加入
             applyJoinGroup();
         } else {
             $("#ajg_apply_msg").val('你好，我想加入贵群~');
@@ -152,6 +158,7 @@ window.sgbnOperateEvents = {
     }
 };
 //初始化搜索群（按名称）结果表格
+
 function initSearchGroupByNameTable(data) {
     $('#search_group_by_name_table').bootstrapTable({
         method: 'get',
@@ -224,7 +231,7 @@ function initSearchGroupByNameTable(data) {
             events: "sgbnOperateEvents"
         }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
@@ -232,6 +239,7 @@ function initSearchGroupByNameTable(data) {
 
 
 //定义我的群组表格每行的操作按钮
+
 function gmgOperateFormatter(value, row, index) {
     return [
         '<a class="plus ml10" href="javascript:void(0)" title="邀请成员">',
@@ -263,7 +271,7 @@ function gmgOperateFormatter(value, row, index) {
 }
 //我的群组表格每行的操作按钮点击事件
 window.gmgOperateEvents = {
-    'click .plus': function (e, value, row, index) {
+    'click .plus': function(e, value, row, index) {
         if (row.TypeEn != 'Private') {
             alert('公开群或聊天室不支持直接拉人操作');
             return;
@@ -271,14 +279,14 @@ window.gmgOperateEvents = {
         $('#gmfg_group_id').val(row.GId);
         getMyFriendGroup();
     },
-    'click .user': function (e, value, row, index) {
+    'click .user': function(e, value, row, index) {
         $('#ggm_group_id').val(row.GId);
         $('#ggm_my_role').val(row.Role);
         $('#ggm_group_type').val(row.TypeEn);
 
         getGroupMemberInfo(row.GId);
     },
-    'click .bell': function (e, value, row, index) {
+    'click .bell': function(e, value, row, index) {
         $('#mgmf_sel_row_index').val(index);
         $('#mgmf_group_id').val(row.GId);
         //设置群消息提示类型
@@ -295,7 +303,7 @@ window.gmgOperateEvents = {
         $('#modify_group_msg_flag_dialog').modal('show');
 
     },
-    'click .logout': function (e, value, row, index) {
+    'click .logout': function(e, value, row, index) {
         if (row.Role == '群主' && row.TypeEn != 'Private') {
             alert('您是群主，不能从公开群或聊天室退出');
             return;
@@ -304,7 +312,7 @@ window.gmgOperateEvents = {
             quitGroup(row.GId);
         }
     },
-    'click .pencil': function (e, value, row, index) {
+    'click .pencil': function(e, value, row, index) {
 
         //成员可以修改私有群的基本资料
         if (row.Role == '成员' && row.Type != 'Private') {
@@ -319,7 +327,7 @@ window.gmgOperateEvents = {
         $('#mg_notification').val(webim.Tool.formatHtml2Text(row.Notification));
         $('#modify_group_dialog').modal('show');
     },
-    'click .share': function (e, value, row, index) {
+    'click .share': function(e, value, row, index) {
         if (row.Role != '群主') {
             alert('你不是群主，无法进行此操作');
         } else {
@@ -327,13 +335,13 @@ window.gmgOperateEvents = {
                 alert('直播聊天室不能进行转让');
                 return;
             }
-            $("#cgo_form")[0].reset();//清空原来表单的值
+            $("#cgo_form")[0].reset(); //清空原来表单的值
             $('#cgo_sel_row_index').val(index);
             $('#cgo_group_id').val(row.GId);
             $('#change_group_owner_dialog').modal('show');
         }
     },
-    'click .trash': function (e, value, row, index) {
+    'click .trash': function(e, value, row, index) {
         if (row.Role != '群主') {
             alert('你不是群主，无法进行此操作');
         } else {
@@ -346,7 +354,7 @@ window.gmgOperateEvents = {
             }
         }
     },
-    'click .envelope': function (e, value, row, index) {
+    'click .envelope': function(e, value, row, index) {
         $('#sgm_to_groupid').val(row.GId);
         $('#sgm_to_group_name').val(row.Name);
 
@@ -354,6 +362,7 @@ window.gmgOperateEvents = {
     }
 };
 //初始化我的群组表格
+
 function initGetMyGroupTable(data) {
     $('#get_my_group_table').bootstrapTable({
         method: 'get',
@@ -460,12 +469,13 @@ function initGetMyGroupTable(data) {
             events: "gmgOperateEvents"
         }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
 }
 //定义邀请好友加群表格每行的操作按钮
+
 function gmfgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="邀请加入">',
@@ -476,13 +486,14 @@ function gmfgOperateFormatter(value, row, index) {
 }
 //邀请好友加群表格每行按钮单击事件
 window.gmfgOperateEvents = {
-    'click .plus': function (e, value, row, index) {
+    'click .plus': function(e, value, row, index) {
         $('#agm_group_id').val($('#gmfg_group_id').val());
         $('#agm_account').val(row.Info_Account);
         $('#add_group_member_dialog').modal('show');
     }
 };
 //初始化邀请好友加群表格
+
 function initGetMyFriendGroupTable(data) {
     $('#get_my_friend_group_table').bootstrapTable({
         method: 'get',
@@ -517,14 +528,14 @@ function initGetMyFriendGroupTable(data) {
             events: "gmfgOperateEvents"
         }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
 }
 
 //读取群组公开资料-高级接口（可用于搜索群，按ID）
-var getGroupPublicInfo = function () {
+var getGroupPublicInfo = function() {
     if ($("#sg_group_id").val().length == 0) {
         alert('请输入群组ID');
         return;
@@ -555,7 +566,7 @@ var getGroupPublicInfo = function () {
     };
     webim.getGroupPublicInfo(
         options,
-        function (resp) {
+        function(resp) {
             var data = [];
             if (resp.GroupInfo && resp.GroupInfo.length > 0) {
                 for (var i in resp.GroupInfo) {
@@ -588,14 +599,14 @@ var getGroupPublicInfo = function () {
             }
             $('#search_group_table').bootstrapTable('load', data);
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //搜索群（按名称）
-var searchGroupByName = function () {
+var searchGroupByName = function() {
     if ($("#sgbn_group_name").val().length == 0) {
         alert('请输入群名称');
         return;
@@ -605,26 +616,26 @@ var searchGroupByName = function () {
         return;
     }
     var options = {
-        'Content': $("#sgbn_group_name").val(),//群名称
-        "PageNum": 0,       //0表示从第1页开始拉取
-        "GroupPerPage": 20,  //每页拉取20条
+        'Content': $("#sgbn_group_name").val(), //群名称
+        "PageNum": 0, //0表示从第1页开始拉取
+        "GroupPerPage": 20, //每页拉取20条
         'ResponseFilter': {
             "GroupBasePublicInfoFilter": [ //基础信息过滤器，可以通过它设置需要拉取的公开的基础信息
-                'Type',//群组类型
-                'Name',//群名称
-                "FaceUrl",//群头像
-                "Introduction",//群简介
-                'CreateTime',//群创建时间
-                'Owner_Account',//群创建者
-                'MemberNum',//成员个数
-                'MaxMemberNum',//群成员最大个数
-                'ApplyJoinOption'//申请加群选项
+                'Type', //群组类型
+                'Name', //群名称
+                "FaceUrl", //群头像
+                "Introduction", //群简介
+                'CreateTime', //群创建时间
+                'Owner_Account', //群创建者
+                'MemberNum', //成员个数
+                'MaxMemberNum', //群成员最大个数
+                'ApplyJoinOption' //申请加群选项
             ]
         }
     };
     webim.searchGroupByName(
         options,
-        function (resp) {
+        function(resp) {
             var data = [];
             if (resp.GroupInfo && resp.GroupInfo.length > 0) {
                 for (var i in resp.GroupInfo) {
@@ -659,14 +670,14 @@ var searchGroupByName = function () {
             }
             $('#search_group_by_name_table').bootstrapTable('load', data);
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //创建群组
-var createGroup = function () {
+var createGroup = function() {
     var sel_friends = $('#select_friends').val();
 
     var member_list = [];
@@ -676,9 +687,9 @@ var createGroup = function () {
             member_list.push(members[i]);
         }
     }
-    var faceurl=$("#cg_faceurl").val();
+    var faceurl = $("#cg_faceurl").val();
     var cg_id = $("#cg_id").val().trim();
-    if(cg_id && !/^[A-Za-z0-9_]+$/gi.test(cg_id)){
+    if (cg_id && !/^[A-Za-z0-9_]+$/gi.test(cg_id)) {
         alert('群组ID只能是数字、字母或下划线');
         return
     }
@@ -716,28 +727,28 @@ var createGroup = function () {
         'Introduction': $('#cg_introduction').val(),
         'MemberList': member_list
     };
-    if(faceurl){
-        options.FaceUrl=faceurl;
+    if (faceurl) {
+        options.FaceUrl = faceurl;
     }
     if (groupType != 'Private') { //非私有群才支持ApplyJoinOption属性
         options.ApplyJoinOption = $('input[name="cg_ajp_type_radio"]:checked').val();
     }
     webim.createGroup(
         options,
-        function (resp) {
+        function(resp) {
             $('#create_group_dialog').modal('hide');
             alert('创建群成功');
             //读取我的群组列表
             //getJoinedGroupListHigh(getGroupsCallbackOK);
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //修改群资料
-var modifyGroup = function () {
-    var faceurl=$("#mg_faceurl").val();
+var modifyGroup = function() {
+    var faceurl = $("#mg_faceurl").val();
     if ($("#mg_name").val().length == 0) {
         alert('请输入群组名称');
         return;
@@ -763,14 +774,14 @@ var modifyGroup = function () {
         'Name': $('#mg_name').val(),
         'Notification': $('#mg_notification').val(),
         'Introduction': $('#mg_introduction').val(),
-        'ShutUpAllMember': $('#shut_up_all_member').val()
+        //'ShutUpAllMember': $('#shut_up_all_member').val()
     };
-    if(faceurl){
-        options.FaceUrl=faceurl;
+    if (faceurl) {
+        options.FaceUrl = faceurl;
     }
     webim.modifyGroupBaseInfo(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中修改对应的行
             $('#get_my_group_table').bootstrapTable('updateRow', {
                 index: $('#mg_sel_row_index').val(),
@@ -784,14 +795,14 @@ var modifyGroup = function () {
             $('#modify_group_dialog').modal('hide');
             alert('修改群资料成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //转让群组
-var changeGroupOwner = function () {
+var changeGroupOwner = function() {
     var newOwer = $("#cgo_new_owner").val();
     if (newOwer.length == 0) {
         alert('请输入新的群主账号');
@@ -801,7 +812,7 @@ var changeGroupOwner = function () {
         alert('您输入的新群主账号全是空格,请重新输入');
         return;
     }
-    if(newOwer==loginInfo.identifier){
+    if (newOwer == loginInfo.identifier) {
         alert('不能给自己转让群组');
         return;
     }
@@ -812,7 +823,7 @@ var changeGroupOwner = function () {
     };
     webim.changeGroupOwner(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中修改对应的行
             $('#get_my_group_table').bootstrapTable('updateRow', {
                 index: $('#cgo_sel_row_index').val(),
@@ -824,14 +835,14 @@ var changeGroupOwner = function () {
             $('#change_group_owner_dialog').modal('hide');
             alert('转让群组成功');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //申请加群
-var applyJoinGroup = function () {
+var applyJoinGroup = function() {
     if (webim.Tool.getStrBytes($("#ajg_apply_msg").val()) > 300) {
         alert('您输入的附言超出限制(最长100个汉字)');
         return;
@@ -843,9 +854,9 @@ var applyJoinGroup = function () {
     };
     webim.applyJoinGroup(
         options,
-        function (resp) {
+        function(resp) {
             $('#apply_join_group_dialog').modal('hide');
-            var joinedStatus = resp.JoinedStatus;//JoinedSuccess--成功加入，WaitAdminApproval--等待管理员审核
+            var joinedStatus = resp.JoinedStatus; //JoinedSuccess--成功加入，WaitAdminApproval--等待管理员审核
             if (joinedStatus == "JoinedSuccess") {
                 //刷新我的群组列表
                 //getJoinedGroupListHigh(getGroupsCallbackOK);
@@ -854,13 +865,13 @@ var applyJoinGroup = function () {
                 alert('申请成功，请等待群主审核');
             }
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //获取我的群组
-var getMyGroup = function () {
+var getMyGroup = function() {
     initGetMyGroupTable([]);
     var options = {
         'Member_Account': loginInfo.identifier,
@@ -891,7 +902,7 @@ var getMyGroup = function () {
     };
     webim.getJoinedGroupListHigh(
         options,
-        function (resp) {
+        function(resp) {
             if (!resp.GroupIdList || resp.GroupIdList.length == 0) {
                 alert('你目前还没有加入任何群组');
                 return;
@@ -933,13 +944,13 @@ var getMyGroup = function () {
             $('#get_my_group_table').bootstrapTable('load', data);
             $('#get_my_group_dialog').modal('show');
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //退群
-var quitGroup = function (group_id) {
+var quitGroup = function(group_id) {
     var options = null;
     if (group_id) {
         options = {
@@ -952,7 +963,7 @@ var quitGroup = function (group_id) {
     }
     webim.quitGroup(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中删除对应的行
             $('#get_my_group_table').bootstrapTable('remove', {
                 field: 'GroupId',
@@ -960,15 +971,15 @@ var quitGroup = function (group_id) {
             });
             //刷新我的群组列表
             //getJoinedGroupListHigh(getGroupsCallbackOK);
-            deleteSessDiv(webim.SESSION_TYPE.GROUP,group_id);//在最近的联系人列表删除可能存在的群会话
+            deleteSessDiv(webim.SESSION_TYPE.GROUP, group_id); //在最近的联系人列表删除可能存在的群会话
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 //读取群组基本资料-高级接口
-var getGroupInfo = function (group_id, cbOK, cbErr) {
+var getGroupInfo = function(group_id, cbOK, cbErr) {
     var options = {
         'GroupIdList': [
             group_id
@@ -1007,14 +1018,14 @@ var getGroupInfo = function (group_id, cbOK, cbErr) {
                 cbOK(resp);
             }
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //解散群组
-var destroyGroup = function (group_id) {
+var destroyGroup = function(group_id) {
     var options = null;
     if (group_id) {
         options = {
@@ -1027,7 +1038,7 @@ var destroyGroup = function (group_id) {
     }
     webim.destroyGroup(
         options,
-        function (resp) {
+        function(resp) {
             //在表格中删除对应的行
             $('#get_my_group_table').bootstrapTable('remove', {
                 field: 'GroupId',
@@ -1035,16 +1046,16 @@ var destroyGroup = function (group_id) {
             });
             //读取我的群组列表
             //getJoinedGroupListHigh(getGroupsCallbackOK);
-            deleteSessDiv(webim.SESSION_TYPE.GROUP,group_id);//在最近的联系人列表删除可能存在的群会话
+            deleteSessDiv(webim.SESSION_TYPE.GROUP, group_id); //在最近的联系人列表删除可能存在的群会话
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //获取我的好友，然后邀请加群
-var getMyFriendGroup = function () {
+var getMyFriendGroup = function() {
 
     initGetMyFriendGroupTable([]);
     var options = {
@@ -1061,7 +1072,7 @@ var getMyFriendGroup = function () {
 
     webim.getAllFriend(
         options,
-        function (resp) {
+        function(resp) {
 
             if (resp.FriendNum > 0) {
                 var table_friends_data = [];
@@ -1092,7 +1103,7 @@ var getMyFriendGroup = function () {
             }
 
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
@@ -1100,7 +1111,7 @@ var getMyFriendGroup = function () {
 
 
 //选择我的好友
-var selectMyFriendGroup = function () {
+var selectMyFriendGroup = function() {
 
     initSelectMyFriendGroupTable([]);
     var options = {
@@ -1117,7 +1128,7 @@ var selectMyFriendGroup = function () {
 
     webim.getAllFriend(
         options,
-        function (resp) {
+        function(resp) {
 
             if (resp.FriendNum > 0) {
                 var table_friends_data = [];
@@ -1148,13 +1159,14 @@ var selectMyFriendGroup = function () {
             }
 
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
 
 //定义（创建群之前）选择好友表格每行按钮
+
 function smfgOperateFormatter(value, row, index) {
     return [
         '<a class="plus" href="javascript:void(0)" title="选中">',
@@ -1167,7 +1179,7 @@ function smfgOperateFormatter(value, row, index) {
 }
 //（创建群之前）选择好友表格每行按钮单击事件
 window.smfgOperateEvents = {
-    'click .plus': function (e, value, row, index) {
+    'click .plus': function(e, value, row, index) {
 
         var sel_friends = $('#select_friends').val();
         var account = row.Info_Account;
@@ -1186,7 +1198,7 @@ window.smfgOperateEvents = {
         alert('选择成功');
 
     },
-    'click .minus': function (e, value, row, index) {
+    'click .minus': function(e, value, row, index) {
         var sel_friends = $('#select_friends').val();
         var account = row.Info_Account;
         //先判断是否已选择
@@ -1217,6 +1229,7 @@ window.smfgOperateEvents = {
     }
 };
 //初始化（创建群之前）选择好友表格
+
 function initSelectMyFriendGroupTable(data) {
     $('#select_my_friend_group_table').bootstrapTable({
         method: 'get',
@@ -1251,18 +1264,19 @@ function initSelectMyFriendGroupTable(data) {
             events: "smfgOperateEvents"
         }],
         data: data,
-        formatNoMatches: function () {
+        formatNoMatches: function() {
             return '无符合条件的记录';
         }
     });
 }
 
 //从我的群组列表中发群消息
-function sendGroupMsg(){
 
-    toAccount=$("#sgm_to_groupid").val();
-    toName=$("#sgm_to_group_name").val();
-    msgtosend=$("#sgm_content").val();
+function sendGroupMsg() {
+
+    toAccount = $("#sgm_to_groupid").val();
+    toName = $("#sgm_to_group_name").val();
+    msgtosend = $("#sgm_content").val();
 
     var msgLen = webim.Tool.getStrBytes(msgtosend);
 
@@ -1281,15 +1295,15 @@ function sendGroupMsg(){
         return;
     }
 
-    var sess=webim.MsgStore.sessByTypeId(webim.SESSION_TYPE.GROUP, toAccount);
+    var sess = webim.MsgStore.sessByTypeId(webim.SESSION_TYPE.GROUP, toAccount);
     if (!sess) {
         sess = new webim.Session(webim.SESSION_TYPE.GROUP, toAccount, toName, groupHeadUrl, Math.round(new Date().getTime() / 1000));
     }
-    var isSend = true;//是否为自己发送
-    var seq = -1;//消息序列，-1表示sdk自动生成，用于去重
-    var random = Math.round(Math.random() * 4294967296);//消息随机数，用于去重
-    var msgTime = Math.round(new Date().getTime() / 1000);//消息时间戳
-    var subType;//消息子类型
+    var isSend = true; //是否为自己发送
+    var seq = -1; //消息序列，-1表示sdk自动生成，用于去重
+    var random = Math.round(Math.random() * 4294967296); //消息随机数，用于去重
+    var msgTime = Math.round(new Date().getTime() / 1000); //消息时间戳
+    var subType; //消息子类型
 
     subType = webim.GROUP_MSG_SUB_TYPE.COMMON;
 
@@ -1300,25 +1314,25 @@ function sendGroupMsg(){
     text_obj = new webim.Msg.Elem.Text(msgtosend);
     msg.addText(text_obj);
 
-    webim.sendMsg(msg, function (resp) {
+    webim.sendMsg(msg, function(resp) {
 
-        if (!selToID) {//没有聊天会话
-            selType=webim.SESSION_TYPE.GROUP;
-            selToID=toAccount;
-            selSess=sess;
-            addSess(selType,toAccount, toName, groupHeadUrl, 0, 'sesslist');
+        if (!selToID) { //没有聊天会话
+            selType = webim.SESSION_TYPE.GROUP;
+            selToID = toAccount;
+            selSess = sess;
+            addSess(selType, toAccount, toName, groupHeadUrl, 0, 'sesslist');
             setSelSessStyleOn(toAccount);
             //群聊时，长轮询接口会返回自己发的消息
             //addMsg(msg);
-        }else{//有聊天会话
-            if(selToID==toAccount){//聊天对象不变
+        } else { //有聊天会话
+            if (selToID == toAccount) { //聊天对象不变
                 //不做任何操作
-            }else{//聊天对象发生改变
+            } else { //聊天对象发生改变
                 var tempSessDiv = document.getElementById("sessDiv_" + toAccount);
-                if(!tempSessDiv){//不存在这个会话
-                    addSess(webim.SESSION_TYPE.GROUP,toAccount, toName, groupHeadUrl, 0, 'sesslist');//增加一个会话
+                if (!tempSessDiv) { //不存在这个会话
+                    addSess(webim.SESSION_TYPE.GROUP, toAccount, toName, groupHeadUrl, 0, 'sesslist'); //增加一个会话
                 }
-                onSelSess(webim.SESSION_TYPE.GROUP,toAccount);//再进行切换
+                onSelSess(webim.SESSION_TYPE.GROUP, toAccount); //再进行切换
             }
         }
         webim.Tool.setCookie("tmpmsg_" + toAccount, '', 0);
@@ -1326,14 +1340,14 @@ function sendGroupMsg(){
         $('#send_group_msg_dialog').modal('hide');
         $('#get_my_group_dialog').modal('hide');
 
-    }, function (err) {
+    }, function(err) {
         alert(err.ErrorInfo);
         $("#sgm_content").val('');
     });
 }
 
 //将我的群组资料（群名称和群头像）保存在infoMap
-var initInfoMapByMyGroups = function (cbOK) {
+var initInfoMapByMyGroups = function(cbOK) {
 
     var options = {
         'Member_Account': loginInfo.identifier,
@@ -1346,15 +1360,15 @@ var initInfoMapByMyGroups = function (cbOK) {
     };
     webim.getJoinedGroupListHigh(
         options,
-        function (resp) {
+        function(resp) {
             if (resp.GroupIdList && resp.GroupIdList.length) {
                 for (var i = 0; i < resp.GroupIdList.length; i++) {
                     var group_name = resp.GroupIdList[i].Name;
-                    var group_image=resp.GroupIdList[i].FaceUrl;
-                    var key=webim.SESSION_TYPE.GROUP+"_"+resp.GroupIdList[i].GroupId;
-                    infoMap[key]={
-                        'name':group_name,
-                        'image':group_image
+                    var group_image = resp.GroupIdList[i].FaceUrl;
+                    var key = webim.SESSION_TYPE.GROUP + "_" + resp.GroupIdList[i].GroupId;
+                    infoMap[key] = {
+                        'name': group_name,
+                        'image': group_image
                     }
                 }
             }
@@ -1362,9 +1376,8 @@ var initInfoMapByMyGroups = function (cbOK) {
                 cbOK();
             }
         },
-        function (err) {
+        function(err) {
             alert(err.ErrorInfo);
         }
     );
 };
-
