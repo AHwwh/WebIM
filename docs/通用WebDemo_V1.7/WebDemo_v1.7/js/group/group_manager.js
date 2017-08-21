@@ -272,10 +272,10 @@ function gmgOperateFormatter(value, row, index) {
 //我的群组表格每行的操作按钮点击事件
 window.gmgOperateEvents = {
     'click .plus': function(e, value, row, index) {
-        if (row.TypeEn != 'Private') {
-            alert('公开群或聊天室不支持直接拉人操作');
-            return;
-        }
+        // if (row.TypeEn != 'Private') {
+        //    alert('公开群或聊天室不支持直接拉人操作');
+        //     return;
+        // }
         $('#gmfg_group_id').val(row.GId);
         getMyFriendGroup();
     },
@@ -326,6 +326,14 @@ window.gmgOperateEvents = {
         $('#mg_introduction').val(webim.Tool.formatHtml2Text(row.Introduction));
         $('#mg_notification').val(webim.Tool.formatHtml2Text(row.Notification));
         $('#modify_group_dialog').modal('show');
+        var shut_up_all = document.mg_form.shut_up_all_member;
+        for (var i = 0; i < shut_up_all.length; i++) {
+            if (shut_up_all[i].value == row.ShutUpAllMember) {
+                shut_up_all[i].checked = true;
+                break;
+            }
+        }
+        //  $('#shut_up_all_member').val(row.ShutUpAllMember);
     },
     'click .share': function(e, value, row, index) {
         if (row.Role != '群主') {
@@ -460,6 +468,12 @@ function initGetMyGroupTable(data) {
             valign: "middle",
             sortable: "true",
             visible: false
+        }, {
+            field: "ShutUpAllMember",
+            title: "全局禁言",
+            align: "center",
+            valign: "middle",
+            sortable: "true"
         }, {
             field: "gmgOperate",
             title: "操作",
@@ -774,7 +788,7 @@ var modifyGroup = function() {
         'Name': $('#mg_name').val(),
         'Notification': $('#mg_notification').val(),
         'Introduction': $('#mg_introduction').val(),
-        //'ShutUpAllMember': $('#shut_up_all_member').val()
+        'ShutUpAllMember': $('#shut_up_all_member').val()
     };
     if (faceurl) {
         options.FaceUrl = faceurl;
@@ -891,7 +905,8 @@ var getMyGroup = function() {
             'NextMsgSeq',
             'MemberNum',
             'MaxMemberNum',
-            'ApplyJoinOption'
+            'ApplyJoinOption',
+            'ShutUpAllMember'
         ],
         'SelfInfoFilter': [
             'Role',
@@ -923,6 +938,7 @@ var getMyGroup = function() {
                 var member_num = resp.GroupIdList[i].MemberNum;
                 var notification = webim.Tool.formatText2Html(resp.GroupIdList[i].Notification);
                 var introduction = webim.Tool.formatText2Html(resp.GroupIdList[i].Introduction);
+                var ShutUpAllMember = resp.GroupIdList[i].ShutUpAllMember; //== 'On' ? resp.GroupIdList[i].ShutUpAllMember = '开启' : resp.GroupIdList[i].ShutUpAllMember = '关闭';
                 data.push({
                     'GId': group_id,
                     'GroupId': webim.Tool.formatText2Html(group_id),
@@ -937,7 +953,8 @@ var getMyGroup = function() {
                     'MemberNum': member_num,
                     'Notification': notification,
                     'Introduction': introduction,
-                    'JoinTime': join_time
+                    'JoinTime': join_time,
+                    'ShutUpAllMember': ShutUpAllMember
                 });
             }
             //打开我的群组列表对话框
@@ -1011,7 +1028,7 @@ var getGroupInfo = function(group_id, cbOK, cbErr) {
     webim.getGroupInfo(
         options,
         function(resp) {
-            if (resp.GroupInfo[0].ShutUpAllMember == 'Open') {
+            if (resp.GroupInfo[0].ShutUpAllMember == 'On') {
                 alert('该群组已开启全局禁言');
             }
             if (cbOK) {

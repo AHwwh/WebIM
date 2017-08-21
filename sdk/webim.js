@@ -1528,7 +1528,7 @@ var webim = { // namespace object webim
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
         "READED": 92, //已读消息同步
-        "KICKEDOUT" : 96
+        "KICKEDOUT": 96
     };
 
     //群消息子类型
@@ -4597,9 +4597,9 @@ var webim = { // namespace object webim
             var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
             var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
             var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
-            var onC2cEventCallbacks={
-                "92":null, //消息已读通知,
-                "96":null
+            var onC2cEventCallbacks = {
+                "92": null, //消息已读通知,
+                "96": null
             };;
             var onKickedEventCall = null; //多实例登录回调
             var onAppliedDownloadUrl = null;
@@ -5037,10 +5037,11 @@ var webim = { // namespace object webim
                     }
 
                     if (isNeedValidRepeatMsg) {
-                        if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                            //回调
-                            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
-                        }
+                        //注释只收取一种通知
+                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                        //回调
+                        if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                        //}
                     } else {
                         //回调
                         if (onGroupSystemNotifyCallbacks[reportType]) {
@@ -5229,7 +5230,7 @@ var webim = { // namespace object webim
                         }
                         break;
                     case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
-                        if(onC2cEventCallbacks[subType]){
+                        if (onC2cEventCallbacks[subType]) {
                             onC2cEventCallbacks[subType]();
                         }
                         break;
