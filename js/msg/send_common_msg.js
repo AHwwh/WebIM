@@ -88,8 +88,8 @@ function handleMsgSend(msgContent) {
 
     msg.PushInfo = {
         "PushFlag": 0,
-        "Desc": text_obj.text, //离线推送内容
-        "Ext": text_obj.text, //离线推送透传内容
+        "Desc": '测试离线推送内容', //离线推送内容
+        "Ext": '测试离线推送透传内容', //离线推送透传内容
         "AndroidInfo": {
             "Sound": "android.mp3" //离线推送声音文件路径。
         },
