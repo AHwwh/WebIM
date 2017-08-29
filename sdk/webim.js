@@ -1467,6 +1467,17 @@ var webim = { // namespace object webim
         'SMALL': 3 //缩略小图
     };
 
+    //图片格式
+    var IMAGE_FORMAT = {
+        JPG: 0x1,
+        JPEG: 0x1,
+        GIF: 0x2,
+        PNG: 0x3,
+        BMP: 0x4,
+        UNKNOWN: 0xff
+    };
+
+
     //上传资源包类型
     var UPLOAD_RES_PKG_FLAG = {
         'RAW_DATA': 0, //原始数据
@@ -2747,6 +2758,7 @@ var webim = { // namespace object webim
                         });
                     }
                     msgContent = {
+                        'ImageFormat': elem.content.ImageFormat,
                         'UUID': elem.content.UUID,
                         'ImageInfoArray': ImageInfoArray
                     };
@@ -4029,7 +4041,6 @@ var webim = { // namespace object webim
             return this.data;
         }
     };
-
     // 地理位置消息 class Msg.Elem.Location
     Msg.Elem.Location = function(longitude, latitude, desc) {
         this.latitude = latitude; //纬度
@@ -4051,8 +4062,12 @@ var webim = { // namespace object webim
 
     //图片消息
     // class Msg.Elem.Images
-    Msg.Elem.Images = function(imageId) {
+    Msg.Elem.Images = function(imageId, format) {
         this.UUID = imageId;
+        if( typeof format !== 'number' ){
+            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'],10);
+        }
+        this.ImageFormat = format;
         this.ImageInfoArray = [];
     };
     Msg.Elem.Images.prototype.addImage = function(image) {
@@ -4073,6 +4088,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.Images.prototype.getImageId = function() {
         return this.UUID;
+    };
+    Msg.Elem.Images.prototype.getImageFormat = function() {
+        return this.ImageFormat;
     };
     Msg.Elem.Images.prototype.getImage = function(type) {
         for (var i in this.ImageInfoArray) {
@@ -5534,7 +5552,8 @@ var webim = { // namespace object webim
                                 break;
                             case MSG_ELEMENT_TYPE.IMAGE:
                                 msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID
+                                    msgBody.MsgContent.UUID,
+                                    msgBody.MsgContent.ImageFormat || ""
                                 );
                                 for (var j in msgBody.MsgContent.ImageInfoArray) {
                                     var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5696,7 +5715,8 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID
+                                        msgBody.MsgContent.UUID,
+                                        msgBody.MsgContent.ImageFormat
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5874,7 +5894,8 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID
+                                        msgBody.MsgContent.UUID,
+                                        msgBody.MsgContent.ImageFormat
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -6111,7 +6132,8 @@ var webim = { // namespace object webim
                             break;
                         case MSG_ELEMENT_TYPE.IMAGE:
                             msgContent = new Msg.Elem.Images(
-                                msgBody.MsgContent.UUID
+                                msgBody.MsgContent.UUID,
+                                msgBody.MsgContent.ImageFormat || ""
                             );
                             for (var j in msgBody.MsgContent.ImageInfoArray) {
                                 msgContent.addImage(
