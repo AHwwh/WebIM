@@ -1518,9 +1518,8 @@ var webim = { // namespace object webim
         ,
         "C2C_COMMON": 9 //新的C2C消息
         ,
-        "C2C_EVENT": 10,
+        "C2C_EVENT": 10
 
-        "GROUP_SYSTEM_OUTHER": 6 //新的群系统消息
     };
 
     //c2c消息子类型
@@ -5286,12 +5285,11 @@ var webim = { // namespace object webim
                                     log.warn("longpolling: received new group tips");
                                     handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
                                     break;
-                                case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
-                                    log.warn("longpolling: received new group system msgs");
-                                    //false 表示 通过长轮询收到的群系统消息，可以不判重
-                                    handlerGroupSystemMsgs(e.GroupTips, false);
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2: //群提示消息
+                                    log.warn("longpolling: received new group tips");
+                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
                                     break;
-                                case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM_OUTHER: //（多终端同步）群系统消息
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                                     log.warn("longpolling: received new group system msgs");
                                     //false 表示 通过长轮询收到的群系统消息，可以不判重
                                     handlerGroupSystemMsgs(e.GroupTips, false);
