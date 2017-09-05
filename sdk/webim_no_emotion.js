@@ -1467,6 +1467,17 @@ var webim = { // namespace object webim
         'SMALL': 3 //缩略小图
     };
 
+    //图片格式
+    var IMAGE_FORMAT = {
+        JPG: 0x1,
+        JPEG: 0x1,
+        GIF: 0x2,
+        PNG: 0x3,
+        BMP: 0x4,
+        UNKNOWN: 0xff
+    };
+
+
     //上传资源包类型
     var UPLOAD_RES_PKG_FLAG = {
         'RAW_DATA': 0, //原始数据
@@ -1519,6 +1530,7 @@ var webim = { // namespace object webim
         "C2C_COMMON": 9 //新的C2C消息
         ,
         "C2C_EVENT": 10
+
     };
 
     //c2c消息子类型
@@ -1528,7 +1540,7 @@ var webim = { // namespace object webim
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
         "READED": 92, //已读消息同步
-        "KICKEDOUT" : 96
+        "KICKEDOUT": 96
     };
 
     //群消息子类型
@@ -2711,6 +2723,7 @@ var webim = { // namespace object webim
                         });
                     }
                     msgContent = {
+                        'ImageFormat': elem.content.ImageFormat,
                         'UUID': elem.content.UUID,
                         'ImageInfoArray': ImageInfoArray
                     };
@@ -3993,7 +4006,6 @@ var webim = { // namespace object webim
             return this.data;
         }
     };
-
     // 地理位置消息 class Msg.Elem.Location
     Msg.Elem.Location = function(longitude, latitude, desc) {
         this.latitude = latitude; //纬度
@@ -4015,8 +4027,12 @@ var webim = { // namespace object webim
 
     //图片消息
     // class Msg.Elem.Images
-    Msg.Elem.Images = function(imageId) {
+    Msg.Elem.Images = function(imageId, format) {
         this.UUID = imageId;
+        if (typeof format !== 'number') {
+            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'], 10);
+        }
+        this.ImageFormat = format;
         this.ImageInfoArray = [];
     };
     Msg.Elem.Images.prototype.addImage = function(image) {
@@ -4037,6 +4053,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.Images.prototype.getImageId = function() {
         return this.UUID;
+    };
+    Msg.Elem.Images.prototype.getImageFormat = function() {
+        return this.ImageFormat;
     };
     Msg.Elem.Images.prototype.getImage = function(type) {
         for (var i in this.ImageInfoArray) {
@@ -4561,9 +4580,9 @@ var webim = { // namespace object webim
             var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
             var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
             var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
-            var onC2cEventCallbacks={
-                "92":null, //消息已读通知,
-                "96":null
+            var onC2cEventCallbacks = {
+                "92": null, //消息已读通知,
+                "96": null
             };;
             var onKickedEventCall = null; //多实例登录回调
             var onAppliedDownloadUrl = null;
@@ -4931,8 +4950,8 @@ var webim = { // namespace object webim
             //处理新的群系统消息
             //isNeedValidRepeatMsg 是否需要判重
             var handlerGroupSystemMsgs = function(groupSystemMsgs, isNeedValidRepeatMsg) {
-                for (var k in groupSystemMsgs.GroupTips) {
-                    var groupTip = groupSystemMsgs.GroupTips[k];
+                for (var k in groupSystemMsgs) {
+                    var groupTip = groupSystemMsgs[k];
                     var groupReportTypeMsg = groupTip.MsgBody;
                     var reportType = groupReportTypeMsg.ReportType;
                     //当长轮询返回的群系统消息，才需要更新群消息通知seq
@@ -5001,10 +5020,11 @@ var webim = { // namespace object webim
                     }
 
                     if (isNeedValidRepeatMsg) {
-                        if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                            //回调
-                            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
-                        }
+                        //注释只收取一种通知
+                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                        //回调
+                        if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                        //}
                     } else {
                         //回调
                         if (onGroupSystemNotifyCallbacks[reportType]) {
@@ -5193,7 +5213,7 @@ var webim = { // namespace object webim
                         }
                         break;
                     case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
-                        if(onC2cEventCallbacks[subType]){
+                        if (onC2cEventCallbacks[subType]) {
                             onC2cEventCallbacks[subType]();
                         }
                         break;
@@ -5244,6 +5264,10 @@ var webim = { // namespace object webim
                                     handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupMsgArray);
                                     break;
                                 case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP: //（全员广播）群提示消息
+                                    log.warn("longpolling: received new group tips");
+                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2: //群提示消息
                                     log.warn("longpolling: received new group tips");
                                     handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
                                     break;
@@ -5497,7 +5521,8 @@ var webim = { // namespace object webim
                                 break;
                             case MSG_ELEMENT_TYPE.IMAGE:
                                 msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID
+                                    msgBody.MsgContent.UUID,
+                                    msgBody.MsgContent.ImageFormat || ""
                                 );
                                 for (var j in msgBody.MsgContent.ImageInfoArray) {
                                     var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5596,7 +5621,7 @@ var webim = { // namespace object webim
             var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
                 for (var i in eventArray) {
                     var e = eventArray[i];
-                    handlerGroupSystemMsgs(e, true);
+                    handlerGroupSystemMsgs(e.GroupTips, true);
                     switch (e.Event) {
                         case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                             log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
@@ -5659,7 +5684,8 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID
+                                        msgBody.MsgContent.UUID,
+                                        msgBody.MsgContent.ImageFormat
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5837,7 +5863,8 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID
+                                        msgBody.MsgContent.UUID,
+                                        msgBody.MsgContent.ImageFormat
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -6074,7 +6101,8 @@ var webim = { // namespace object webim
                             break;
                         case MSG_ELEMENT_TYPE.IMAGE:
                             msgContent = new Msg.Elem.Images(
-                                msgBody.MsgContent.UUID
+                                msgBody.MsgContent.UUID,
+                                msgBody.MsgContent.ImageFormat || ""
                             );
                             for (var j in msgBody.MsgContent.ImageInfoArray) {
                                 msgContent.addImage(

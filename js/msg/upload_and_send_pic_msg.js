@@ -141,8 +141,10 @@ function uploadPicByBase64() {
         }
     );
 }
+
 //发送图片消息
 function sendPic(images,imgName) {
+    console.debug('sendPic',imgName);
     if (!selToID) {
         alert("您还没有好友，暂不能聊天");
         return;
@@ -152,7 +154,8 @@ function sendPic(images,imgName) {
         selSess = new webim.Session(selType, selToID, selToID, friendHeadUrl, Math.round(new Date().getTime() / 1000));
     }
     var msg = new webim.Msg(selSess, true, -1, -1, -1, loginInfo.identifier, 0, loginInfo.identifierNick);
-    var images_obj = new webim.Msg.Elem.Images(images.File_UUID);
+    console.debug(imgName.split(".")[1]);
+    var images_obj = new webim.Msg.Elem.Images(images.File_UUID , imgName.split(".")[1]);
     for (var i in images.URL_INFO) {
         var img = images.URL_INFO[i];
         var newImg;
