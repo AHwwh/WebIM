@@ -44,6 +44,13 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
         name = name.substr(0, maxNameLen) + "...";
     }
 
+    var delchat = document.createElement("div");
+    delchat.className = 'delChat';
+    delchat.innerHTML = '删除会话';
+    delchat.onclick = function() {
+        delChat(sess_type, to_id);
+    }
+
     var nameDiv = document.createElement("div");
     nameDiv.id = "nameDiv_" + to_id;
     nameDiv.className = "name";
@@ -61,6 +68,7 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     sessDiv.appendChild(faceImg);
     sessDiv.appendChild(nameDiv);
     sessDiv.appendChild(badgeDiv);
+    sessDiv.appendChild(delchat);
     if (!addPositonType || addPositonType == 'TAIL') {
         sessList.appendChild(sessDiv); //默认插入尾部
     } else if (addPositonType == 'HEAD') {
@@ -68,6 +76,26 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     } else {
         console.log(webim.Log.error('未知addPositonType' + addPositonType));
     }
+}
+
+//删除会话
+
+function delChat(sess_type, to_id) {
+    if (sess_type == 'C2C') {
+        sess_type = 1;
+    } else {
+        sess_type = 2;
+    }
+    var data = {
+        'To_Account': to_id,
+        'chatType': sess_type
+    }
+    webim.deleteChat(
+        data,
+        function(resp) {
+            $("#sessDiv_" + to_id).remove();
+        }
+    );
 }
 
 //切换好友或群组聊天对象

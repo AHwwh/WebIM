@@ -151,6 +151,13 @@ function onGroupInfoChangeNotify(notify) {
     }
 }
 
+function onCustomGroupNotify(notify) {
+    webim.Log.info("执行 用户自定义系统消息 回调：" + JSON.stringify(notify));
+    var reportTypeCh = "[用户自定义系统消息]";
+    var content = notify.UserDefinedField; //群自定义消息数据
+    addGroupSystemMsg(notify.ReportType, reportTypeCh, notify.GroupId, notify.GroupName, content, notify.MsgTime);
+}
+
 //已读消息同步
 //告诉你哪个类型的那个群组已读消息的情况
 
