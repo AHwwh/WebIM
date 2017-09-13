@@ -2408,6 +2408,12 @@ var webim = { // namespace object webim
         clearSdk();
 
         if (options) opt = options;
+
+        if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
+            isAccessFormaEnvironment = false; //访问测试环境
+            log.error("请切换为正式环境");
+        }
+
         if (opt.isAccessFormalEnv == false) {
             log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
@@ -5049,7 +5055,8 @@ var webim = { // namespace object webim
                         //注释只收取一种通知
                         // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
                         //回调
-                        if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                        //if (onGroupSystemNotifyCallbacks[reportType]) 
+                        onGroupSystemNotifyCallbacks[reportType](notify);
                         //}
                     } else {
                         //回调

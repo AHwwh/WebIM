@@ -2444,10 +2444,16 @@ var webim = { // namespace object webim
         clearSdk();
 
         if (options) opt = options;
+        if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
+            isAccessFormaEnvironment = false; //访问测试环境
+            log.error("请切换为正式环境");
+        }
+
         if (opt.isAccessFormalEnv == false) {
             log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
         }
+
         if (opt.isLogOn == false) {
             log.setOn(opt.isLogOn);
         }
@@ -5083,10 +5089,14 @@ var webim = { // namespace object webim
 
                     if (isNeedValidRepeatMsg) {
                         //注释只收取一种通知
-                        if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                            //回调
-                            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                        //回调
+                        if (onGroupSystemNotifyCallbacks[reportType]) {
+                            onGroupSystemNotifyCallbacks[reportType](notify);
+                        } else {
+                            log.error("未知群系统消息类型：reportType=" + reportType);
                         }
+                        //}
                     } else {
                         //回调
                         if (onGroupSystemNotifyCallbacks[reportType]) {
