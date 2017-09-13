@@ -4091,8 +4091,8 @@ var webim = { // namespace object webim
     // class Msg.Elem.Images
     Msg.Elem.Images = function(imageId, format) {
         this.UUID = imageId;
-        if( typeof format !== 'number' ){
-            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'],10);
+        if (typeof format !== 'number') {
+            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'], 10);
         }
         this.ImageFormat = format;
         this.ImageInfoArray = [];
@@ -5083,10 +5083,10 @@ var webim = { // namespace object webim
 
                     if (isNeedValidRepeatMsg) {
                         //注释只收取一种通知
-                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                        //回调
-                        if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
-                        //}
+                        if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                            //回调
+                            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                        }
                     } else {
                         //回调
                         if (onGroupSystemNotifyCallbacks[reportType]) {
