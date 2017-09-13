@@ -1395,7 +1395,8 @@ var webim = { // namespace object webim
         'PIC': 'openpic', //图片（或文件）服务名
         'BIG_GROUP': 'group_open_http_noauth_svc', //直播大群 群组管理（申请加大群）服务名
         'BIG_GROUP_LONG_POLLING': 'group_open_long_polling_http_noauth_svc', //直播大群 长轮询（拉取消息等）服务名
-        'IM_OPEN_STAT': 'imopenstat' //质量上报，统计接口错误率
+        'IM_OPEN_STAT': 'imopenstat', //质量上报，统计接口错误率
+        'DEL_CHAT': 'recentcontact' //删除会话
     };
 
     //不同服务对应的版本号
@@ -1408,7 +1409,8 @@ var webim = { // namespace object webim
         'openpic': 'v4',
         'group_open_http_noauth_svc': 'v1',
         'group_open_long_polling_http_noauth_svc': 'v1',
-        'imopenstat': 'v4'
+        'imopenstat': 'v4',
+        'recentcontact': 'v4'
     };
 
     //不同的命令名对应的上报类型ID，用于接口质量上报
@@ -3390,6 +3392,30 @@ var webim = { // namespace object webim
                 }
             }, cbErr);
     };
+
+    //删除会话
+    var proto_deleteChat = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        if (options.chatType == 1) {
+            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
+                    'From_Account': ctx.identifier,
+                    'Type': options.chatType,
+                    'To_Account': options.To_Account
+                },
+                cbOk, cbErr);
+        } else {
+            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
+                    'From_Account': ctx.identifier,
+                    'Type': options.chatType,
+                    'ToGroupid': options.To_Account
+                },
+                cbOk, cbErr);
+
+        }
+
+    };
+
     //获取好友申请
     var proto_getPendency = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -7017,6 +7043,11 @@ var webim = { // namespace object webim
     webim.getAllFriend = function(options, cbOk, cbErr) {
         return proto_getAllFriend(options, cbOk, cbErr);
     };
+    //删除会话
+    webim.deleteChat = function(options, cbOk, cbErr) {
+        return proto_deleteChat(options, cbOk, cbErr);
+    };
+
     //删除好友
     webim.deleteFriend = function(options, cbOk, cbErr) {
         return proto_deleteFriend(options, cbOk, cbErr);

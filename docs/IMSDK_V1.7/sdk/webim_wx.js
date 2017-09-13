@@ -1308,7 +1308,7 @@ var webim = { // namespace object webim
             var json = null;
             //if (resp) eval('json=('+resp+');');//将返回的json字符串转换成json对象
             //if (resp) json=eval('('+resp+')');//将返回的json字符串转换成json对象
-            if (resp) json = JSON.parse(resp); //将返回的json字符串转换成json对象
+            if (resp) json = resp; //将返回的json字符串转换成json对象
             if (cbOk) cbOk(json);
         }, cbErr);
     }
@@ -1676,7 +1676,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function (resp) {
-                        var nick, gender, allowType;
+                        var nick, gender, allowType, image;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
