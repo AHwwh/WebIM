@@ -326,7 +326,7 @@ window.gmgOperateEvents = {
         $('#mg_introduction').val(webim.Tool.formatHtml2Text(row.Introduction));
         $('#mg_notification').val(webim.Tool.formatHtml2Text(row.Notification));
         $('#modify_group_dialog').modal('show');
-        var shut_up_all = document.mg_form.shut_up_all_member;
+        var shut_up_all = document.mg_form.mgm_up_all_radio;
         for (var i = 0; i < shut_up_all.length; i++) {
             if (shut_up_all[i].value == row.ShutUpAllMember) {
                 shut_up_all[i].checked = true;
@@ -783,12 +783,13 @@ var modifyGroup = function() {
         alert('您输入的群组简介超出限制(最长40个汉字)');
         return;
     }
+    var up_all = $('input[name="mgm_up_all_radio"]:checked').val();
     var options = {
         'GroupId': $('#mg_group_id').val(),
         'Name': $('#mg_name').val(),
         'Notification': $('#mg_notification').val(),
         'Introduction': $('#mg_introduction').val(),
-        'ShutUpAllMember': $('#shut_up_all_member').val()
+        'ShutUpAllMember': up_all
     };
     if (faceurl) {
         options.FaceUrl = faceurl;
