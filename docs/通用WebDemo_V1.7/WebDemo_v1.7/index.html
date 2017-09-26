@@ -1476,7 +1476,7 @@
 
                             <div class="col-sm-9">
                                 <label id="demo_type_desc">无需注册腾讯云帐号直接使用，适合只需快速体验开放IM的用户</label>
-                                <label id="myself_type_desc">需注册腾讯云官帐号，并创建应用获取SdkAppId和AccountType，适合需在Demo基础上进行修改调试的用户。<a
+                                <label id="myself_type_desc">需注册腾讯云官帐号，并创建应用获取SdkAppId，适合需在Demo基础上进行修改调试的用户。<a
                                     href="http://console.qcloud.com/avc/" id="qcloudLink"
                                     target="_blank">现在创建>></a></label>
                             </div>
@@ -1489,14 +1489,7 @@
                                 <input type="text" class="form-control" id="sdk_app_id" placeholder="请输入SdkAppId" value="">
                             </div>
                         </div>
-                        <div class="form-group" id="accountTypeDiv">
-                            <label class="col-sm-2 control-label"></label>
-                            <label for="account_type" class="col-sm-2 control-label">AccountType:</label>
-
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="account_type" placeholder="请输入AccountType" value="">
-                            </div>
-                        </div>
+                       
                         <div class="form-group" id="accountModeDiv" style="display:none">
                             <label class="col-sm-2 control-label"></label>
                             <label for="account_type" class="col-sm-2 control-label">集成模式:</label>
@@ -2145,13 +2138,10 @@
 
         //官方 demo appid,需要开发者自己修改（托管模式）
         var sdkAppID = 1400001533;
-        var accountType = 792;
-
 
         //当前用户身份
         var loginInfo = {
             'sdkAppID': sdkAppID, //用户所属应用id,必填
-            'accountType': accountType, //用户所属应用帐号类型，必填
             'identifier': null, //当前用户ID,必须是否字符串类型，必填
             'userSig': null, //当前用户身份凭证，必须是字符串类型，必填
             'identifierNick': null, //当前用户昵称，不用填写，登录接口会返回用户的昵称，如果没有设置，则返回用户的id
