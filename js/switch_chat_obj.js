@@ -52,6 +52,7 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     delchat.onclick = function(e) {
 
 
+        var selSess=webim.MsgStore.sessByTypeId(sess_type, to_id);
         webim.setAutoRead(selSess, true, false);
         delChat(sess_type, to_id);
         e.preventDefault()
