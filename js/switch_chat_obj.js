@@ -49,8 +49,14 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     var delchat = document.createElement("div");
     delchat.className = 'delChat';
     delchat.innerHTML = '删除会话';
-    delchat.onclick = function() {
+    delchat.onclick = function(e) {
+
+
+        webim.setAutoRead(selSess, true, false);
         delChat(sess_type, to_id);
+        e.preventDefault()
+        e.stopPropagation()
+        return false;
     }
 
     var nameDiv = document.createElement("div");
