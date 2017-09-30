@@ -50,7 +50,21 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     delchat.className = 'delChat';
     delchat.innerHTML = '删除会话';
     delchat.onclick = function() {
+        var selSess = webim.MsgStore.sessByTypeId(sess_type, to_id)
+        if (sess_type == 'C2C') {
+            sess_type = 1;
+            webim.setAutoRead(selSess, true, false)
+        } else {
+            sess_type = 2;
+            webim.groupMsgReaded({
+                "GroupId": to_id,
+                "MsgReadedSeq": selSess._impl.curMaxMsgSeq
+            })
+        }
         delChat(sess_type, to_id);
+        e.preventDefault()
+        e.stopPropagation()
+        return false;
     }
 
     var nameDiv = document.createElement("div");
