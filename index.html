@@ -1490,6 +1490,15 @@
                             </div>
                         </div>
                        
+                       <div class="form-group" id="accountTypeDiv">
+                            <label class="col-sm-2 control-label"></label>
+                            <label for="account_type" class="col-sm-2 control-label">AccountType:</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="account_type" placeholder="请输入AccountType" value="">
+                            </div> 
+                        </div>
+
                         <div class="form-group" id="accountModeDiv" style="display:none">
                             <label class="col-sm-2 control-label"></label>
                             <label for="account_type" class="col-sm-2 control-label">集成模式:</label>
@@ -2138,11 +2147,13 @@
 
         //官方 demo appid,需要开发者自己修改（托管模式）
         var sdkAppID = 1400001533;
+        var accountType = 792;
 
         //当前用户身份
         var loginInfo = {
             'sdkAppID': sdkAppID, //用户所属应用id,必填
             'identifier': null, //当前用户ID,必须是否字符串类型，必填
+            'accountType': accountType, //用户所属应用帐号类型，必填
             'userSig': null, //当前用户身份凭证，必须是字符串类型，必填
             'identifierNick': null, //当前用户昵称，不用填写，登录接口会返回用户的昵称，如果没有设置，则返回用户的id
             'headurl': 'img/me.jpg' //当前用户默认头像，选填，如果设置过头像，则可以通过拉取个人资料接口来得到头像信息

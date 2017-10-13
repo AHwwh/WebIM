@@ -45,7 +45,7 @@ function selectApp() {
     var appType = $('input[name="app_type_radio"]:checked').val();
     if (appType == 1) { //测试应用
         loginInfo.sdkAppID = loginInfo.appIDAt3rd = sdkAppID;
-        //loginInfo.accountType = accountType;
+        loginInfo.accountType = accountType;
     } else if (appType == 0) { //自建应用
         if ($("#sdk_app_id").val().length == 0) {
             alert('请输入sdkAppId');
@@ -55,19 +55,19 @@ function selectApp() {
             alert('sdkAppId非法,只能输入数字');
             return;
         }
-        // if ($("#account_type").val().length == 0) {
-        //     alert('请输入accountType');
-        //     return;
-        // }
-        // if (!validNumber($("#account_type").val())) {
-        //     alert('accountType非法,只能输入数字');
-        //     return;
-        // }
+        if ($("#account_type").val().length == 0) {
+            alert('请输入accountType');
+            return;
+        }
+        if (!validNumber($("#account_type").val())) {
+            alert('accountType非法,只能输入数字');
+            return;
+        }
         loginInfo.sdkAppID = loginInfo.appIDAt3rd = $('#sdk_app_id').val();
-        // loginInfo.accountType = $('#account_type').val();
+        loginInfo.accountType = $('#account_type').val();
     }
     //将account_type保存到cookie中,有效期是1天
-    // webim.Tool.setCookie('accountType', loginInfo.accountType, 3600 * 24);
+    webim.Tool.setCookie('accountType', loginInfo.accountType, 3600 * 24);
     $('#select_app_dialog').modal('hide');
 
     if (accountMode == 1) {

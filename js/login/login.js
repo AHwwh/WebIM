@@ -4,6 +4,7 @@ function tlsLogin() {
     //跳转到TLS登录页面
     TLSHelper.goLogin({
         sdkappid: loginInfo.sdkAppID,
+        acctype: loginInfo.accountType,
         url: window.location.href
     });
 }
@@ -18,8 +19,15 @@ function tlsGetUserSig(res) {
         loginInfo.userSig = res.UserSig;
         //从当前URL中获取参数为sdkappid的值
         loginInfo.sdkAppID = loginInfo.appIDAt3rd = Number(webim.Tool.getQueryString("sdkappid"));
-        //sdk登录
-        webimLogin();
+        //从cookie获取accountType
+        var accountType = webim.Tool.getCookie('accountType');
+        if (accountType) {
+            loginInfo.accountType = accountType;
+            //sdk登录
+            webimLogin();
+        } else {
+            alert('accountType非法');
+        }
 
     } else {
         //签名过期，需要重新登录

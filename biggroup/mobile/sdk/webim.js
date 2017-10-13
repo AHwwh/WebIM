@@ -814,6 +814,7 @@ var webim = { // namespace object webim
      *   {
      *     sdkAppID     - String, 用户标识接入SDK的应用ID，必填
      *     identifier   - String, 用户帐号,必须是字符串类型，必填
+     *     accountType  - int, 账号类型，必填
      *     identifierNick   - String, 用户昵称，选填
      *     userSig      - String, 鉴权Token，必须是字符串类型，必填
      *   }
@@ -1706,6 +1707,7 @@ var webim = { // namespace object webim
         sdkAppID: null,
         appIDAt3rd: null,
         identifier: null,
+        accountType: null,
         tinyid: null,
         identifierNick: null,
         userSig: null,
@@ -2324,7 +2326,7 @@ var webim = { // namespace object webim
             }
             url += '&contenttype=' + ctx.contentType;
         }
-        url += '&sdkappid=' + ctx.sdkAppID + '&apn=' + ctx.apn + '&reqtime=' + unixtime();
+        url += '&sdkappid=' + ctx.sdkAppID + '&apn=' + ctx.apn + '&reqtime=' + unixtime() + '&accounttype=' + ctx.accountType;
         return url;
     };
 
@@ -2414,6 +2416,7 @@ var webim = { // namespace object webim
             appIDAt3rd: null,
             identifier: null,
             identifierNick: null,
+            accountType: null,
             userSig: null,
             contentType: 'json',
             apn: 1
@@ -2477,6 +2480,13 @@ var webim = { // namespace object webim
             }
         }
 
+        if (!loginInfo.accountType) {
+            if (cbErr) {
+                cbErr(tool.getReturnError("loginInfo.accountType is empty", -8));
+                return;
+            }
+        }
+
         if (loginInfo.identifier) {
             ctx.identifier = loginInfo.identifier.toString();
         }
@@ -2490,6 +2500,7 @@ var webim = { // namespace object webim
             ctx.userSig = loginInfo.userSig.toString();
         }
         ctx.sdkAppID = loginInfo.sdkAppID;
+        ctx.accountType = loginInfo.accountType;
 
         if (ctx.identifier && ctx.userSig) { //带登录态
             //登录
@@ -6547,7 +6558,7 @@ var webim = { // namespace object webim
                 } else {
                     cmdName = 'pic_up_test';
                 }
-                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&contenttype=http";
+                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&contenttype=http" + "&accounttype=" + ctx.accountType;
                 form.action = uploadApiUrl;
                 form.method = 'post';
                 //form.enctype='multipart/form-data';//ie8下不起作用，必须由业务自己设置

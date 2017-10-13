@@ -49,7 +49,7 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
     var delchat = document.createElement("div");
     delchat.className = 'delChat';
     delchat.innerHTML = '删除会话';
-    delchat.onclick = function() {
+    delchat.onclick = function(e) {
         var selSess = webim.MsgStore.sessByTypeId(sess_type, to_id)
         if (sess_type == 'C2C') {
             sess_type = 1;
@@ -97,11 +97,7 @@ function addSess(sess_type, to_id, name, face_url, unread_msg_count, sesslist, a
 //删除会话
 
 function delChat(sess_type, to_id) {
-    if (sess_type == 'C2C') {
-        sess_type = 1;
-    } else {
-        sess_type = 2;
-    }
+
     var data = {
         'To_Account': to_id,
         'chatType': sess_type
