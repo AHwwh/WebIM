@@ -422,8 +422,40 @@ var webim = { // namespace object webim
      * return:
      *   (无)
      */
-    deleteGroupMember: function (options, cbOk, cbErr) {
-    },
+    deleteGroupMember: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyGroup
+     *   获取群组未决列表
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroup: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyReport
+     *   好友未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyReport: function(options, cbOk, cbErr) {},
+
+    /* function getPendencyGroupRead
+     *   群组未决已读上报
+     * params:
+     *   options    - 请求参数，详见api文档
+     *   cbOk   - function()类型, 成功时回调函数
+     *   cbErr  - function(err)类型, 失败时回调函数, err为错误对象
+     * return:
+     *   (无)
+     */
+    getPendencyGroupRead: function(options, cbOk, cbErr) {},
 
     /* function sendCustomGroupNotify
      *   发送自定义群通知
@@ -564,8 +596,9 @@ var webim = { // namespace object webim
 (function (webim) {
     //sdk版本
     var SDK = {
-        'VERSION': '1.7.0',//sdk版本号
-        'APPID': '537048168'//web im sdk 版本 APPID
+        'VERSION': '1.7.0', //sdk版本号
+        'APPID': '537048168', //web im sdk 版本 APPID
+        'PLAATFORM': "10" //发送请求时判断其是来自web端的请求
     };
 
     //是否启用正式环境，默认启用
@@ -591,15 +624,16 @@ var webim = { // namespace object webim
 
     //服务名称
     var SRV_NAME = {
-        'OPEN_IM': 'openim',//私聊（拉取未读c2c消息，长轮询，c2c消息已读上报等）服务名
-        'GROUP': 'group_open_http_svc',//群组管理（拉取群消息，创建群，群成员管理，群消息已读上报等）服务名
-        'FRIEND': 'sns',//关系链管理（好友管理，黑名单管理等）服务名
-        'PROFILE': 'profile',//资料管理（查询，设置个人资料等）服务名
-        'RECENT_CONTACT': 'recentcontact',//最近联系人服务名
-        'PIC': 'openpic',//图片（或文件）服务名
-        'BIG_GROUP': 'group_open_http_noauth_svc',//直播大群 群组管理（申请加大群）服务名
-        'BIG_GROUP_LONG_POLLING': 'group_open_long_polling_http_noauth_svc',//直播大群 长轮询（拉取消息等）服务名
-        'IM_OPEN_STAT': 'imopenstat'//质量上报，统计接口错误率
+        'OPEN_IM': 'openim', //私聊（拉取未读c2c消息，长轮询，c2c消息已读上报等）服务名
+        'GROUP': 'group_open_http_svc', //群组管理（拉取群消息，创建群，群成员管理，群消息已读上报等）服务名
+        'FRIEND': 'sns', //关系链管理（好友管理，黑名单管理等）服务名
+        'PROFILE': 'profile', //资料管理（查询，设置个人资料等）服务名
+        'RECENT_CONTACT': 'recentcontact', //最近联系人服务名
+        'PIC': 'openpic', //图片（或文件）服务名
+        'BIG_GROUP': 'group_open_http_noauth_svc', //直播大群 群组管理（申请加大群）服务名
+        'BIG_GROUP_LONG_POLLING': 'group_open_long_polling_http_noauth_svc', //直播大群 长轮询（拉取消息等）服务名
+        'IM_OPEN_STAT': 'imopenstat', //质量上报，统计接口错误率
+        'DEL_CHAT': 'recentcontact' //删除会话
     };
 
     //不同服务对应的版本号
@@ -612,7 +646,8 @@ var webim = { // namespace object webim
         'openpic': 'v4',
         'group_open_http_noauth_svc': 'v1',
         'group_open_long_polling_http_noauth_svc': 'v1',
-        'imopenstat': 'v4'
+        'imopenstat': 'v4',
+        'recentcontact': 'v4'
     };
 
     //不同的命令名对应的上报类型ID，用于接口质量上报
@@ -671,6 +706,17 @@ var webim = { // namespace object webim
         'SMALL': 3//缩略小图
     };
 
+    //图片格式
+    var IMAGE_FORMAT = {
+        JPG: 0x1,
+        JPEG: 0x1,
+        GIF: 0x2,
+        PNG: 0x3,
+        BMP: 0x4,
+        UNKNOWN: 0xff
+    };
+
+
     //上传资源包类型
     var UPLOAD_RES_PKG_FLAG = {
         'RAW_DATA': 0,//原始数据
@@ -723,7 +769,8 @@ var webim = { // namespace object webim
     };
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
-        "READED": 92//已读消息同步
+        "READED": 92, //已读消息同步
+        "KICKEDOUT": 96
     };
 
     //群消息子类型
@@ -763,19 +810,20 @@ var webim = { // namespace object webim
 
     //群系统消息类型
     var GROUP_SYSTEM_TYPE = {
-        "JOIN_GROUP_REQUEST": 1,//申请加群请求（只有管理员会收到）
-        "JOIN_GROUP_ACCEPT": 2,//申请加群被同意（只有申请人能够收到）
-        "JOIN_GROUP_REFUSE": 3,//申请加群被拒绝（只有申请人能够收到）
-        "KICK": 4,//被管理员踢出群(只有被踢者接收到)
-        "DESTORY": 5,//群被解散(全员接收)
-        "CREATE": 6,//创建群(创建者接收, 不展示)
-        "INVITED_JOIN_GROUP_REQUEST": 7,//邀请加群(被邀请者接收)
-        "QUIT": 8,//主动退群(主动退出者接收, 不展示)
-        "SET_ADMIN": 9,//设置管理员(被设置者接收)
-        "CANCEL_ADMIN": 10,//取消管理员(被取消者接收)
-        "REVOKE": 11,//群已被回收(全员接收, 不展示)
-        "READED": 15,//群消息已读同步
-        "CUSTOM": 255//用户自定义通知(默认全员接收)
+        "JOIN_GROUP_REQUEST": 1, //申请加群请求（只有管理员会收到）
+        "JOIN_GROUP_ACCEPT": 2, //申请加群被同意（只有申请人能够收到）
+        "JOIN_GROUP_REFUSE": 3, //申请加群被拒绝（只有申请人能够收到）
+        "KICK": 4, //被管理员踢出群(只有被踢者接收到)
+        "DESTORY": 5, //群被解散(全员接收)
+        "CREATE": 6, //创建群(创建者接收, 不展示)
+        "INVITED_JOIN_GROUP_REQUEST": 7, //邀请加群(被邀请者接收)
+        "QUIT": 8, //主动退群(主动退出者接收, 不展示)
+        "SET_ADMIN": 9, //设置管理员(被设置者接收)
+        "CANCEL_ADMIN": 10, //取消管理员(被取消者接收)
+        "REVOKE": 11, //群已被回收(全员接收, 不展示)
+        "READED": 15, //群消息已读同步
+        "CUSTOM": 255, //用户自定义通知(默认全员接收)
+        "INVITED_JOIN_GROUP_REQUEST_AGREE": 12, //邀请加群(被邀请者需同意)
     };
 
     //好友系统通知子类型
@@ -995,7 +1043,7 @@ var webim = { // namespace object webim
                     type_ch = '聊天室';
                     break;
                 case 'Private':
-                    type_ch = '讨论组';
+                        type_ch = '私有群'; //即讨论组
                     break;
                 case 'AVChatRoom':
                     type_ch = '直播聊天室';
@@ -1016,7 +1064,7 @@ var webim = { // namespace object webim
                 case '聊天室':
                     type_en = 'ChatRoom';
                     break;
-                case '讨论组':
+                    case '私有群': //即讨论组
                     type_en = 'Private';
                     break;
                 case '直播聊天室':
@@ -1277,6 +1325,24 @@ var webim = { // namespace object webim
         return Math.round(Math.random() * 4294967296);
     };
 
+    //获取ajax请求对象
+    var getXmlHttp = function() {
+        var xmlhttp = null;
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            try {
+                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (e) {
+                try {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                } catch (e) {
+                    return null;
+                }
+            }
+        }
+        return xmlhttp;
+    }
     //发起ajax请求
     var ajaxRequest = function (meth, url, req, timeout, isLongPolling, cbOk, cbErr) {
 
@@ -1300,7 +1366,23 @@ var webim = { // namespace object webim
                     if (cbErr) cbErr(error);
                 },16);
             }
-        });
+        };
+        xmlHttpObj.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        //设置超时时间
+        if (!timeout) {
+            timeout = ajaxDefaultTimeOut; //设置ajax默认超时时间
+        }
+        if (timeout) {
+            xmlHttpObj.timeout = timeout;
+            xmlHttpObj.ontimeout = function(event) {
+                xmlHttpObj = null;
+                //var errInfo = "请求服务器超时";
+                //var error = tool.getReturnError(errInfo, -3);
+                //if (cbErr) cbErr(error);
+            };
+        }
+        //
+        xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
     var ajaxRequestJson = function (meth, url, req, timeout, isLongPolling, cbOk, cbErr) {
@@ -1492,6 +1574,11 @@ var webim = { // namespace object webim
         clearSdk();
 
         if (options) opt = options;
+        if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
+            isAccessFormaEnvironment = false; //访问测试环境
+            log.error("请切换为正式环境");
+        }
+
         if (opt.isAccessFormalEnv == false) {
             log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
@@ -1796,7 +1883,11 @@ var webim = { // namespace object webim
                             }
                         );
                     }
-                    msgContent = {'UUID': elem.content.UUID, 'ImageInfoArray': ImageInfoArray};
+                    msgContent = {
+                        'ImageFormat': elem.content.ImageFormat,
+                        'UUID': elem.content.UUID,
+                        'ImageInfoArray': ImageInfoArray
+                    };
                     break;
                 case MSG_ELEMENT_TYPE.SOUND://
                     log.warn('web端暂不支持发送语音消息');
@@ -1946,7 +2037,7 @@ var webim = { // namespace object webim
     var proto_createGroup = function (options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
         var opt = {
-            //必填    群组形态，包括Public（公开群），Private（私密群），ChatRoom（聊天室），AVChatRoom（互动直播聊天室）。
+            //必填    群组形态，包括Public（公开群），Private（私有群），ChatRoom（聊天室），AVChatRoom（互动直播聊天室）。
             'Type': options.Type,
             //必填    群名称，最长30字节。
             'Name': options.Name
@@ -2044,7 +2135,7 @@ var webim = { // namespace object webim
                         MsgManager.setBigGroupLongPollingMsgMap(options.GroupId, 0);//收到的群消息置0
                         MsgManager.bigGroupLongPolling();//开启长轮询
                     } else {//没有返回LongPollingKey，说明申请加的群不是直播聊天室(AVChatRoom)
-                        cbErr && cbErr(tool.getReturnError("The type of group is not AVChatRoom: groupid=" + options.GroupId, -12));
+                        cbErr && cbErr(tool.getReturnError("Join Group succeed; But the type of group is not AVChatRoom: groupid=" + options.GroupId, -12));
                         return;
                     }
                 }
@@ -2083,6 +2174,58 @@ var webim = { // namespace object webim
                 } else {
                     if (cbErr) cbErr(err);
                 }
+            }
+        );
+    };
+
+    //获取群组未决列表
+    var proto_getPendencyGroup = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "get_pendency", {
+                'StartTime': options.StartTime,
+                'Limit': options.Limit,
+                'Handle_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+
+    //群组未决已经上报
+    var proto_getPendencyGroupRead = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "report_pendency", {
+                'ReportTime': options.ReportTime,
+                'From_Account': ctx.identifier
+            },
+            cbOk,
+            function(err) {
+
+            }
+        );
+    };
+
+    //处理被邀请进群申请(同意或拒绝)
+    var proto_handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        ConnManager.apiCall(SRV_NAME.GROUP, "handle_invite_join_group", {
+                'GroupId': options.GroupId,
+                'Inviter_Account': options.Inviter_Account,
+                'HandleMsg': options.HandleMsg,
+                'Authentication': options.Authentication,
+                'MsgKey': options.MsgKey,
+                'ApprovalMsg': options.ApprovalMsg,
+                'UserDefinedField': options.UserDefinedField
+            },
+            cbOk,
+            function(err) {
+
             }
         );
     };
@@ -2399,6 +2542,30 @@ var webim = { // namespace object webim
                 }
             }, cbErr);
     };
+
+    //删除会话
+    var proto_deleteChat = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+
+        if (options.chatType == 1) {
+            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
+                    'From_Account': ctx.identifier,
+                    'Type': options.chatType,
+                    'To_Account': options.To_Account
+                },
+                cbOk, cbErr);
+        } else {
+            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
+                    'From_Account': ctx.identifier,
+                    'Type': options.chatType,
+                    'ToGroupid': options.To_Account
+                },
+                cbOk, cbErr);
+
+        }
+
+    };
+
     //获取好友申请
     var proto_getPendency = function (options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -2408,6 +2575,15 @@ var webim = { // namespace object webim
                 "StartTime": options.StartTime,
                 "MaxLimited": options.MaxLimited,
                 "LastSequence": options.LastSequence
+            },
+            cbOk, cbErr);
+    };
+    //好友申请已读上报
+    var proto_getPendencyReport = function(options, cbOk, cbErr) {
+        if (!checkLogin(cbErr, true)) return;
+        ConnManager.apiCall(SRV_NAME.FRIEND, "PendencyReport", {
+                "From_Account": ctx.identifier,
+                "LatestPendencyTimeStamp": options.LatestPendencyTimeStamp
             },
             cbOk, cbErr);
     };
@@ -2461,7 +2637,11 @@ var webim = { // namespace object webim
 
     //资料接口
     //查看个人资料
-    var proto_getProfilePortrait = function (options, cbOk, cbErr) {
+    var proto_getProfilePortrait = function(options, cbOk, cbErr) {
+        if (options.To_Account.length > 100) {
+            options.To_Account.length = 100;
+            log.error('获取用户资料人数不能超过100人')
+        }
         if (!checkLogin(cbErr, true)) return;
         ConnManager.apiCall(SRV_NAME.PROFILE, "portrait_get", {
                 'From_Account': ctx.identifier,
@@ -2840,6 +3020,26 @@ var webim = { // namespace object webim
         this.toAccount = toAccount;
         this.lastedMsgTime = lastedMsgTime;
     }
+
+    var calcUniqId = function(num1, num2) {
+        var str1 = parseInt(num1).toString(2) + '00000000000000000000000000000000';
+        var str2 = parseInt(num2).toString(2);
+        var arr1 = str1.split('').reverse();
+        var arr2 = str2.split('').reverse();
+        var res = [];
+        var length = arr1.length > arr2.length ? arr1.length : arr2.length;
+        for (var a = 0; a < length; a++) {
+            sig = Number(arr1[a] || 0) || Number(arr2[a] || 0);
+            res.push(sig);
+        }
+        var numstr = res.reverse().join("");
+        var long = {
+            high: "0x" + parseInt(numstr.substr(0, numstr.length - 32), 2).toString(16),
+            low: "0x" + parseInt(numstr.substr(numstr.length - 32 - 1), 2).toString(16)
+        }
+        var longVal = new Long(long.low, long.high, true);
+        return longVal.toString();
+    };
     // class Msg
     var Msg = function (sess, isSend, seq, random, time, fromAccount, subType, fromAccountNick) {
         this.sess = sess;
@@ -2851,6 +3051,18 @@ var webim = { // namespace object webim
         this.random = random >= 0 ? random : createRandom();
         this.time = time >= 0 ? time : unixtime();
         this.elems = [];
+        var type = sess.type();
+        switch (type) {
+            case SESSION_TYPE.GROUP:
+                this.uniqueId = calcUniqId(this.seq, this.random);
+                break;
+            case SESSION_TYPE.C2C:
+            default:
+                this.uniqueId = calcUniqId(this.time, this.random);
+                break;
+        }
+
+
     };
     Msg.prototype.getSession = function () {
         return this.sess;
@@ -2881,6 +3093,9 @@ var webim = { // namespace object webim
     };
     Msg.prototype.getElems = function () {
         return this.elems;
+    };
+    Msg.prototype.getMsgUniqueId = function() {
+        return this.uniqueId;
     };
     //文本
     Msg.prototype.addText = function (text) {
@@ -2992,8 +3207,12 @@ var webim = { // namespace object webim
 
     //图片消息
     // class Msg.Elem.Images
-    Msg.Elem.Images = function (imageId) {
+    Msg.Elem.Images = function(imageId, format) {
         this.UUID = imageId;
+        if (typeof format !== 'number') {
+            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'], 10);
+        }
+        this.ImageFormat = format;
         this.ImageInfoArray = [];
     };
     Msg.Elem.Images.prototype.addImage = function (image) {
@@ -3014,6 +3233,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.Images.prototype.getImageId = function () {
         return this.UUID;
+    };
+    Msg.Elem.Images.prototype.getImageFormat = function() {
+        return this.ImageFormat;
     };
     Msg.Elem.Images.prototype.getImage = function (type) {
         for (var i in this.ImageInfoArray) {
@@ -3485,42 +3707,41 @@ var webim = { // namespace object webim
 
         var onMsgCallback = null;//新消息(c2c和group)回调
 
-        var onGroupInfoChangeCallback = null;//群资料变化回调
-        //收到新群系统消息回调列表
-        var onGroupSystemNotifyCallbacks = {
-            "1": null,
-            "2": null,
-            "3": null,
-            "4": null,
-            "5": null,
-            "6": null,
-            "7": null,
-            "8": null,
-            "9": null,
-            "10": null,
-            "11": null,
-            "15": null,
-            "255": null
-        };
-        //监听好友系统通知函数
-        var onFriendSystemNotifyCallbacks={
-            "1":null,
-            "2":null,
-            "3":null,
-            "4":null,
-            "5":null,
-            "6":null,
-            "7":null,
-            "8":null
-        };
+            var onGroupInfoChangeCallback = null; //群资料变化回调
+            //收到新群系统消息回调列表
+            var onGroupSystemNotifyCallbacks = {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null,
+                "5": null,
+                "6": null,
+                "7": null,
+                "8": null,
+                "9": null,
+                "10": null,
+                "11": null,
+                "15": null,
+                "255": null,
+                "12": null,
+            };
+            //监听好友系统通知函数
+            var onFriendSystemNotifyCallbacks = {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null,
+                "5": null,
+                "6": null,
+                "7": null,
+                "8": null
+            };
 
-        var onProfileSystemNotifyCallbacks= {
-            "1" :null
-        };
+            var onProfileSystemNotifyCallbacks = {
+                "1": null
+            };
 
-            var onKickedEventCall = null;
 
-            var onMsgReadCallback = null;
 
         //普通长轮询
         var longPollingOn = false;//是否开启普通长轮询
@@ -3528,13 +3749,19 @@ var webim = { // namespace object webim
         var notifySeq = 0;//c2c通知seq
         var noticeSeq = 0;//群消息seq
 
-        //大群长轮询
-        var onBigGroupMsgCallback = null;//大群消息回调
-        var bigGroupLongPollingOn = false;//是否开启长轮询
-        var bigGroupLongPollingStartSeq = 0;//请求拉消息的起始seq(大群长轮询)
-        var bigGroupLongPollingHoldTime = 90;//客户端长轮询的超时时间，单位是秒(大群长轮询)
-        var bigGroupLongPollingKey = null;//客户端加入群组后收到的的Key(大群长轮询)
-        var bigGroupLongPollingMsgMap = {};//记录收到的群消息数
+            //大群长轮询
+            var onBigGroupMsgCallback = null; //大群消息回调
+            var bigGroupLongPollingOn = false; //是否开启长轮询
+            var bigGroupLongPollingStartSeq = 0; //请求拉消息的起始seq(大群长轮询)
+            var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
+            var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
+            var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
+            var onC2cEventCallbacks = {
+                "92": null, //消息已读通知,
+                "96": null
+            };;
+            var onKickedEventCall = null; //多实例登录回调
+            var onAppliedDownloadUrl = null;
 
 
         var getLostGroupMsgCount = 0;//补拉丢失的群消息次数
@@ -3592,40 +3819,41 @@ var webim = { // namespace object webim
         //重置
         this.clear = function () {
 
-            onGroupInfoChangeCallback = null;
-            onGroupSystemNotifyCallbacks = {
-                "1": null,//申请加群请求（只有管理员会收到）
-                "2": null,//申请加群被同意（只有申请人能够收到）
-                "3": null,//申请加群被拒绝（只有申请人能够收到）
-                "4": null,//被管理员踢出群(只有被踢者接收到)
-                "5": null,//群被解散(全员接收)
-                "6": null,//创建群(创建者接收)
-                "7": null,//邀请加群(被邀请者接收)
-                "8": null,//主动退群(主动退出者接收)
-                "9": null,//设置管理员(被设置者接收)
-                "10": null,//取消管理员(被取消者接收)
-                "11": null,//群已被回收(全员接收)
-                "15": null,//群已被回收(全员接收)
-                "255": null//用户自定义通知(默认全员接收)
-            };
-            onFriendSystemNotifyCallbacks = {
-                "1": null,//好友表增加
-                "2": null,//好友表删除
-                "3": null,//未决增加
-                "4": null,//未决删除
-                "5": null,//黑名单增加
-                "6": null,//黑名单删除
-                "7": null,//未决已读上报
-                "8": null//好友信息(备注，分组)变更
-            };
-            onProfileSystemNotifyCallbacks = {
-                "1": null//资料修改
-            };
-            //重置普通长轮询参数
-            onMsgCallback = null;
-            longPollingOn = false;
-            notifySeq = 0;//c2c新消息通知seq
-            noticeSeq = 0;//group新消息seq
+                onGroupInfoChangeCallback = null;
+                onGroupSystemNotifyCallbacks = {
+                    "1": null, //申请加群请求（只有管理员会收到）
+                    "2": null, //申请加群被同意（只有申请人能够收到）
+                    "3": null, //申请加群被拒绝（只有申请人能够收到）
+                    "4": null, //被管理员踢出群(只有被踢者接收到)
+                    "5": null, //群被解散(全员接收)
+                    "6": null, //创建群(创建者接收)
+                    "7": null, //邀请加群(被邀请者接收)
+                    "8": null, //主动退群(主动退出者接收)
+                    "9": null, //设置管理员(被设置者接收)
+                    "10": null, //取消管理员(被取消者接收)
+                    "11": null, //群已被回收(全员接收)
+                    "15": null, //群已被回收(全员接收)
+                    "255": null, //用户自定义通知(默认全员接收)
+                    "12": null, //邀请加群(被邀请者需要同意)
+                };
+                onFriendSystemNotifyCallbacks = {
+                    "1": null, //好友表增加
+                    "2": null, //好友表删除
+                    "3": null, //未决增加
+                    "4": null, //未决删除
+                    "5": null, //黑名单增加
+                    "6": null, //黑名单删除
+                    "7": null, //未决已读上报
+                    "8": null //好友信息(备注，分组)变更
+                };
+                onProfileSystemNotifyCallbacks = {
+                    "1": null //资料修改
+                };
+                //重置普通长轮询参数
+                onMsgCallback = null;
+                longPollingOn = false;
+                notifySeq = 0; //c2c新消息通知seq
+                noticeSeq = 0; //group新消息seq
 
             //重置大群长轮询参数
             onBigGroupMsgCallback = null;
@@ -3923,70 +4151,76 @@ var webim = { // namespace object webim
                     groupSystemMsgsCache[key] = true;
                 }
 
-                var notify = {
-                    "SrcFlag": 0,
-                    "ReportType": reportType,
-                    "GroupId": groupTip.ToGroupId,
-                    "GroupName": groupTip.GroupInfo.GroupName,
-                    "Operator_Account": groupReportTypeMsg.Operator_Account,
-                    "MsgTime": groupTip.MsgTimeStamp,
-                    "groupReportTypeMsg" : groupReportTypeMsg
-                };
-                switch (reportType) {
-                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST://申请加群(只有管理员会接收到)
-                        notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
-                        notify["MsgKey"] = groupReportTypeMsg.MsgKey;
-                        notify["Authentication"] = groupReportTypeMsg.Authentication;
-                        notify["UserDefinedField"] = groupTip.UserDefinedField;
-                        notify["From_Account"] = groupTip.From_Account;
-                        notify["MsgSeq"] = groupTip.ClientSeq;
-                        notify["MsgRandom"] = groupTip.MsgRandom;
-                        break;
-                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_ACCEPT://申请加群被同意(只有申请人自己接收到)
-                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_REFUSE://申请加群被拒绝(只有申请人自己接收到)
-                        notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
-                        break;
-                    case GROUP_SYSTEM_TYPE.KICK://被管理员踢出群(只有被踢者接收到)
-                    case GROUP_SYSTEM_TYPE.DESTORY://群被解散(全员接收)
-                    case GROUP_SYSTEM_TYPE.CREATE://创建群(创建者接收, 不展示)
-                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST://邀请加群(被邀请者接收)
-                    case GROUP_SYSTEM_TYPE.QUIT://主动退群(主动退出者接收, 不展示)
-                    case GROUP_SYSTEM_TYPE.SET_ADMIN://群设置管理员(被设置者接收)
-                    case GROUP_SYSTEM_TYPE.CANCEL_ADMIN://取消管理员(被取消者接收)
-                    case GROUP_SYSTEM_TYPE.REVOKE://群已被回收(全员接收, 不展示)
-                        break;
-                    case GROUP_SYSTEM_TYPE.READED://群消息已读同步
-                        break;
-                    case GROUP_SYSTEM_TYPE.CUSTOM://用户自定义通知(默认全员接收)
-                        notify["MsgSeq"] = groupTip.MsgSeq;
-                        notify["UserDefinedField"] = groupReportTypeMsg.UserDefinedField;
-                        break;
-                    default:
-                        log.error("未知群系统消息类型：reportType=" + reportType);
-                        break;
-                }
-
-                if (isNeedValidRepeatMsg) {
-                    if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                        //回调
-                        if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+                    var notify = {
+                        "SrcFlag": 0,
+                        "ReportType": reportType,
+                        "GroupId": groupTip.ToGroupId,
+                        "GroupName": groupTip.GroupInfo.GroupName,
+                        "Operator_Account": groupReportTypeMsg.Operator_Account,
+                        "MsgTime": groupTip.MsgTimeStamp,
+                        "groupReportTypeMsg": groupReportTypeMsg
+                    };
+                    switch (reportType) {
+                        case GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST: //申请加群(只有管理员会接收到)
+                            notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
+                            notify["MsgKey"] = groupReportTypeMsg.MsgKey;
+                            notify["Authentication"] = groupReportTypeMsg.Authentication;
+                            notify["UserDefinedField"] = groupTip.UserDefinedField;
+                            notify["From_Account"] = groupTip.From_Account;
+                            notify["MsgSeq"] = groupTip.ClientSeq;
+                            notify["MsgRandom"] = groupTip.MsgRandom;
+                            break;
+                        case GROUP_SYSTEM_TYPE.JOIN_GROUP_ACCEPT: //申请加群被同意(只有申请人自己接收到)
+                        case GROUP_SYSTEM_TYPE.JOIN_GROUP_REFUSE: //申请加群被拒绝(只有申请人自己接收到)
+                            notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
+                            break;
+                        case GROUP_SYSTEM_TYPE.KICK: //被管理员踢出群(只有被踢者接收到)
+                        case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
+                        case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
+                        case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                        case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需同意)
+                        case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
+                        case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
+                        case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
+                        case GROUP_SYSTEM_TYPE.REVOKE: //群已被回收(全员接收, 不展示)
+                            break;
+                        case GROUP_SYSTEM_TYPE.READED: //群消息已读同步
+                            break;
+                        case GROUP_SYSTEM_TYPE.CUSTOM: //用户自定义通知(默认全员接收)
+                            notify["MsgSeq"] = groupTip.MsgSeq;
+                            notify["UserDefinedField"] = groupReportTypeMsg.UserDefinedField;
+                            break;
+                        default:
+                            log.error("未知群系统消息类型：reportType=" + reportType);
+                            break;
                     }
-                } else {
-                    //回调
-                    if (onGroupSystemNotifyCallbacks[reportType]) {
-                        if(reportType == GROUP_SYSTEM_TYPE.READED){
-                            var arr = notify.groupReportTypeMsg.GroupReadInfoArray;
-                            for(var i = 0 , l = arr.length; i < l ; i++){
-                                var item = arr[i];
-                                onGroupSystemNotifyCallbacks[reportType](item);
-                            }
-                        }else{
+
+                    if (isNeedValidRepeatMsg) {
+                        //注释只收取一种通知
+                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                        //回调
+                        if (onGroupSystemNotifyCallbacks[reportType]) {
                             onGroupSystemNotifyCallbacks[reportType](notify);
+                        } else {
+                            log.error("未知群系统消息类型：reportType=" + reportType);
+                        }
+                        //}
+                    } else {
+                        //回调
+                        if (onGroupSystemNotifyCallbacks[reportType]) {
+                            if (reportType == GROUP_SYSTEM_TYPE.READED) {
+                                var arr = notify.groupReportTypeMsg.GroupReadInfoArray;
+                                for (var i = 0, l = arr.length; i < l; i++) {
+                                    var item = arr[i];
+                                    onGroupSystemNotifyCallbacks[reportType](item);
+                                }
+                            } else {
+                                onGroupSystemNotifyCallbacks[reportType](notify);
+                            }
                         }
                     }
-                }
-            }//loop
-        };
+                } //loop
+            };
 
 
         //处理新的好友系统通知
@@ -4078,57 +4312,58 @@ var webim = { // namespace object webim
             }//loop
         };
 
-        //处理新的群系统消息(用于直播大群长轮询)
-        var handlerGroupSystemMsg = function (groupTip) {
-            var groupReportTypeMsg = groupTip.MsgBody;
-            var reportType = groupReportTypeMsg.ReportType;
-            var toAccount = groupTip.GroupInfo.To_Account;
-            //过滤本不应该给自己的系统消息
-            //if(!toAccount || toAccount!=ctx.identifier){
-            //    log.error("收到本不应该给自己的系统消息: To_Account="+toAccount);
-            //    continue;
-            //}
-            var notify = {
-                "SrcFlag": 1,
-                "ReportType": reportType,
-                "GroupId": groupTip.ToGroupId,
-                "GroupName": groupTip.GroupInfo.GroupName,
-                "Operator_Account": groupReportTypeMsg.Operator_Account,
-                "MsgTime": groupTip.MsgTimeStamp
-            };
-            switch (reportType) {
-                case GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST://申请加群(只有管理员会接收到)
-                    notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
-                    notify["MsgKey"] = groupReportTypeMsg.MsgKey;
-                    notify["Authentication"] = groupReportTypeMsg.Authentication;
-                    notify["UserDefinedField"] = groupTip.UserDefinedField;
-                    notify["From_Account"] = groupTip.From_Account;
-                    notify["MsgSeq"] = groupTip.ClientSeq;
-                    notify["MsgRandom"] = groupTip.MsgRandom;
-                    break;
-                case GROUP_SYSTEM_TYPE.JOIN_GROUP_ACCEPT://申请加群被同意(只有申请人自己接收到)
-                case GROUP_SYSTEM_TYPE.JOIN_GROUP_REFUSE://申请加群被拒绝(只有申请人自己接收到)
-                    notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
-                    break;
-                case GROUP_SYSTEM_TYPE.KICK://被管理员踢出群(只有被踢者接收到)
-                case GROUP_SYSTEM_TYPE.DESTORY://群被解散(全员接收)
-                case GROUP_SYSTEM_TYPE.CREATE://创建群(创建者接收, 不展示)
-                case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST://邀请加群(被邀请者接收)
-                case GROUP_SYSTEM_TYPE.QUIT://主动退群(主动退出者接收, 不展示)
-                case GROUP_SYSTEM_TYPE.SET_ADMIN://群设置管理员(被设置者接收)
-                case GROUP_SYSTEM_TYPE.CANCEL_ADMIN://取消管理员(被取消者接收)
-                case GROUP_SYSTEM_TYPE.REVOKE://群已被回收(全员接收, 不展示)
-                    break;
-                case GROUP_SYSTEM_TYPE.CUSTOM://用户自定义通知(默认全员接收)
-                    notify["MsgSeq"] = groupTip.MsgSeq;
-                    notify["UserDefinedField"] = groupReportTypeMsg.UserDefinedField;
-                    break;
-                default:
-                    log.error("未知群系统消息类型：reportType=" + reportType);
-                    break;
-            }
-            //回调
-            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
+            //处理新的群系统消息(用于直播大群长轮询)
+            var handlerGroupSystemMsg = function(groupTip) {
+                var groupReportTypeMsg = groupTip.MsgBody;
+                var reportType = groupReportTypeMsg.ReportType;
+                var toAccount = groupTip.GroupInfo.To_Account;
+                //过滤本不应该给自己的系统消息
+                //if(!toAccount || toAccount!=ctx.identifier){
+                //    log.error("收到本不应该给自己的系统消息: To_Account="+toAccount);
+                //    continue;
+                //}
+                var notify = {
+                    "SrcFlag": 1,
+                    "ReportType": reportType,
+                    "GroupId": groupTip.ToGroupId,
+                    "GroupName": groupTip.GroupInfo.GroupName,
+                    "Operator_Account": groupReportTypeMsg.Operator_Account,
+                    "MsgTime": groupTip.MsgTimeStamp
+                };
+                switch (reportType) {
+                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST: //申请加群(只有管理员会接收到)
+                        notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
+                        notify["MsgKey"] = groupReportTypeMsg.MsgKey;
+                        notify["Authentication"] = groupReportTypeMsg.Authentication;
+                        notify["UserDefinedField"] = groupTip.UserDefinedField;
+                        notify["From_Account"] = groupTip.From_Account;
+                        notify["MsgSeq"] = groupTip.ClientSeq;
+                        notify["MsgRandom"] = groupTip.MsgRandom;
+                        break;
+                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_ACCEPT: //申请加群被同意(只有申请人自己接收到)
+                    case GROUP_SYSTEM_TYPE.JOIN_GROUP_REFUSE: //申请加群被拒绝(只有申请人自己接收到)
+                        notify["RemarkInfo"] = groupReportTypeMsg.RemarkInfo;
+                        break;
+                    case GROUP_SYSTEM_TYPE.KICK: //被管理员踢出群(只有被踢者接收到)
+                    case GROUP_SYSTEM_TYPE.DESTORY: //群被解散(全员接收)
+                    case GROUP_SYSTEM_TYPE.CREATE: //创建群(创建者接收, 不展示)
+                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST: //邀请加群(被邀请者接收)
+                    case GROUP_SYSTEM_TYPE.INVITED_JOIN_GROUP_REQUEST_AGREE: //邀请加群(被邀请者需要同意)
+                    case GROUP_SYSTEM_TYPE.QUIT: //主动退群(主动退出者接收, 不展示)
+                    case GROUP_SYSTEM_TYPE.SET_ADMIN: //群设置管理员(被设置者接收)
+                    case GROUP_SYSTEM_TYPE.CANCEL_ADMIN: //取消管理员(被取消者接收)
+                    case GROUP_SYSTEM_TYPE.REVOKE: //群已被回收(全员接收, 不展示)
+                        break;
+                    case GROUP_SYSTEM_TYPE.CUSTOM: //用户自定义通知(默认全员接收)
+                        notify["MsgSeq"] = groupTip.MsgSeq;
+                        notify["UserDefinedField"] = groupReportTypeMsg.UserDefinedField;
+                        break;
+                    default:
+                        log.error("未知群系统消息类型：reportType=" + reportType);
+                        break;
+                }
+                //回调
+                if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
 
         };
 
@@ -4139,25 +4374,31 @@ var webim = { // namespace object webim
             }
         }
 
-        //处理C2C EVENT 消息通道Item
-        var handlerC2cEventMsg = function (notify) {
-            var subType = notify.SubMsgType;
-            switch (subType) {
-                case C2C_EVENT_SUB_TYPE.READED://已读通知
-                    break;
-                default:
-                    log.error("未知C2c系统消息：reportType=" + reportType);
-                    break;
-            }
-            // stopPolling = true;
-            //回调onMsgReadCallback
-            if(notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]){
-                for(var i = 0 ,l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l ; i++){
-                    var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
-                    onC2cEventCallbacks[subType](item);
+            //处理C2C EVENT 消息通道Item
+            var handlerC2cEventMsg = function(notify) {
+                var subType = notify.SubMsgType;
+                switch (subType) {
+                    case C2C_EVENT_SUB_TYPE.READED: //已读通知
+                        // stopPolling = true;
+                        //回调onMsgReadCallback
+                        if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
+                            for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
+                                var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
+                                onC2cEventCallbacks[subType](item);
+                            }
+                        }
+                        break;
+                    case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
+                        if (onC2cEventCallbacks[subType]) {
+                            onC2cEventCallbacks[subType]();
+                        }
+                        break;
+                    default:
+                        log.error("未知C2c系统消息：subType=" + subType);
+                        break;
                 }
-            }
-        };
+
+            };
 
         //长轮询
         this.longPolling = function (cbOk, cbErr) {
@@ -4182,69 +4423,73 @@ var webim = { // namespace object webim
                 });
             }
 
-            function doPolling(){
-                proto_longPolling(opts, function (resp) {
-                    for (var i in resp.EventArray) {
-                        var e = resp.EventArray[i];
-                        switch (e.Event) {
-                            case LONG_POLLINNG_EVENT_TYPE.C2C://c2c消息通知
-                                //更新C2C消息通知seq
-                                notifySeq = e.NotifySeq;
-                                log.warn("longpolling: received new c2c msg");
-                                //获取新消息
-                                MsgManager.syncMsgs();
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.GROUP_COMMON://普通群消息通知
-                                log.warn("longpolling: received new group msgs");
-                                handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupMsgArray);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP://（全员广播）群提示消息
-                                log.warn("longpolling: received new group tips");
-                                handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM://（多终端同步）群系统消息
-                                log.warn("longpolling: received new group system msgs");
-                                //false 表示 通过长轮询收到的群系统消息，可以不判重
-                                handlerGroupSystemMsgs(e.GroupTips, false);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.FRIEND_NOTICE://好友系统通知
-                                log.warn("longpolling: received new friend system notice");
-                                //false 表示 通过长轮询收到的好友系统通知，可以不判重
-                                handlerFriendSystemNotices(e.FriendListMod, false);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.PROFILE_NOTICE://资料系统通知
-                                log.warn("longpolling: received new profile system notice");
-                                //false 表示 通过长轮询收到的资料系统通知，可以不判重
-                                handlerProfileSystemNotices(e.ProfileDataMod, false);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.C2C_COMMON://c2c消息通知
-                                noticeSeq = e.C2cMsgArray[0].NoticeSeq;
-                                //更新C2C消息通知seq
-                                log.warn("longpolling: received new c2c_common msg",noticeSeq);
-                                handlerOrdinaryAndTipC2cMsgs(e.Event, e.C2cMsgArray);
-                                break;
-                            case LONG_POLLINNG_EVENT_TYPE.C2C_EVENT://c2c已读消息通知
-                                noticeSeq = e.C2cNotifyMsgArray[0].NoticeSeq;
-                                log.warn("longpolling: received new c2c_event msg");
-                                handlerC2cNotifyMsgArray(e.C2cNotifyMsgArray);
-                                break;
-                            default:
-                                log.error("longpolling收到未知新消息类型: Event=" + e.Event);
-                                break;
+                function doPolling() {
+                    proto_longPolling(opts, function(resp) {
+                        for (var i in resp.EventArray) {
+                            var e = resp.EventArray[i];
+                            switch (e.Event) {
+                                case LONG_POLLINNG_EVENT_TYPE.C2C: //c2c消息通知
+                                    //更新C2C消息通知seq
+                                    notifySeq = e.NotifySeq;
+                                    log.warn("longpolling: received new c2c msg");
+                                    //获取新消息
+                                    MsgManager.syncMsgs();
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_COMMON: //普通群消息通知
+                                    log.warn("longpolling: received new group msgs");
+                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupMsgArray);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP: //（全员广播）群提示消息
+                                    log.warn("longpolling: received new group tips");
+                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2: //群提示消息
+                                    log.warn("longpolling: received new group tips");
+                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
+                                    log.warn("longpolling: received new group system msgs");
+                                    //false 表示 通过长轮询收到的群系统消息，可以不判重
+                                    handlerGroupSystemMsgs(e.GroupTips, false);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.FRIEND_NOTICE: //好友系统通知
+                                    log.warn("longpolling: received new friend system notice");
+                                    //false 表示 通过长轮询收到的好友系统通知，可以不判重
+                                    handlerFriendSystemNotices(e.FriendListMod, false);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.PROFILE_NOTICE: //资料系统通知
+                                    log.warn("longpolling: received new profile system notice");
+                                    //false 表示 通过长轮询收到的资料系统通知，可以不判重
+                                    handlerProfileSystemNotices(e.ProfileDataMod, false);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.C2C_COMMON: //c2c消息通知
+                                    noticeSeq = e.C2cMsgArray[0].NoticeSeq;
+                                    //更新C2C消息通知seq
+                                    log.warn("longpolling: received new c2c_common msg", noticeSeq);
+                                    handlerOrdinaryAndTipC2cMsgs(e.Event, e.C2cMsgArray);
+                                    break;
+                                case LONG_POLLINNG_EVENT_TYPE.C2C_EVENT: //c2c已读消息通知
+                                    noticeSeq = e.C2cNotifyMsgArray[0].NoticeSeq;
+                                    log.warn("longpolling: received new c2c_event msg");
+                                    handlerC2cNotifyMsgArray(e.C2cNotifyMsgArray);
+                                    break;
+                                default:
+                                    log.error("longpolling收到未知新消息类型: Event=" + e.Event);
+                                    break;
+                            }
                         }
-                    }
-                    var successInfo = {
-                        'ActionStatus': ACTION_STATUS.OK,
-                        'ErrorCode': 0
-                    };
-                    updatecLongPollingStatus(successInfo);
-                }, function (err) {
-                    //log.error(err);
-                    updatecLongPollingStatus(err);
-                    if (cbErr) cbErr(err);
-                });
-            }
-        };
+                        var successInfo = {
+                            'ActionStatus': ACTION_STATUS.OK,
+                            'ErrorCode': 0
+                        };
+                        updatecLongPollingStatus(successInfo);
+                    }, function(err) {
+                        //log.error(err);
+                        updatecLongPollingStatus(err);
+                        if (cbErr) cbErr(err);
+                    });
+                }
+            };
 
 
         //大群 长轮询
@@ -4317,101 +4562,96 @@ var webim = { // namespace object webim
                 //重新启动长轮询
                 bigGroupLongPollingOn && MsgManager.bigGroupLongPolling();
 
-            }, function (err) {
-                //
-                if (err.ErrorCode != longPollingTimeOutErrorCode) {
-                    log.error(err.ErrorInfo);
-                    //记录长轮询返回错误次数
-                    curBigGroupLongPollingRetErrorCount++;
-                }
-                if (err.ErrorCode != longPollingKickedErrorCode) {
-                    //登出
-                    log.error("多实例登录，被kick");
-
-                    if (onKickedEventCall) {onKickedEventCall();}
-                    /*    return;
-                    proto_logout(function(){
-                        if (onKickedEventCall) {onKickedEventCall();}
-                    });*/
-                }
-                //累计超过一定次数，不再发起长轮询请求
-                if (curBigGroupLongPollingRetErrorCount < LONG_POLLING_MAX_RET_ERROR_COUNT) {
-                    bigGroupLongPollingOn && MsgManager.bigGroupLongPolling();
-                } else {
-                    var errInfo = {
-                        'ActionStatus': ACTION_STATUS.FAIL,
-                        'ErrorCode': CONNECTION_STATUS.OFF,
-                        'ErrorInfo': 'connection is off'
-                    };
-                    ConnManager.callBack(errInfo);
-                }
-                if (cbErr) cbErr(err);
+                }, function(err) {
+                    //
+                    if (err.ErrorCode != longPollingTimeOutErrorCode) {
+                        log.error(err.ErrorInfo);
+                        //记录长轮询返回错误次数
+                        curBigGroupLongPollingRetErrorCount++;
+                    }
+                    if (err.ErrorCode == longPollingKickedErrorCode) {
+                        //登出
+                        log.error("多实例登录，被kick");
+                        if (onKickedEventCall) {
+                            onKickedEventCall();
+                        }
+                    }
+                    //累计超过一定次数，不再发起长轮询请求
+                    if (curBigGroupLongPollingRetErrorCount < LONG_POLLING_MAX_RET_ERROR_COUNT) {
+                        bigGroupLongPollingOn && MsgManager.bigGroupLongPolling();
+                    } else {
+                        var errInfo = {
+                            'ActionStatus': ACTION_STATUS.FAIL,
+                            'ErrorCode': CONNECTION_STATUS.OFF,
+                            'ErrorInfo': 'connection is off'
+                        };
+                        ConnManager.callBack(errInfo);
+                    }
+                    if (cbErr) cbErr(err);
 
             }, bigGroupLongPollingHoldTime * 1000);
         };
 
-        //更新连接状态
-        var updatecLongPollingStatus = function (errObj) {
-            if (errObj.ErrorCode == 0 || errObj.ErrorCode == longPollingTimeOutErrorCode) {
-                curLongPollingRetErrorCount = 0;
-                longPollingOffCallbackFlag = false;
-                var errorInfo;
-                var isNeedCallback = false;
-                switch (curLongPollingStatus) {
-                    case CONNECTION_STATUS.INIT:
-                        isNeedCallback = true;
-                        curLongPollingStatus = CONNECTION_STATUS.ON;
-                        errorInfo = "create connection successfully(INIT->ON)";
-                        break;
-                    case CONNECTION_STATUS.ON:
-                        errorInfo = "connection is on...(ON->ON)";
-                        break;
-                    case CONNECTION_STATUS.RECONNECT:
-                        curLongPollingStatus = CONNECTION_STATUS.ON;
-                        errorInfo = "connection is on...(RECONNECT->ON)";
-                        break;
-                    case CONNECTION_STATUS.OFF:
-                        isNeedCallback = true;
-                        curLongPollingStatus = CONNECTION_STATUS.RECONNECT;
-                        errorInfo = "reconnect successfully(OFF->RECONNECT)";
-                        break;
-                }
-                var successInfo = {
-                    'ActionStatus': ACTION_STATUS.OK,
-                    'ErrorCode': curLongPollingStatus,
-                    'ErrorInfo': errorInfo
-                };
-                isNeedCallback && ConnManager.callBack(successInfo);
-                longPollingOn && MsgManager.longPolling();
-            } else if( errObj.ErrorCode == longPollingKickedErrorCode){
-                //登出
-                log.error("多实例登录，被kick");
-                    if (onKickedEventCall) {onKickedEventCall();}
-                //     return;
-                // proto_logout(function(){
-                //     if (onKickedEventCall) {onKickedEventCall();}
-                // });
-            }else {
-                //记录长轮询返回解析json错误次数
-                curLongPollingRetErrorCount++;
-                log.warn("longPolling接口第" + curLongPollingRetErrorCount + "次报错: " + errObj.ErrorInfo);
-                //累计超过一定次数
-                if (curLongPollingRetErrorCount <= LONG_POLLING_MAX_RET_ERROR_COUNT) {
-                    setTimeout(startNextLongPolling, 100);//
-                } else {
-                    curLongPollingStatus = CONNECTION_STATUS.OFF;
-                    var errInfo = {
-                        'ActionStatus': ACTION_STATUS.FAIL,
-                        'ErrorCode': CONNECTION_STATUS.OFF,
-                        'ErrorInfo': 'connection is off'
+            //更新连接状态
+            var updatecLongPollingStatus = function(errObj) {
+                if (errObj.ErrorCode == 0 || errObj.ErrorCode == longPollingTimeOutErrorCode) {
+                    curLongPollingRetErrorCount = 0;
+                    longPollingOffCallbackFlag = false;
+                    var errorInfo;
+                    var isNeedCallback = false;
+                    switch (curLongPollingStatus) {
+                        case CONNECTION_STATUS.INIT:
+                            isNeedCallback = true;
+                            curLongPollingStatus = CONNECTION_STATUS.ON;
+                            errorInfo = "create connection successfully(INIT->ON)";
+                            break;
+                        case CONNECTION_STATUS.ON:
+                            errorInfo = "connection is on...(ON->ON)";
+                            break;
+                        case CONNECTION_STATUS.RECONNECT:
+                            curLongPollingStatus = CONNECTION_STATUS.ON;
+                            errorInfo = "connection is on...(RECONNECT->ON)";
+                            break;
+                        case CONNECTION_STATUS.OFF:
+                            isNeedCallback = true;
+                            curLongPollingStatus = CONNECTION_STATUS.RECONNECT;
+                            errorInfo = "reconnect successfully(OFF->RECONNECT)";
+                            break;
+                    }
+                    var successInfo = {
+                        'ActionStatus': ACTION_STATUS.OK,
+                        'ErrorCode': curLongPollingStatus,
+                        'ErrorInfo': errorInfo
                     };
-                    longPollingOffCallbackFlag == false && ConnManager.callBack(errInfo);
-                    longPollingOffCallbackFlag = true;
-                    log.warn(longPollingIntervalTime + "毫秒之后,SDK会发起新的longPolling请求...");
-                    setTimeout(startNextLongPolling, longPollingIntervalTime);//长轮询接口报错次数达到一定值，每间隔5s发起新的长轮询
+                    isNeedCallback && ConnManager.callBack(successInfo);
+                    longPollingOn && MsgManager.longPolling();
+                } else if (errObj.ErrorCode == longPollingKickedErrorCode) {
+                    //登出
+                    log.error("多实例登录，被kick");
+                    if (onKickedEventCall) {
+                        onKickedEventCall();
+                    }
+                } else {
+                    //记录长轮询返回解析json错误次数
+                    curLongPollingRetErrorCount++;
+                    log.warn("longPolling接口第" + curLongPollingRetErrorCount + "次报错: " + errObj.ErrorInfo);
+                    //累计超过一定次数
+                    if (curLongPollingRetErrorCount <= LONG_POLLING_MAX_RET_ERROR_COUNT) {
+                        setTimeout(startNextLongPolling, 100); //
+                    } else {
+                        curLongPollingStatus = CONNECTION_STATUS.OFF;
+                        var errInfo = {
+                            'ActionStatus': ACTION_STATUS.FAIL,
+                            'ErrorCode': CONNECTION_STATUS.OFF,
+                            'ErrorInfo': 'connection is off'
+                        };
+                        longPollingOffCallbackFlag == false && ConnManager.callBack(errInfo);
+                        longPollingOffCallbackFlag = true;
+                        log.warn(longPollingIntervalTime + "毫秒之后,SDK会发起新的longPolling请求...");
+                        setTimeout(startNextLongPolling, longPollingIntervalTime); //长轮询接口报错次数达到一定值，每间隔5s发起新的长轮询
+                    }
                 }
-            }
-        };
+            };
 
          //处理收到的普通C2C消息
         var handlerOrdinaryAndTipC2cMsgs = function (eventType, C2cMsgArray) {
@@ -4456,7 +4696,8 @@ var webim = { // namespace object webim
                                 break;
                             case MSG_ELEMENT_TYPE.IMAGE:
                                 msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID
+                                    msgBody.MsgContent.UUID,
+                                    msgBody.MsgContent.ImageFormat || ""
                                 );
                                 for (var j in msgBody.MsgContent.ImageInfoArray) {
                                     var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -4552,22 +4793,23 @@ var webim = { // namespace object webim
             longPollingOn && MsgManager.longPolling();
         };
 
-        //处理未决的加群申请消息列表
-        var handlerApplyJoinGroupSystemMsgs = function (eventArray) {
-            for (var i in eventArray) {
-                var e = eventArray[i];
-                switch (e.Event) {
-                    case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM://（多终端同步）群系统消息
-                        log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
-                        //true 表示 解决加群申请通知存在重复的问题（已处理的通知，下次登录还会拉到），需要判重
-                        handlerGroupSystemMsgs(e.GroupTips, true);
-                        break;
-                    default:
-                        log.error("syncMsgs收到未知的群系统消息类型: Event=" + e.Event);
-                        break;
+            //处理未决的加群申请消息列表
+            var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
+                for (var i in eventArray) {
+                    var e = eventArray[i];
+                    handlerGroupSystemMsgs(e.GroupTips, true);
+                    switch (e.Event) {
+                        case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
+                            log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
+                            //true 表示 解决加群申请通知存在重复的问题（已处理的通知，下次登录还会拉到），需要判重
+                            handlerGroupSystemMsgs(e.GroupTips, true);
+                            break;
+                        default:
+                            log.error("syncMsgs收到未知的群系统消息类型: Event=" + e.Event);
+                            break;
+                    }
                 }
-            }
-        };
+            };
 
         //拉取c2c消息(包含加群未决消息，需要处理)
         this.syncMsgs = function (cbOk, cbErr) {
@@ -4583,107 +4825,107 @@ var webim = { // namespace object webim
                 msgInfos = resp.MsgList;//返回的消息列表
                 MsgStore.cookie = resp.Cookie;//cookies，记录当前读到的最新消息位置
 
-                for (var i in msgInfos) {
-                    var msgInfo = msgInfos[i];
-                    var isSendMsg, id, headUrl;
-                    if (msgInfo.From_Account == ctx.identifier) {//当前用户发送的消息
-                        isSendMsg = true;
-                        id = msgInfo.To_Account;//读取接收者信息
-                        headUrl = '';
-                    } else {//当前用户收到的消息
-                        isSendMsg = false;
-                        id = msgInfo.From_Account;//读取发送者信息
-                        headUrl = '';
-                    }
-                    var sess = MsgStore.sessByTypeId(SESSION_TYPE.C2C, id);
-                    if (!sess) {
-                        sess = new Session(SESSION_TYPE.C2C, id, id, headUrl, 0, 0);
-                    }
-                    var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account);
-                    var msgBody = null;
-                    var msgContent = null;
-                    var msgType = null;
-                    for (var mi in msgInfo.MsgBody) {
-                        msgBody = msgInfo.MsgBody[mi];
-                        msgType = msgBody.MsgType;
-                        switch (msgType) {
-                            case MSG_ELEMENT_TYPE.TEXT:
-                                msgContent = new Msg.Elem.Text(msgBody.MsgContent.Text);
-                                break;
-                            case MSG_ELEMENT_TYPE.FACE:
-                                msgContent = new Msg.Elem.Face(
-                                    msgBody.MsgContent.Index,
-                                    msgBody.MsgContent.Data
-                                );
-                                break;
-                            case MSG_ELEMENT_TYPE.IMAGE:
-                                msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID
-                                );
-                                for (var j in msgBody.MsgContent.ImageInfoArray) {
-                                    var tempImg = msgBody.MsgContent.ImageInfoArray[j];
-                                    msgContent.addImage(
-                                        new Msg.Elem.Images.Image(
-                                            tempImg.Type,
-                                            tempImg.Size,
-                                            tempImg.Width,
-                                            tempImg.Height,
-                                            tempImg.URL
-                                        )
+                    for (var i in msgInfos) {
+                        var msgInfo = msgInfos[i];
+                        var isSendMsg, id, headUrl;
+                        if (msgInfo.From_Account == ctx.identifier) { //当前用户发送的消息
+                            isSendMsg = true;
+                            id = msgInfo.To_Account; //读取接收者信息
+                            headUrl = '';
+                        } else { //当前用户收到的消息
+                            isSendMsg = false;
+                            id = msgInfo.From_Account; //读取发送者信息
+                            headUrl = '';
+                        }
+                        var sess = MsgStore.sessByTypeId(SESSION_TYPE.C2C, id);
+                        if (!sess) {
+                            sess = new Session(SESSION_TYPE.C2C, id, id, headUrl, 0, 0);
+                        }
+                        var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account);
+                        var msgBody = null;
+                        var msgContent = null;
+                        var msgType = null;
+                        for (var mi in msgInfo.MsgBody) {
+                            msgBody = msgInfo.MsgBody[mi];
+                            msgType = msgBody.MsgType;
+                            switch (msgType) {
+                                case MSG_ELEMENT_TYPE.TEXT:
+                                    msgContent = new Msg.Elem.Text(msgBody.MsgContent.Text);
+                                    break;
+                                case MSG_ELEMENT_TYPE.FACE:
+                                    msgContent = new Msg.Elem.Face(
+                                        msgBody.MsgContent.Index,
+                                        msgBody.MsgContent.Data
                                     );
-                                }
-                                break;
-                            case MSG_ELEMENT_TYPE.SOUND:
-                                // var soundUrl = getSoundDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account);
-                                if (msgBody.MsgContent) {
-                                    msgContent = new Msg.Elem.Sound(
+                                    break;
+                                case MSG_ELEMENT_TYPE.IMAGE:
+                                    msgContent = new Msg.Elem.Images(
                                         msgBody.MsgContent.UUID,
-                                        msgBody.MsgContent.Second,
-                                        msgBody.MsgContent.Size,
-                                        msgInfo.From_Account,
-                                        msgInfo.To_Account,
-                                        msgBody.MsgContent.Download_Flag,
-                                        SESSION_TYPE.C2C
+                                        msgBody.MsgContent.ImageFormat
                                     );
-                                } else {
-                                    msgType = MSG_ELEMENT_TYPE.TEXT;
-                                    msgContent = new Msg.Elem.Text('[语音消息]下载地址解析出错');
-                                }
-                                break;
-                            case MSG_ELEMENT_TYPE.LOCATION:
-                                msgContent = new Msg.Elem.Location(
-                                    msgBody.MsgContent.Longitude,
-                                    msgBody.MsgContent.Latitude,
-                                    msgBody.MsgContent.Desc
-                                );
-                                break;
-                            case MSG_ELEMENT_TYPE.FILE:
-                            case MSG_ELEMENT_TYPE.FILE + " ":
-                                msgType = MSG_ELEMENT_TYPE.FILE;
-                                // var fileUrl = getFileDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account, msgBody.MsgContent.FileName);
-                                if (msgBody.MsgContent) {
-                                    msgContent = new Msg.Elem.File(
-                                        msgBody.MsgContent.UUID,
-                                        msgBody.MsgContent.FileName,
-                                        msgBody.MsgContent.FileSize,
-                                        msgInfo.From_Account,
-                                        msgInfo.To_Account,
-                                        msgBody.MsgContent.Download_Flag,
-                                        SESSION_TYPE.C2C
-                                    );
-                                } else {
-                                    msgType = MSG_ELEMENT_TYPE.TEXT;
-                                    msgContent = new Msg.Elem.Text('[文件消息下载地址解析出错]');
-                                }
-                                break;
-                            case MSG_ELEMENT_TYPE.CUSTOM:
-                                try {
-                                    var data = JSON.parse(msgBody.MsgContent.Data);
-                                    if (data && data.userAction && data.userAction == FRIEND_WRITE_MSG_ACTION.ING) {//过滤安卓或ios的正在输入自定义消息
-                                        continue;
+                                    for (var j in msgBody.MsgContent.ImageInfoArray) {
+                                        var tempImg = msgBody.MsgContent.ImageInfoArray[j];
+                                        msgContent.addImage(
+                                            new Msg.Elem.Images.Image(
+                                                tempImg.Type,
+                                                tempImg.Size,
+                                                tempImg.Width,
+                                                tempImg.Height,
+                                                tempImg.URL
+                                            )
+                                        );
                                     }
-                                } catch (e) {
-                                }
+                                    break;
+                                case MSG_ELEMENT_TYPE.SOUND:
+                                    // var soundUrl = getSoundDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account);
+                                    if (msgBody.MsgContent) {
+                                        msgContent = new Msg.Elem.Sound(
+                                            msgBody.MsgContent.UUID,
+                                            msgBody.MsgContent.Second,
+                                            msgBody.MsgContent.Size,
+                                            msgInfo.From_Account,
+                                            msgInfo.To_Account,
+                                            msgBody.MsgContent.Download_Flag,
+                                            SESSION_TYPE.C2C
+                                        );
+                                    } else {
+                                        msgType = MSG_ELEMENT_TYPE.TEXT;
+                                        msgContent = new Msg.Elem.Text('[语音消息]下载地址解析出错');
+                                    }
+                                    break;
+                                case MSG_ELEMENT_TYPE.LOCATION:
+                                    msgContent = new Msg.Elem.Location(
+                                        msgBody.MsgContent.Longitude,
+                                        msgBody.MsgContent.Latitude,
+                                        msgBody.MsgContent.Desc
+                                    );
+                                    break;
+                                case MSG_ELEMENT_TYPE.FILE:
+                                case MSG_ELEMENT_TYPE.FILE + " ":
+                                    msgType = MSG_ELEMENT_TYPE.FILE;
+                                    // var fileUrl = getFileDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account, msgBody.MsgContent.FileName);
+                                    if (msgBody.MsgContent) {
+                                        msgContent = new Msg.Elem.File(
+                                            msgBody.MsgContent.UUID,
+                                            msgBody.MsgContent.FileName,
+                                            msgBody.MsgContent.FileSize,
+                                            msgInfo.From_Account,
+                                            msgInfo.To_Account,
+                                            msgBody.MsgContent.Download_Flag,
+                                            SESSION_TYPE.C2C
+                                        );
+                                    } else {
+                                        msgType = MSG_ELEMENT_TYPE.TEXT;
+                                        msgContent = new Msg.Elem.Text('[文件消息下载地址解析出错]');
+                                    }
+                                    break;
+                                case MSG_ELEMENT_TYPE.CUSTOM:
+                                    try {
+                                        var data = JSON.parse(msgBody.MsgContent.Data);
+                                        if (data && data.userAction && data.userAction == FRIEND_WRITE_MSG_ACTION.ING) { //过滤安卓或ios的正在输入自定义消息
+                                            continue;
+                                        }
+                                    } catch (e) {}
 
                                 msgType = MSG_ELEMENT_TYPE.CUSTOM;
                                 msgContent = new Msg.Elem.Custom(
@@ -4797,22 +5039,23 @@ var webim = { // namespace object webim
                                 break;
                             case MSG_ELEMENT_TYPE.IMAGE:
                                 msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID
-                                );
-                                for (var j in msgBody.MsgContent.ImageInfoArray) {
-                                    var tempImg = msgBody.MsgContent.ImageInfoArray[j];
-                                    msgContent.addImage(
-                                        new Msg.Elem.Images.Image(
-                                            tempImg.Type,
-                                            tempImg.Size,
-                                            tempImg.Width,
-                                            tempImg.Height,
-                                            tempImg.URL
-                                        )
+                                        msgBody.MsgContent.UUID,
+                                        msgBody.MsgContent.ImageFormat
                                     );
-                                }
-                                break;
-                            case MSG_ELEMENT_TYPE.SOUND:
+                                    for (var j in msgBody.MsgContent.ImageInfoArray) {
+                                        var tempImg = msgBody.MsgContent.ImageInfoArray[j];
+                                        msgContent.addImage(
+                                            new Msg.Elem.Images.Image(
+                                                tempImg.Type,
+                                                tempImg.Size,
+                                                tempImg.Width,
+                                                tempImg.Height,
+                                                tempImg.URL
+                                            )
+                                        );
+                                    }
+                                    break;
+                                case MSG_ELEMENT_TYPE.SOUND:
 
                                 // var soundUrl = getSoundDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account);
 
@@ -4959,7 +5202,7 @@ var webim = { // namespace object webim
             if (msgInfo.IsPlaceMsg || !msgInfo.From_Account || !msgInfo.MsgBody || msgInfo.MsgBody.length == 0) {
                 return null;
             }
-            var isSendMsg, id, headUrl, fromAccountNick;
+                var isSendMsg, id, headUrl, fromAccountNick, fromAccountHeadurl;
             var group_id = msgInfo.ToGroupId;
             var group_name = group_id;
             if (msgInfo.GroupInfo) {//取出群名称
@@ -4969,34 +5212,40 @@ var webim = { // namespace object webim
             }
             //取出成员昵称
             fromAccountNick = msgInfo.From_Account;
+                //fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
             if (msgInfo.GroupInfo) {
                 if (msgInfo.GroupInfo.From_AccountNick) {
                     fromAccountNick = msgInfo.GroupInfo.From_AccountNick;
+                    }
+                    if (msgInfo.GroupInfo.From_AccountHeadurl) {
+                        fromAccountHeadurl = msgInfo.GroupInfo.From_AccountHeadurl;
+                    } else {
+                        fromAccountHeadurl = null;
+                    }
                 }
-            }
-            if (msgInfo.From_Account == ctx.identifier) {//当前用户发送的消息
-                isSendMsg = true;
-                id = msgInfo.From_Account;//读取接收者信息
-                headUrl = '';
-            } else {//当前用户收到的消息
-                isSendMsg = false;
-                id = msgInfo.From_Account;//读取发送者信息
-                headUrl = '';
-            }
-            var sess = MsgStore.sessByTypeId(SESSION_TYPE.GROUP, group_id);
-            if (!sess) {
-                sess = new Session(SESSION_TYPE.GROUP, group_id, group_name, headUrl, 0, 0);
-            }
-            if(typeof isFinished !=="undefined") {
-                sess.isFinished(isFinished || 0);
-            }
-            var subType = GROUP_MSG_SUB_TYPE.COMMON;//消息类型
-            //群提示消息,重新封装下
-            if (LONG_POLLINNG_EVENT_TYPE.GROUP_TIP == msgInfo.Event || LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2 == msgInfo.Event) {
-                subType = GROUP_MSG_SUB_TYPE.TIP;
-                var groupTip = msgInfo.MsgBody;
-                msgInfo.MsgBody = [];
-                msgInfo.MsgBody.push({
+                if (msgInfo.From_Account == ctx.identifier) { //当前用户发送的消息
+                    isSendMsg = true;
+                    id = msgInfo.From_Account; //读取接收者信息
+                    headUrl = '';
+                } else { //当前用户收到的消息
+                    isSendMsg = false;
+                    id = msgInfo.From_Account; //读取发送者信息
+                    headUrl = '';
+                }
+                var sess = MsgStore.sessByTypeId(SESSION_TYPE.GROUP, group_id);
+                if (!sess) {
+                    sess = new Session(SESSION_TYPE.GROUP, group_id, group_name, headUrl, 0, 0);
+                }
+                if (typeof isFinished !== "undefined") {
+                    sess.isFinished(isFinished || 0);
+                }
+                var subType = GROUP_MSG_SUB_TYPE.COMMON; //消息类型
+                //群提示消息,重新封装下
+                if (LONG_POLLINNG_EVENT_TYPE.GROUP_TIP == msgInfo.Event || LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2 == msgInfo.Event) {
+                    subType = GROUP_MSG_SUB_TYPE.TIP;
+                    var groupTip = msgInfo.MsgBody;
+                    msgInfo.MsgBody = [];
+                    msgInfo.MsgBody.push({
                         "MsgType": MSG_ELEMENT_TYPE.GROUP_TIP,
                         "MsgContent": groupTip
                     }
@@ -5009,7 +5258,7 @@ var webim = { // namespace object webim
                 }
 
             }
-            var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick);
+                var msg = new Msg(sess, isSendMsg, msgInfo.MsgSeq, msgInfo.MsgRandom, msgInfo.MsgTimeStamp, msgInfo.From_Account, subType, fromAccountNick, fromAccountHeadurl);
             var msgBody = null;
             var msgContent = null;
             var msgType = null;
@@ -5028,47 +5277,48 @@ var webim = { // namespace object webim
                         break;
                     case MSG_ELEMENT_TYPE.IMAGE:
                         msgContent = new Msg.Elem.Images(
-                            msgBody.MsgContent.UUID
-                        );
-                        for (var j in msgBody.MsgContent.ImageInfoArray) {
-                            msgContent.addImage(
-                                new Msg.Elem.Images.Image(
-                                    msgBody.MsgContent.ImageInfoArray[j].Type,
-                                    msgBody.MsgContent.ImageInfoArray[j].Size,
-                                    msgBody.MsgContent.ImageInfoArray[j].Width,
-                                    msgBody.MsgContent.ImageInfoArray[j].Height,
-                                    msgBody.MsgContent.ImageInfoArray[j].URL
-                                )
-                            );
-                        }
-                        break;
-                    case MSG_ELEMENT_TYPE.SOUND:
-                       if (msgBody.MsgContent) {
-                            msgContent = new Msg.Elem.Sound(
                                 msgBody.MsgContent.UUID,
-                                msgBody.MsgContent.Second,
-                                msgBody.MsgContent.Size,
-                                msgInfo.From_Account,
-                                msgInfo.To_Account,
-                                msgBody.MsgContent.Download_Flag,
-                                SESSION_TYPE.GROUP
+                                msgBody.MsgContent.ImageFormat || ""
                             );
-                        } else {
-                            msgType = MSG_ELEMENT_TYPE.TEXT;
-                            msgContent = new Msg.Elem.Text('[语音消息]下载地址解析出错');
-                        }
-                        break;
-                    case MSG_ELEMENT_TYPE.LOCATION:
-                        msgContent = new Msg.Elem.Location(
-                            msgBody.MsgContent.Longitude,
-                            msgBody.MsgContent.Latitude,
-                            msgBody.MsgContent.Desc
-                        );
-                        break;
-                    case MSG_ELEMENT_TYPE.FILE:
-                    case MSG_ELEMENT_TYPE.FILE + " ":
-                        msgType = MSG_ELEMENT_TYPE.FILE;
-                        var fileUrl = getFileDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account, msgBody.MsgContent.FileName);
+                            for (var j in msgBody.MsgContent.ImageInfoArray) {
+                                msgContent.addImage(
+                                    new Msg.Elem.Images.Image(
+                                        msgBody.MsgContent.ImageInfoArray[j].Type,
+                                        msgBody.MsgContent.ImageInfoArray[j].Size,
+                                        msgBody.MsgContent.ImageInfoArray[j].Width,
+                                        msgBody.MsgContent.ImageInfoArray[j].Height,
+                                        msgBody.MsgContent.ImageInfoArray[j].URL
+                                    )
+                                );
+                            }
+                            break;
+                        case MSG_ELEMENT_TYPE.SOUND:
+                            if (msgBody.MsgContent) {
+                                msgContent = new Msg.Elem.Sound(
+                                    msgBody.MsgContent.UUID,
+                                    msgBody.MsgContent.Second,
+                                    msgBody.MsgContent.Size,
+                                    msgInfo.From_Account,
+                                    msgInfo.To_Account,
+                                    msgBody.MsgContent.Download_Flag,
+                                    SESSION_TYPE.GROUP
+                                );
+                            } else {
+                                msgType = MSG_ELEMENT_TYPE.TEXT;
+                                msgContent = new Msg.Elem.Text('[语音消息]下载地址解析出错');
+                            }
+                            break;
+                        case MSG_ELEMENT_TYPE.LOCATION:
+                            msgContent = new Msg.Elem.Location(
+                                msgBody.MsgContent.Longitude,
+                                msgBody.MsgContent.Latitude,
+                                msgBody.MsgContent.Desc
+                            );
+                            break;
+                        case MSG_ELEMENT_TYPE.FILE:
+                        case MSG_ELEMENT_TYPE.FILE + " ":
+                            msgType = MSG_ELEMENT_TYPE.FILE;
+                            var fileUrl = getFileDownUrl(msgBody.MsgContent.UUID, msgInfo.From_Account, msgBody.MsgContent.FileName);
 
                         if (msgBody.MsgContent) {
                             msgContent = new Msg.Elem.File(
@@ -5815,6 +6065,21 @@ var webim = { // namespace object webim
         return proto_handleApplyJoinGroupPendency(options, cbOk, cbErr);
     };
 
+    //获取群组未决列表
+    webim.getPendencyGroup = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroup(options, cbOk, cbErr);
+    };
+
+    //群未决已读上报
+    webim.getPendencyGroupRead = function(options, cbOk, cbErr) {
+        return proto_getPendencyGroupRead(options, cbOk, cbErr);
+    };
+
+    //处理邀请进群申请(同意或拒绝)
+    webim.handleInviteJoinGroupRequest = function(options, cbOk, cbErr) {
+        return proto_handleInviteJoinGroupRequest(options, cbOk, cbErr);
+    };
+
     //删除加群申请
     webim.deleteApplyJoinGroupPendency = function (options, cbOk, cbErr) {
         return proto_deleteC2CMsg(options, cbOk, cbErr);
@@ -5909,6 +6174,10 @@ var webim = { // namespace object webim
     webim.getPendency = function (options, cbOk, cbErr) {
         return proto_getPendency(options, cbOk, cbErr);
     };
+    //好友申请列表已读上报
+    webim.getPendencyReport = function(options, cbOk, cbErr) {
+        return proto_getPendencyReport(options, cbOk, cbErr);
+    };
     //删除好友申请
     webim.deletePendency = function (options, cbOk, cbErr) {
         return proto_deletePendency(options, cbOk, cbErr);
@@ -5920,6 +6189,10 @@ var webim = { // namespace object webim
     //获取我的好友
     webim.getAllFriend = function (options, cbOk, cbErr) {
         return proto_getAllFriend(options, cbOk, cbErr);
+    };
+    //删除会话
+    webim.deleteChat = function(options, cbOk, cbErr) {
+        return proto_deleteChat(options, cbOk, cbErr);
     };
     //删除好友
     webim.deleteFriend = function (options, cbOk, cbErr) {
