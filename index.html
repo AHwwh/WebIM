@@ -2207,7 +2207,8 @@
             "10": onCanceledGroupAdminNotify, //取消管理员(被取消者接收)
             "11": onRevokeGroupNotify, //群已被回收(全员接收)
             "15": onReadedSyncGroupNotify, //群消息已读同步通知
-            "255": onCustomGroupNotify //用户自定义通知(默认全员接收)
+            "255": onCustomGroupNotify, //用户自定义通知(默认全员接收)
+            "12":onInvitedJoinGroupNotifyRequest//邀请加群(被邀请者接收,接收者需要同意)
         };
 
         //监听好友系统通知函数对象，方法都定义在receive_friend_system_msg.js文件中

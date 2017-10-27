@@ -80,11 +80,13 @@ function onInvitedJoinGroupNotify(notify) {
 
 function onInvitedJoinGroupNotifyRequest(notify) {
     var timestamp = notify.MsgTime;
+    var data = [];
     notify.MsgTimeStamp = timestamp;
     notify.MsgTime = webim.Tool.formatTimeStamp(notify.MsgTime);
     data.push(notify);
+    $('#get_apply_join_group_pendency_table').bootstrapTable('append', data);
     $('#get_apply_join_group_pendency_dialog').modal('show');
-    addGroupSystemMsg(notify.ReportType, reportTypeCh, notify.GroupId, notify.GroupName, content, timestamp);
+    addGroupSystemMsg(notify.ReportType, notify.GroupId, notify.GroupName, timestamp);
 }
 
 //监听 主动退群 系统消息
