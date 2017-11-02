@@ -1,7 +1,7 @@
 ## Web IMSDK的微信小程序接入
 ##### 1.设置微信公众后台，添加request合法域名
 
-http://webim.tim.qq.com
+https://webim.tim.qq.com
 
 https://tls.qcloud.com
 
