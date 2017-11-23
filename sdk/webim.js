@@ -2893,12 +2893,20 @@ var webim = { // namespace object webim
                 var rspMsgCount = resp.MaxCnt;
                 var msgKey = resp.MsgKey;
                 var lastMsgTime = resp.LastMsgTime;
+                var tempMsgList = [];
 
                 if (resp.MsgList && resp.MsgList.length) {
                     for (var i in resp.MsgList) {
-                        tempC2CHistoryMsgList.push(resp.MsgList[i]);
+                        tempMsgList.push(resp.MsgList[i]);
                     }
                 }
+
+                if(tempC2CHistoryMsgList && tempC2CHistoryMsgList.length > 0 ){
+                    tempC2CHistoryMsgList = tempMsgList.concat(tempC2CHistoryMsgList)
+                }else{
+                    tempC2CHistoryMsgList = tempMsgList
+                }
+
                 var netxOptions = null;
                 if (complete == 0) { //还有历史消息可拉取
                     if (rspMsgCount < reqMsgCount) {
@@ -2910,7 +2918,6 @@ var webim = { // namespace object webim
                         };
                     }
                 }
-
                 if (netxOptions) { //继续拉取
                     proto_getC2CHistoryMsgs(netxOptions, cbOk, cbErr);
                 } else {
