@@ -2252,6 +2252,10 @@ var webim = { // namespace object webim
             };
         }
         //
+
+        if (xmlHttpObj.overrideMimeType) {
+            xmlHttpObj.overrideMimeType("application/json");
+        }
         xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
@@ -2901,9 +2905,9 @@ var webim = { // namespace object webim
                     }
                 }
 
-                if(tempC2CHistoryMsgList && tempC2CHistoryMsgList.length > 0 ){
+                if (tempC2CHistoryMsgList && tempC2CHistoryMsgList.length > 0) {
                     tempC2CHistoryMsgList = tempMsgList.concat(tempC2CHistoryMsgList)
-                }else{
+                } else {
                     tempC2CHistoryMsgList = tempMsgList
                 }
 
