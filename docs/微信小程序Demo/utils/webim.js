@@ -1721,10 +1721,10 @@ module.exports = function() {
                                                 nick = resp.UserProfileItem[i].ProfileItem[j].Value;
                                                 if (nick) ctx.identifierNick = nick;
                                                 break;
-                                            case 'Tag_Profile_IM_Image':
-                                                image = resp.UserProfileItem[i].ProfileItem[j].Value;
-                                                if (image) ctx.headurl = image;
-                                                break;
+                                                // case 'Tag_Profile_IM_Image':
+                                                //     image = resp.UserProfileItem[i].ProfileItem[j].Value;
+                                                //     if (image) ctx.headurl = image;
+                                                //     break;
                                         }
                                     }
                                 }
