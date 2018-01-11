@@ -2166,6 +2166,8 @@
         var recentSessMap = {}; //保存最近会话列表
         var reqRecentSessCount = 50; //每次请求的最近会话条数，业务可以自定义
 
+        var isPeerRead  = 1;//是否需要支持APP端已读回执的功能,默认为0。是：1，否：0。
+
         //默认好友头像
         var friendHeadUrl = 'img/friend.jpg'; //仅demo使用，用于没有设置过头像的好友
         //默认群头像

@@ -2867,7 +2867,8 @@ var webim = { // namespace object webim
         for (var i in c2CMsgReadedItem) {
             var item = {
                 'To_Account': c2CMsgReadedItem[i].toAccount,
-                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime
+                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime,
+                'Receipt': isPeerRead
             };
             tmpC2CMsgReadedItem.push(item);
         }
@@ -4257,7 +4258,7 @@ var webim = { // namespace object webim
     };
 
     // class Msg.Elem.GroupTip 群提示消息对象
-    Msg.Elem.GroupTip = function(opType, opUserId, groupId, groupName, userIdList) {
+    Msg.Elem.GroupTip = function(opType, opUserId, groupId, groupName, userIdList, userinfo) {
         this.opType = opType; //操作类型
         this.opUserId = opUserId; //操作者id
         this.groupId = groupId; //群id
@@ -4266,6 +4267,7 @@ var webim = { // namespace object webim
         this.groupInfoList = []; //新的群资料信息，群资料变更时才有值
         this.memberInfoList = []; //新的群成员资料信息，群成员资料变更时才有值
         this.groupMemberNum = null; //群成员数，操作类型为加群或者退群时才有值
+        this.userinfo = userinfo ? userinfo : []; //被操作的用户信息列表列表
     };
     Msg.Elem.GroupTip.prototype.addGroupInfo = function(groupInfo) {
         this.groupInfoList.push(groupInfo);
@@ -4278,6 +4280,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.GroupTip.prototype.getOpUserId = function() {
         return this.opUserId;
+    };
+    Msg.Elem.GroupTip.prototype.getUserInfo = function() {
+        return this.userinfo;
     };
     Msg.Elem.GroupTip.prototype.getGroupId = function() {
         return this.groupId;
@@ -6250,7 +6255,8 @@ var webim = { // namespace object webim
                                 msgBody.MsgContent.Operator_Account,
                                 group_id,
                                 msgInfo.GroupInfo.GroupName,
-                                msgBody.MsgContent.List_Account
+                                msgBody.MsgContent.List_Account,
+                                msgBody.MsgContent.MsgMemberExtraInfo
                             );
                             if (GROUP_TIP_TYPE.JOIN == opType || GROUP_TIP_TYPE.QUIT == opType) { //加群或退群时，设置最新群成员数
                                 msgContent.setGroupMemberNum(msgBody.MsgContent.MemberNum);
