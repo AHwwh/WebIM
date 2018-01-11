@@ -814,6 +814,7 @@ var webim = { // namespace object webim
      *   {
      *     sdkAppID     - String, 用户标识接入SDK的应用ID，必填
      *     identifier   - String, 用户帐号,必须是字符串类型，必填
+     *     accountType  - int, 账号类型，必填
      *     identifierNick   - String, 用户昵称，选填
      *     userSig      - String, 鉴权Token，必须是字符串类型，必填
      *   }
@@ -1706,6 +1707,7 @@ var webim = { // namespace object webim
         sdkAppID: null,
         appIDAt3rd: null,
         identifier: null,
+        accountType: null,
         tinyid: null,
         identifierNick: null,
         userSig: null,
@@ -2214,6 +2216,10 @@ var webim = { // namespace object webim
             };
         }
         //
+
+        if (xmlHttpObj.overrideMimeType) {
+            xmlHttpObj.overrideMimeType("application/json");
+        }
         xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
@@ -2288,7 +2294,7 @@ var webim = { // namespace object webim
             }
             url += '&contenttype=' + ctx.contentType;
         }
-        url += '&sdkappid=' + ctx.sdkAppID + '&apn=' + ctx.apn + '&reqtime=' + unixtime();
+        url += '&sdkappid=' + ctx.sdkAppID + '&apn=' + ctx.apn + '&reqtime=' + unixtime() + '&accounttype=' + ctx.accountType;
         return url;
     };
 
@@ -2378,6 +2384,7 @@ var webim = { // namespace object webim
             appIDAt3rd: null,
             identifier: null,
             identifierNick: null,
+            accountType: null,
             userSig: null,
             contentType: 'json',
             apn: 1
@@ -2405,7 +2412,6 @@ var webim = { // namespace object webim
         clearSdk();
 
         if (options) opt = options;
-
         if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
             isAccessFormaEnvironment = false; //访问测试环境
             log.error("请切换为正式环境");
@@ -2415,6 +2421,7 @@ var webim = { // namespace object webim
             log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
         }
+
         if (opt.isLogOn == false) {
             log.setOn(opt.isLogOn);
         }
@@ -2441,6 +2448,13 @@ var webim = { // namespace object webim
             }
         }
 
+        if (!loginInfo.accountType) {
+            if (cbErr) {
+                cbErr(tool.getReturnError("loginInfo.accountType is empty", -8));
+                return;
+            }
+        }
+
         if (loginInfo.identifier) {
             ctx.identifier = loginInfo.identifier.toString();
         }
@@ -2454,6 +2468,7 @@ var webim = { // namespace object webim
             ctx.userSig = loginInfo.userSig.toString();
         }
         ctx.sdkAppID = loginInfo.sdkAppID;
+        ctx.accountType = loginInfo.accountType;
 
         if (ctx.identifier && ctx.userSig) { //带登录态
             //登录
@@ -2816,7 +2831,8 @@ var webim = { // namespace object webim
         for (var i in c2CMsgReadedItem) {
             var item = {
                 'To_Account': c2CMsgReadedItem[i].toAccount,
-                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime
+                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime,
+                'Receipt': isPeerRead
             };
             tmpC2CMsgReadedItem.push(item);
         }
@@ -2846,12 +2862,20 @@ var webim = { // namespace object webim
                 var rspMsgCount = resp.MaxCnt;
                 var msgKey = resp.MsgKey;
                 var lastMsgTime = resp.LastMsgTime;
+                var tempMsgList = [];
 
                 if (resp.MsgList && resp.MsgList.length) {
                     for (var i in resp.MsgList) {
-                        tempC2CHistoryMsgList.push(resp.MsgList[i]);
+                        tempMsgList.push(resp.MsgList[i]);
                     }
                 }
+
+                if (tempC2CHistoryMsgList && tempC2CHistoryMsgList.length > 0) {
+                    tempC2CHistoryMsgList = tempMsgList.concat(tempC2CHistoryMsgList)
+                } else {
+                    tempC2CHistoryMsgList = tempMsgList
+                }
+
                 var netxOptions = null;
                 if (complete == 0) { //还有历史消息可拉取
                     if (rspMsgCount < reqMsgCount) {
@@ -2863,7 +2887,6 @@ var webim = { // namespace object webim
                         };
                     }
                 }
-
                 if (netxOptions) { //继续拉取
                     proto_getC2CHistoryMsgs(netxOptions, cbOk, cbErr);
                 } else {
@@ -4199,7 +4222,7 @@ var webim = { // namespace object webim
     };
 
     // class Msg.Elem.GroupTip 群提示消息对象
-    Msg.Elem.GroupTip = function(opType, opUserId, groupId, groupName, userIdList) {
+    Msg.Elem.GroupTip = function(opType, opUserId, groupId, groupName, userIdList, userinfo) {
         this.opType = opType; //操作类型
         this.opUserId = opUserId; //操作者id
         this.groupId = groupId; //群id
@@ -4208,6 +4231,7 @@ var webim = { // namespace object webim
         this.groupInfoList = []; //新的群资料信息，群资料变更时才有值
         this.memberInfoList = []; //新的群成员资料信息，群成员资料变更时才有值
         this.groupMemberNum = null; //群成员数，操作类型为加群或者退群时才有值
+        this.userinfo = userinfo ? userinfo : []; //被操作的用户信息列表列表
     };
     Msg.Elem.GroupTip.prototype.addGroupInfo = function(groupInfo) {
         this.groupInfoList.push(groupInfo);
@@ -4220,6 +4244,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.GroupTip.prototype.getOpUserId = function() {
         return this.opUserId;
+    };
+    Msg.Elem.GroupTip.prototype.getUserInfo = function() {
+        return this.userinfo;
     };
     Msg.Elem.GroupTip.prototype.getGroupId = function() {
         return this.groupId;
@@ -5043,11 +5070,14 @@ var webim = { // namespace object webim
 
                     if (isNeedValidRepeatMsg) {
                         //注释只收取一种通知
-                        // if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
-                        //回调
-                        //if (onGroupSystemNotifyCallbacks[reportType]) 
-                        onGroupSystemNotifyCallbacks[reportType](notify);
-                        //}
+                        if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
+                            //回调
+                            if (onGroupSystemNotifyCallbacks[reportType]) {
+                                onGroupSystemNotifyCallbacks[reportType](notify);
+                            } else {
+                                log.error("未知群系统消息类型：reportType=" + reportType);
+                            }
+                        }
                     } else {
                         //回调
                         if (onGroupSystemNotifyCallbacks[reportType]) {
@@ -6189,7 +6219,8 @@ var webim = { // namespace object webim
                                 msgBody.MsgContent.Operator_Account,
                                 group_id,
                                 msgInfo.GroupInfo.GroupName,
-                                msgBody.MsgContent.List_Account
+                                msgBody.MsgContent.List_Account,
+                                msgBody.MsgContent.MsgMemberExtraInfo
                             );
                             if (GROUP_TIP_TYPE.JOIN == opType || GROUP_TIP_TYPE.QUIT == opType) { //加群或退群时，设置最新群成员数
                                 msgContent.setGroupMemberNum(msgBody.MsgContent.MemberNum);
@@ -6508,7 +6539,7 @@ var webim = { // namespace object webim
                 } else {
                     cmdName = 'pic_up_test';
                 }
-                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&contenttype=http";
+                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&contenttype=http" + "&accounttype=" + ctx.accountType;
                 form.action = uploadApiUrl;
                 form.method = 'post';
                 //form.enctype='multipart/form-data';//ie8下不起作用，必须由业务自己设置
@@ -7044,7 +7075,6 @@ var webim = { // namespace object webim
     webim.deleteChat = function(options, cbOk, cbErr) {
         return proto_deleteChat(options, cbOk, cbErr);
     };
-
     //删除好友
     webim.deleteFriend = function(options, cbOk, cbErr) {
         return proto_deleteFriend(options, cbOk, cbErr);
