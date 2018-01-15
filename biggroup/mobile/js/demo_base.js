@@ -339,7 +339,8 @@ function convertGroupTipMsgToHtml(content) {
             $('#user-icon-fans').html(parseInt(memberCount) + 1);
             break;
         case webim.GROUP_TIP_TYPE.QUIT: //退出群
-            text += opUserId + "离开房间";
+            var quitName = content.getQuitGorupName()
+            text += quitName + "离开房间";
             //房间成员数减1
             memberCount = parseInt($('#user-icon-fans').html());
             if (memberCount > 0) {

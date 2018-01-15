@@ -4218,7 +4218,7 @@ var webim = { // namespace object webim
             fileSize = Math.round(this.size / 1024);
             unitStr = "KB";
         }
-        return '<a href="javascript" onclick="webim.onDownFile("' + this.uuid + '")" title="点击下载文件" ><i class="glyphicon glyphicon-file">&nbsp;' + this.name + '(' + fileSize + unitStr + ')</i></a>';
+        return '<a href="javascript" onclick="webim.onDownFile(' + "'" + this.uuid + "'" + ')" title="点击下载文件" ><i class="glyphicon glyphicon-file">&nbsp;' + this.name + '(' + fileSize + unitStr + ')</i></a>';
     };
 
     // class Msg.Elem.GroupTip 群提示消息对象
