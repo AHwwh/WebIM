@@ -317,12 +317,16 @@ function convertGroupTipMsgToHtml(content) {
     var memberCount;
     opType = content.getOpType(); //群提示消息类型（操作类型）
     opUserId = content.getOpUserId(); //操作人id
+    userIdList = content.getUserInfo();
     switch (opType) {
         case webim.GROUP_TIP_TYPE.JOIN: //加入群
-            userIdList = content.getUserIdList();
             //text += opUserId + "邀请了";
             for (var m in userIdList) {
-                text += userIdList[m] + ",";
+                if (userIdList[m].NickName != undefined) {
+                    text += userIdList[m].NickName + ",";
+                } else {
+                    text += userIdList[m].UserId + ",";
+                }
                 if (userIdList.length > WEB_IM_GROUP_TIP_MAX_USER_COUNT && m == maxIndex) {
                     text += "等" + userIdList.length + "人";
                     break;
@@ -335,7 +339,8 @@ function convertGroupTipMsgToHtml(content) {
             $('#user-icon-fans').html(parseInt(memberCount) + 1);
             break;
         case webim.GROUP_TIP_TYPE.QUIT: //退出群
-            text += opUserId + "离开房间";
+            var quitName = content.getQuitGorupName()
+            text += quitName + "离开房间";
             //房间成员数减1
             memberCount = parseInt($('#user-icon-fans').html());
             if (memberCount > 0) {
@@ -344,9 +349,12 @@ function convertGroupTipMsgToHtml(content) {
             break;
         case webim.GROUP_TIP_TYPE.KICK: //踢出群
             text += opUserId + "将";
-            userIdList = content.getUserIdList();
             for (var m in userIdList) {
-                text += userIdList[m] + ",";
+                if (userIdList[m].NickName != undefined) {
+                    text += userIdList[m].NickName + ",";
+                } else {
+                    text += userIdList[m].UserId + ",";
+                }
                 if (userIdList.length > WEB_IM_GROUP_TIP_MAX_USER_COUNT && m == maxIndex) {
                     text += "等" + userIdList.length + "人";
                     break;
@@ -356,9 +364,12 @@ function convertGroupTipMsgToHtml(content) {
             break;
         case webim.GROUP_TIP_TYPE.SET_ADMIN: //设置管理员
             text += opUserId + "将";
-            userIdList = content.getUserIdList();
             for (var m in userIdList) {
-                text += userIdList[m] + ",";
+                if (userIdList[m].NickName != undefined) {
+                    text += userIdList[m].NickName + ",";
+                } else {
+                    text += userIdList[m].UserId + ",";
+                }
                 if (userIdList.length > WEB_IM_GROUP_TIP_MAX_USER_COUNT && m == maxIndex) {
                     text += "等" + userIdList.length + "人";
                     break;
@@ -368,9 +379,12 @@ function convertGroupTipMsgToHtml(content) {
             break;
         case webim.GROUP_TIP_TYPE.CANCEL_ADMIN: //取消管理员
             text += opUserId + "取消";
-            userIdList = content.getUserIdList();
             for (var m in userIdList) {
-                text += userIdList[m] + ",";
+                if (userIdList[m].NickName != undefined) {
+                    text += userIdList[m].NickName + ",";
+                } else {
+                    text += userIdList[m].UserId + ",";
+                }
                 if (userIdList.length > WEB_IM_GROUP_TIP_MAX_USER_COUNT && m == maxIndex) {
                     text += "等" + userIdList.length + "人";
                     break;

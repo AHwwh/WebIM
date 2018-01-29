@@ -48,6 +48,13 @@ function webimLogin() {
             loginInfo.identifierNick = resp.identifierNick; //设置当前用户昵称
             loginInfo.headurl = resp.headurl; //设置当前用户头像
             initDemoApp();
+            // webim.getPendencyGroup({
+            //         StartTime: 0,
+            //         Limit: 10
+            //     },
+            //     function() {
+
+            //     })
         },
         function(err) {
             alert(err.ErrorInfo);
