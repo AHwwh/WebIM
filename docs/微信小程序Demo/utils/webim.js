@@ -1527,7 +1527,12 @@ module.exports = function() {
             clearSdk();
 
             if (options) opt = options;
+                    if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
+                        isAccessFormaEnvironment = false; //访问测试环境
+                        log.error("请切换为正式环境");
+                    }
             if (opt.isAccessFormalEnv == false) {
+                        log.error("请切换为正式环境");
                 isAccessFormaEnvironment = opt.isAccessFormalEnv;
             }
             if (opt.isLogOn == false) {
@@ -1712,7 +1717,7 @@ module.exports = function() {
                     proto_getProfilePortrait(
                         options,
                         function(resp) {
-                            var nick, gender, allowType;
+                            var nick, image;
                             if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                                 for (var i in resp.UserProfileItem) {
                                     for (var j in resp.UserProfileItem[i].ProfileItem) {
@@ -1721,10 +1726,10 @@ module.exports = function() {
                                                 nick = resp.UserProfileItem[i].ProfileItem[j].Value;
                                                 if (nick) ctx.identifierNick = nick;
                                                 break;
-                                                // case 'Tag_Profile_IM_Image':
-                                                //     image = resp.UserProfileItem[i].ProfileItem[j].Value;
-                                                //     if (image) ctx.headurl = image;
-                                                //     break;
+                                                case 'Tag_Profile_IM_Image':
+                                                    image = resp.UserProfileItem[i].ProfileItem[j].Value;
+                                                    if (image) ctx.headurl = image;
+                                                    break;
                                         }
                                     }
                                 }

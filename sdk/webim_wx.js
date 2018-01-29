@@ -1518,7 +1518,7 @@ module.exports = function() {
 
                     MsgManager.clear();
 
-                    //重置longpollingId 
+                    //重置longpollingId
                     LongPollingId = null;
                 };
 
@@ -1719,7 +1719,7 @@ module.exports = function() {
                             proto_getProfilePortrait(
                                 options,
                                 function(resp) {
-                                    var nick, gender, allowType;
+                                    var nick, image;
                                     if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                                         for (var i in resp.UserProfileItem) {
                                             for (var j in resp.UserProfileItem[i].ProfileItem) {
