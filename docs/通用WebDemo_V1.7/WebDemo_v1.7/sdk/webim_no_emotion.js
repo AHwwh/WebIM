@@ -1,3 +1,4 @@
+"use strict";
 (function(global, factory) {
 
     global["Long"] = factory();
@@ -1769,7 +1770,7 @@ var webim = { // namespace object webim
     };
 
     //表情对象，用户可以自定义
-    var emotions = {};
+    var emotions = { };
     //工具类
     var tool = new function() {
 
@@ -2611,7 +2612,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function(resp) {
-                        var nick, gender, allowType;
+                        var nick;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
