@@ -2648,7 +2648,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function(resp) {
-                        var nick;
+                        var nick, image;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
@@ -3932,7 +3932,7 @@ var webim = { // namespace object webim
         var res = [];
         var length = arr1.length > arr2.length ? arr1.length : arr2.length;
         for (var a = 0; a < length; a++) {
-            sig = Number(arr1[a] || 0) || Number(arr2[a] || 0);
+            var sig = Number(arr1[a] || 0) || Number(arr2[a] || 0);
             res.push(sig);
         }
         var numstr = res.reverse().join("");
