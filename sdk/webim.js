@@ -5409,6 +5409,7 @@ var webim = { // namespace object webim
             //大群 长轮询
             this.bigGroupLongPolling = function(cbOk, cbErr) {
 
+                var GroupId = group_id;
                 var opts = {
                     'StartSeq': bigGroupLongPollingStartSeq, //请求拉消息的起始seq
                     'HoldTime': bigGroupLongPollingHoldTime, //客户端长轮询的超时时间，单位是秒
@@ -5416,6 +5417,7 @@ var webim = { // namespace object webim
                 };
 
                 proto_bigGroupLongPolling(opts, function(resp) {
+                    if (GroupId != group_id) return;
 
                     var msgObjList = [];
                     bigGroupLongPollingStartSeq = resp.NextSeq;
