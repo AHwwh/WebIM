@@ -1,4 +1,3 @@
-"use strict";
 (function(global, factory) {
 
     global["Long"] = factory();
@@ -814,8 +813,8 @@ var webim = { // namespace object webim
      *   loginInfo      - Object, 登录身份相关参数集合，详见下面
      *   {
      *     sdkAppID     - String, 用户标识接入SDK的应用ID，必填
-     *     identifier   - String, 用户帐号,必须是字符串类型，必填
      *     accountType  - int, 账号类型，必填
+     *     identifier   - String, 用户帐号,必须是字符串类型，必填
      *     identifierNick   - String, 用户昵称，选填
      *     userSig      - String, 鉴权Token，必须是字符串类型，必填
      *   }
@@ -1396,8 +1395,7 @@ var webim = { // namespace object webim
         'PIC': 'openpic', //图片（或文件）服务名
         'BIG_GROUP': 'group_open_http_noauth_svc', //直播大群 群组管理（申请加大群）服务名
         'BIG_GROUP_LONG_POLLING': 'group_open_long_polling_http_noauth_svc', //直播大群 长轮询（拉取消息等）服务名
-        'IM_OPEN_STAT': 'imopenstat', //质量上报，统计接口错误率
-        'DEL_CHAT': 'recentcontact' //删除会话
+        'IM_OPEN_STAT': 'imopenstat' //质量上报，统计接口错误率
     };
 
     //不同服务对应的版本号
@@ -1410,8 +1408,7 @@ var webim = { // namespace object webim
         'openpic': 'v4',
         'group_open_http_noauth_svc': 'v1',
         'group_open_long_polling_http_noauth_svc': 'v1',
-        'imopenstat': 'v4',
-        'recentcontact': 'v4'
+        'imopenstat': 'v4'
     };
 
     //不同的命令名对应的上报类型ID，用于接口质量上报
@@ -1470,17 +1467,6 @@ var webim = { // namespace object webim
         'SMALL': 3 //缩略小图
     };
 
-    //图片格式
-    var IMAGE_FORMAT = {
-        JPG: 0x1,
-        JPEG: 0x1,
-        GIF: 0x2,
-        PNG: 0x3,
-        BMP: 0x4,
-        UNKNOWN: 0xff
-    };
-
-
     //上传资源包类型
     var UPLOAD_RES_PKG_FLAG = {
         'RAW_DATA': 0, //原始数据
@@ -1533,7 +1519,6 @@ var webim = { // namespace object webim
         "C2C_COMMON": 9 //新的C2C消息
         ,
         "C2C_EVENT": 10
-
     };
 
     //c2c消息子类型
@@ -1542,8 +1527,7 @@ var webim = { // namespace object webim
     };
     //c2c消息子类型
     var C2C_EVENT_SUB_TYPE = {
-        "READED": 92, //已读消息同步
-        "KICKEDOUT": 96
+        "READED": 92 //已读消息同步
     };
 
     //群消息子类型
@@ -1707,8 +1691,8 @@ var webim = { // namespace object webim
     var ctx = {
         sdkAppID: null,
         appIDAt3rd: null,
-        identifier: null,
         accountType: null,
+        identifier: null,
         tinyid: null,
         identifierNick: null,
         userSig: null,
@@ -1731,43 +1715,7 @@ var webim = { // namespace object webim
     };
 
     //表情标识字符和索引映射关系对象，用户可以自定义
-    var emotionDataIndexs = {
-        "[惊讶]": 0,
-        "[撇嘴]": 1,
-        "[色]": 2,
-        "[发呆]": 3,
-        "[得意]": 4,
-        "[流泪]": 5,
-        "[害羞]": 6,
-        "[闭嘴]": 7,
-        "[睡]": 8,
-        "[大哭]": 9,
-        "[尴尬]": 10,
-        "[发怒]": 11,
-        "[调皮]": 12,
-        "[龇牙]": 13,
-        "[微笑]": 14,
-        "[难过]": 15,
-        "[酷]": 16,
-        "[冷汗]": 17,
-        "[抓狂]": 18,
-        "[吐]": 19,
-        "[偷笑]": 20,
-        "[可爱]": 21,
-        "[白眼]": 22,
-        "[傲慢]": 23,
-        "[饿]": 24,
-        "[困]": 25,
-        "[惊恐]": 26,
-        "[流汗]": 27,
-        "[憨笑]": 28,
-        "[大兵]": 29,
-        "[奋斗]": 30,
-        "[咒骂]": 31,
-        "[疑问]": 32,
-        "[嘘]": 33,
-        "[晕]": 34
-    };
+    var emotionDataIndexs = {    };
 
     //表情对象，用户可以自定义
     var emotions = { };
@@ -2053,6 +2001,12 @@ var webim = { // namespace object webim
                     (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
                     (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
                 if (Sys.ie) { //Js判断为IE浏览器
+                    //ie10的判断这里有个问题
+                    // Mozilla/5.0 (compatible; MSIE 9.0; qdesk 2.5.1277.202; Windows NT 6.1; WOW64; Trident/6.0)
+                    // 是IE10 而不是IE9
+                    if( ua.match(/Trident\/(\d)\./) && ua.match(/Trident\/(\d)\./)[1]  == 6 ){
+                        Sys.ie = 10
+                    }
                     return {
                         'type': 'ie',
                         'ver': Sys.ie
@@ -2217,10 +2171,6 @@ var webim = { // namespace object webim
             };
         }
         //
-
-        if (xmlHttpObj.overrideMimeType) {
-            xmlHttpObj.overrideMimeType("application/json");
-        }
         xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
@@ -2295,7 +2245,7 @@ var webim = { // namespace object webim
             }
             url += '&contenttype=' + ctx.contentType;
         }
-        url += '&sdkappid=' + ctx.sdkAppID + '&apn=' + ctx.apn + '&reqtime=' + unixtime() + '&accounttype=' + ctx.accountType;
+        url += '&sdkappid=' + ctx.sdkAppID + '&accounttype=' + ctx.accountType + '&apn=' + ctx.apn + '&reqtime=' + unixtime();
         return url;
     };
 
@@ -2383,9 +2333,9 @@ var webim = { // namespace object webim
         ctx = {
             sdkAppID: null,
             appIDAt3rd: null,
+            accountType: null,
             identifier: null,
             identifierNick: null,
-            accountType: null,
             userSig: null,
             contentType: 'json',
             apn: 1
@@ -2413,16 +2363,10 @@ var webim = { // namespace object webim
         clearSdk();
 
         if (options) opt = options;
-        if (webim.Tool.getQueryString("isAccessFormalEnv") == 'false') {
-            isAccessFormaEnvironment = false; //访问测试环境
-            log.error("请切换为正式环境");
-        }
-
         if (opt.isAccessFormalEnv == false) {
             log.error("请切换为正式环境");
             isAccessFormaEnvironment = opt.isAccessFormalEnv;
         }
-
         if (opt.isLogOn == false) {
             log.setOn(opt.isLogOn);
         }
@@ -2448,7 +2392,6 @@ var webim = { // namespace object webim
                 return;
             }
         }
-
         if (!loginInfo.accountType) {
             if (cbErr) {
                 cbErr(tool.getReturnError("loginInfo.accountType is empty", -8));
@@ -2612,7 +2555,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function(resp) {
-                        var nick;
+                        var nick, gender, allowType;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
@@ -2737,7 +2680,6 @@ var webim = { // namespace object webim
                         });
                     }
                     msgContent = {
-                        'ImageFormat': elem.content.ImageFormat,
                         'UUID': elem.content.UUID,
                         'ImageInfoArray': ImageInfoArray
                     };
@@ -2832,8 +2774,7 @@ var webim = { // namespace object webim
         for (var i in c2CMsgReadedItem) {
             var item = {
                 'To_Account': c2CMsgReadedItem[i].toAccount,
-                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime,
-                'Receipt': isPeerRead
+                'LastedMsgTime': c2CMsgReadedItem[i].lastedMsgTime
             };
             tmpC2CMsgReadedItem.push(item);
         }
@@ -2863,20 +2804,12 @@ var webim = { // namespace object webim
                 var rspMsgCount = resp.MaxCnt;
                 var msgKey = resp.MsgKey;
                 var lastMsgTime = resp.LastMsgTime;
-                var tempMsgList = [];
 
                 if (resp.MsgList && resp.MsgList.length) {
                     for (var i in resp.MsgList) {
-                        tempMsgList.push(resp.MsgList[i]);
+                        tempC2CHistoryMsgList.push(resp.MsgList[i]);
                     }
                 }
-
-                if (tempC2CHistoryMsgList && tempC2CHistoryMsgList.length > 0) {
-                    tempC2CHistoryMsgList = tempMsgList.concat(tempC2CHistoryMsgList)
-                } else {
-                    tempC2CHistoryMsgList = tempMsgList
-                }
-
                 var netxOptions = null;
                 if (complete == 0) { //还有历史消息可拉取
                     if (rspMsgCount < reqMsgCount) {
@@ -2888,6 +2821,7 @@ var webim = { // namespace object webim
                         };
                     }
                 }
+
                 if (netxOptions) { //继续拉取
                     proto_getC2CHistoryMsgs(netxOptions, cbOk, cbErr);
                 } else {
@@ -2985,7 +2919,9 @@ var webim = { // namespace object webim
     };
 
     //申请加入大群
+    var group_Bigid;
     var proto_applyJoinBigGroup = function(options, cbOk, cbErr) {
+        group_Bigid = options.GroupId;
         var srvName;
         if (!checkLogin(cbErr, false)) { //未登录
             srvName = SRV_NAME.BIG_GROUP;
@@ -3412,30 +3348,6 @@ var webim = { // namespace object webim
                 }
             }, cbErr);
     };
-
-    //删除会话
-    var proto_deleteChat = function(options, cbOk, cbErr) {
-        if (!checkLogin(cbErr, true)) return;
-
-        if (options.chatType == 1) {
-            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
-                    'From_Account': ctx.identifier,
-                    'Type': options.chatType,
-                    'To_Account': options.To_Account
-                },
-                cbOk, cbErr);
-        } else {
-            ConnManager.apiCall(SRV_NAME.DEL_CHAT, "delete", {
-                    'From_Account': ctx.identifier,
-                    'Type': options.chatType,
-                    'ToGroupid': options.To_Account
-                },
-                cbOk, cbErr);
-
-        }
-
-    };
-
     //获取好友申请
     var proto_getPendency = function(options, cbOk, cbErr) {
         if (!checkLogin(cbErr, true)) return;
@@ -4052,6 +3964,7 @@ var webim = { // namespace object webim
             return this.data;
         }
     };
+
     // 地理位置消息 class Msg.Elem.Location
     Msg.Elem.Location = function(longitude, latitude, desc) {
         this.latitude = latitude; //纬度
@@ -4073,12 +3986,8 @@ var webim = { // namespace object webim
 
     //图片消息
     // class Msg.Elem.Images
-    Msg.Elem.Images = function(imageId, format) {
+    Msg.Elem.Images = function(imageId) {
         this.UUID = imageId;
-        if (typeof format !== 'number') {
-            format = parseInt(IMAGE_FORMAT[format] || IMAGE_FORMAT['UNKNOWN'], 10);
-        }
-        this.ImageFormat = format;
         this.ImageInfoArray = [];
     };
     Msg.Elem.Images.prototype.addImage = function(image) {
@@ -4099,9 +4008,6 @@ var webim = { // namespace object webim
     };
     Msg.Elem.Images.prototype.getImageId = function() {
         return this.UUID;
-    };
-    Msg.Elem.Images.prototype.getImageFormat = function() {
-        return this.ImageFormat;
     };
     Msg.Elem.Images.prototype.getImage = function(type) {
         for (var i in this.ImageInfoArray) {
@@ -4219,7 +4125,7 @@ var webim = { // namespace object webim
             fileSize = Math.round(this.size / 1024);
             unitStr = "KB";
         }
-        return '<a href="javascript" onclick="webim.onDownFile(' + "'" + this.uuid + "'" + ')" title="点击下载文件" ><i class="glyphicon glyphicon-file">&nbsp;' + this.name + '(' + fileSize + unitStr + ')</i></a>';
+        return '<a href="javascript" onclick="webim.onDownFile("' + this.uuid + '")" title="点击下载文件" ><i class="glyphicon glyphicon-file">&nbsp;' + this.name + '(' + fileSize + unitStr + ')</i></a>';
     };
 
     // class Msg.Elem.GroupTip 群提示消息对象
@@ -4246,9 +4152,6 @@ var webim = { // namespace object webim
     Msg.Elem.GroupTip.prototype.getOpUserId = function() {
         return this.opUserId;
     };
-    Msg.Elem.GroupTip.prototype.getUserInfo = function() {
-        return this.userinfo;
-    };
     Msg.Elem.GroupTip.prototype.getGroupId = function() {
         return this.groupId;
     };
@@ -4257,6 +4160,9 @@ var webim = { // namespace object webim
     };
     Msg.Elem.GroupTip.prototype.getUserIdList = function() {
         return this.userIdList;
+    };
+    Msg.Elem.GroupTip.prototype.getUserInfo = function() {
+        return this.userinfo;
     };
     Msg.Elem.GroupTip.prototype.getGroupInfoList = function() {
         return this.groupInfoList;
@@ -4615,7 +4521,9 @@ var webim = { // namespace object webim
                 "1": null
             };
 
+            var onKickedEventCall = null;
 
+            var onMsgReadCallback = null;
 
             //普通长轮询
             var longPollingOn = false; //是否开启普通长轮询
@@ -4630,12 +4538,6 @@ var webim = { // namespace object webim
             var bigGroupLongPollingHoldTime = 90; //客户端长轮询的超时时间，单位是秒(大群长轮询)
             var bigGroupLongPollingKey = null; //客户端加入群组后收到的的Key(大群长轮询)
             var bigGroupLongPollingMsgMap = {}; //记录收到的群消息数
-            var onC2cEventCallbacks = {
-                "92": null, //消息已读通知,
-                "96": null
-            };;
-            var onKickedEventCall = null; //多实例登录回调
-            var onAppliedDownloadUrl = null;
 
 
             var getLostGroupMsgCount = 0; //补拉丢失的群消息次数
@@ -4666,6 +4568,7 @@ var webim = { // namespace object webim
             //isOn=false 停止
             this.setBigGroupLongPollingOn = function(isOn) {
                 bigGroupLongPollingOn = isOn;
+                //bigGroupLongPollingStartSeq = 0;
             };
             //设置大群长轮询key
             this.setBigGroupLongPollingKey = function(key) {
@@ -5000,8 +4903,8 @@ var webim = { // namespace object webim
             //处理新的群系统消息
             //isNeedValidRepeatMsg 是否需要判重
             var handlerGroupSystemMsgs = function(groupSystemMsgs, isNeedValidRepeatMsg) {
-                for (var k in groupSystemMsgs) {
-                    var groupTip = groupSystemMsgs[k];
+                for (var k in groupSystemMsgs.GroupTips) {
+                    var groupTip = groupSystemMsgs.GroupTips[k];
                     var groupReportTypeMsg = groupTip.MsgBody;
                     var reportType = groupReportTypeMsg.ReportType;
                     //当长轮询返回的群系统消息，才需要更新群消息通知seq
@@ -5070,14 +4973,9 @@ var webim = { // namespace object webim
                     }
 
                     if (isNeedValidRepeatMsg) {
-                        //注释只收取一种通知
                         if (reportType == GROUP_SYSTEM_TYPE.JOIN_GROUP_REQUEST) {
                             //回调
-                            if (onGroupSystemNotifyCallbacks[reportType]) {
-                                onGroupSystemNotifyCallbacks[reportType](notify);
-                            } else {
-                                log.error("未知群系统消息类型：reportType=" + reportType);
-                            }
+                            if (onGroupSystemNotifyCallbacks[reportType]) onGroupSystemNotifyCallbacks[reportType](notify);
                         }
                     } else {
                         //回调
@@ -5257,25 +5155,19 @@ var webim = { // namespace object webim
                 var subType = notify.SubMsgType;
                 switch (subType) {
                     case C2C_EVENT_SUB_TYPE.READED: //已读通知
-                        // stopPolling = true;
-                        //回调onMsgReadCallback
-                        if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
-                            for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
-                                var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
-                                onC2cEventCallbacks[subType](item);
-                            }
-                        }
-                        break;
-                    case C2C_EVENT_SUB_TYPE.KICKEDOUT: //已读通知
-                        if (onC2cEventCallbacks[subType]) {
-                            onC2cEventCallbacks[subType]();
-                        }
                         break;
                     default:
-                        log.error("未知C2c系统消息：subType=" + subType);
+                        log.error("未知C2c系统消息：reportType=" + reportType);
                         break;
                 }
-
+                // stopPolling = true;
+                //回调onMsgReadCallback
+                if (notify.ReadC2cMsgNotify.UinPairReadArray && onC2cEventCallbacks[subType]) {
+                    for (var i = 0, l = notify.ReadC2cMsgNotify.UinPairReadArray.length; i < l; i++) {
+                        var item = notify.ReadC2cMsgNotify.UinPairReadArray[i];
+                        onC2cEventCallbacks[subType](item);
+                    }
+                }
             };
 
             //长轮询
@@ -5318,10 +5210,6 @@ var webim = { // namespace object webim
                                     handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupMsgArray);
                                     break;
                                 case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP: //（全员广播）群提示消息
-                                    log.warn("longpolling: received new group tips");
-                                    handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
-                                    break;
-                                case LONG_POLLINNG_EVENT_TYPE.GROUP_TIP2: //群提示消息
                                     log.warn("longpolling: received new group tips");
                                     handlerOrdinaryAndTipGroupMsgs(e.Event, e.GroupTips);
                                     break;
@@ -5372,7 +5260,7 @@ var webim = { // namespace object webim
 
             //大群 长轮询
             this.bigGroupLongPolling = function(cbOk, cbErr) {
-
+                var GroupId = group_Bigid;
                 var opts = {
                     'StartSeq': bigGroupLongPollingStartSeq, //请求拉消息的起始seq
                     'HoldTime': bigGroupLongPollingHoldTime, //客户端长轮询的超时时间，单位是秒
@@ -5380,6 +5268,7 @@ var webim = { // namespace object webim
                 };
 
                 proto_bigGroupLongPolling(opts, function(resp) {
+                    if (GroupId != group_Bigid) return;
 
                     var msgObjList = [];
                     bigGroupLongPollingStartSeq = resp.NextSeq;
@@ -5448,12 +5337,16 @@ var webim = { // namespace object webim
                         //记录长轮询返回错误次数
                         curBigGroupLongPollingRetErrorCount++;
                     }
-                    if (err.ErrorCode == longPollingKickedErrorCode) {
+                    if (err.ErrorCode != longPollingKickedErrorCode) {
                         //登出
                         log.error("多实例登录，被kick");
                         if (onKickedEventCall) {
                             onKickedEventCall();
                         }
+                        /*    return;
+                    proto_logout(function(){
+                        if (onKickedEventCall) {onKickedEventCall();}
+                    });*/
                     }
                     //累计超过一定次数，不再发起长轮询请求
                     if (curBigGroupLongPollingRetErrorCount < LONG_POLLING_MAX_RET_ERROR_COUNT) {
@@ -5510,6 +5403,10 @@ var webim = { // namespace object webim
                     if (onKickedEventCall) {
                         onKickedEventCall();
                     }
+                    //     return;
+                    // proto_logout(function(){
+                    //     if (onKickedEventCall) {onKickedEventCall();}
+                    // });
                 } else {
                     //记录长轮询返回解析json错误次数
                     curLongPollingRetErrorCount++;
@@ -5575,8 +5472,7 @@ var webim = { // namespace object webim
                                 break;
                             case MSG_ELEMENT_TYPE.IMAGE:
                                 msgContent = new Msg.Elem.Images(
-                                    msgBody.MsgContent.UUID,
-                                    msgBody.MsgContent.ImageFormat || ""
+                                    msgBody.MsgContent.UUID
                                 );
                                 for (var j in msgBody.MsgContent.ImageInfoArray) {
                                     var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5675,7 +5571,7 @@ var webim = { // namespace object webim
             var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
                 for (var i in eventArray) {
                     var e = eventArray[i];
-                    handlerGroupSystemMsgs(e.GroupTips, true);
+                    handlerGroupSystemMsgs(e, true);
                     switch (e.Event) {
                         case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                             log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
@@ -5738,8 +5634,7 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID,
-                                        msgBody.MsgContent.ImageFormat
+                                        msgBody.MsgContent.UUID
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -5917,8 +5812,7 @@ var webim = { // namespace object webim
                                     break;
                                 case MSG_ELEMENT_TYPE.IMAGE:
                                     msgContent = new Msg.Elem.Images(
-                                        msgBody.MsgContent.UUID,
-                                        msgBody.MsgContent.ImageFormat
+                                        msgBody.MsgContent.UUID
                                     );
                                     for (var j in msgBody.MsgContent.ImageInfoArray) {
                                         var tempImg = msgBody.MsgContent.ImageInfoArray[j];
@@ -6155,8 +6049,7 @@ var webim = { // namespace object webim
                             break;
                         case MSG_ELEMENT_TYPE.IMAGE:
                             msgContent = new Msg.Elem.Images(
-                                msgBody.MsgContent.UUID,
-                                msgBody.MsgContent.ImageFormat || ""
+                                msgBody.MsgContent.UUID
                             );
                             for (var j in msgBody.MsgContent.ImageInfoArray) {
                                 msgContent.addImage(
@@ -6540,7 +6433,7 @@ var webim = { // namespace object webim
                 } else {
                     cmdName = 'pic_up_test';
                 }
-                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&contenttype=http" + "&accounttype=" + ctx.accountType;
+                var uploadApiUrl = "https://pic.tim.qq.com/v4/openpic/" + cmdName + "?tinyid=" + ctx.tinyid + "&a2=" + ctx.a2 + "&sdkappid=" + ctx.sdkAppID + "&accounttype=" + ctx.accountType + "&contenttype=http";
                 form.action = uploadApiUrl;
                 form.method = 'post';
                 //form.enctype='multipart/form-data';//ie8下不起作用，必须由业务自己设置
@@ -7071,10 +6964,6 @@ var webim = { // namespace object webim
     //获取我的好友
     webim.getAllFriend = function(options, cbOk, cbErr) {
         return proto_getAllFriend(options, cbOk, cbErr);
-    };
-    //删除会话
-    webim.deleteChat = function(options, cbOk, cbErr) {
-        return proto_deleteChat(options, cbOk, cbErr);
     };
     //删除好友
     webim.deleteFriend = function(options, cbOk, cbErr) {

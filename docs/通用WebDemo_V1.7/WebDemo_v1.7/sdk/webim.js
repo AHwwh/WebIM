@@ -2073,6 +2073,12 @@ var webim = { // namespace object webim
                     (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
                     (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
                 if (Sys.ie) { //Js判断为IE浏览器
+                    //ie10的判断这里有个问题
+                    // Mozilla/5.0 (compatible; MSIE 9.0; qdesk 2.5.1277.202; Windows NT 6.1; WOW64; Trident/6.0)
+                    // 是IE10 而不是IE9
+                    if( ua.match(/Trident\/(\d)\./) && ua.match(/Trident\/(\d)\./)[1]  == 6 ){
+                        Sys.ie = 10
+                    }
                     return {
                         'type': 'ie',
                         'ver': Sys.ie
@@ -2419,7 +2425,7 @@ var webim = { // namespace object webim
 
         MsgManager.clear();
 
-        //重置longpollingId 
+        //重置longpollingId
         LongPollingId = null;
     };
 
