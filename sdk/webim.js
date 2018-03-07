@@ -2076,7 +2076,7 @@ var webim = { // namespace object webim
                     //ie10的判断这里有个问题
                     // Mozilla/5.0 (compatible; MSIE 9.0; qdesk 2.5.1277.202; Windows NT 6.1; WOW64; Trident/6.0)
                     // 是IE10 而不是IE9
-                    if( ua.match(/Trident\/(\d)\./) && ua.match(/Trident\/(\d)\./)[1]  == 6 ){
+                    if( ua.match(/trident\/(\d)\./) && ua.match(/trident\/(\d)\./)[1]  == 6 ){
                         Sys.ie = 10
                     }
                     return {
