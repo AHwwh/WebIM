@@ -1715,10 +1715,10 @@ var webim = { // namespace object webim
     };
 
     //表情标识字符和索引映射关系对象，用户可以自定义
-    var emotionDataIndexs = {    };
+    var emotionDataIndexs = {};
 
     //表情对象，用户可以自定义
-    var emotions = { };
+    var emotions = {};
     //工具类
     var tool = new function() {
 
@@ -2004,7 +2004,7 @@ var webim = { // namespace object webim
                     //ie10的判断这里有个问题
                     // Mozilla/5.0 (compatible; MSIE 9.0; qdesk 2.5.1277.202; Windows NT 6.1; WOW64; Trident/6.0)
                     // 是IE10 而不是IE9
-                    if( ua.match(/trident\/(\d)\./) && ua.match(/trident\/(\d)\./)[1]  == 6 ){
+                    if (ua.match(/trident\/(\d)\./) && ua.match(/trident\/(\d)\./)[1] == 6) {
                         Sys.ie = 10
                     }
                     return {
@@ -2555,7 +2555,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function(resp) {
-                        var nick, gender, allowType;
+                        var nick, gender, allowType, image;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
