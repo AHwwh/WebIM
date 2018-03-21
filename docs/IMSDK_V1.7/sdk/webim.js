@@ -2243,6 +2243,10 @@ var webim = { // namespace object webim
             };
         }
         //
+        if (xmlHttpObj.overrideMimeType) {
+            xmlHttpObj.overrideMimeType("application/json");
+        }
+
         xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
