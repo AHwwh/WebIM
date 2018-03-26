@@ -3,7 +3,7 @@
 
 https://webim.tim.qq.com
 
-https://tls.qcloud.com
+https://sxb.qcloud.com
 
 ![image](http://im-1251132611.costj.myqcloud.com/wxsetting.png)
 
