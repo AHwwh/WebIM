@@ -52,13 +52,14 @@ Page({
 
   login : function(cb){
       var that = this;
-      tls.anologin(function(data){
+      tls.login({ success: function(data){
              that.setData({
                  Identifier : data.Identifier,
                  UserSig : data.UserSig
              })
              cb();
-          });
+          }
+        });
   },
 
 
