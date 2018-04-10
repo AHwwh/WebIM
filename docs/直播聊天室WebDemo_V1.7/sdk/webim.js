@@ -2076,7 +2076,7 @@ var webim = { // namespace object webim
                     //ie10的判断这里有个问题
                     // Mozilla/5.0 (compatible; MSIE 9.0; qdesk 2.5.1277.202; Windows NT 6.1; WOW64; Trident/6.0)
                     // 是IE10 而不是IE9
-                    if( ua.match(/trident\/(\d)\./) && ua.match(/trident\/(\d)\./)[1]  == 6 ){
+                    if (ua.match(/trident\/(\d)\./) && ua.match(/trident\/(\d)\./)[1] == 6) {
                         Sys.ie = 10
                     }
                     return {
@@ -2243,6 +2243,10 @@ var webim = { // namespace object webim
             };
         }
         //
+        if (xmlHttpObj.overrideMimeType) {
+            xmlHttpObj.overrideMimeType("application/json");
+        }
+
         xmlHttpObj.send(req);
     }
     //发起ajax请求（json格式数据）
@@ -2627,7 +2631,7 @@ var webim = { // namespace object webim
                 proto_getProfilePortrait(
                     options,
                     function(resp) {
-                        var nick, gender, allowType;
+                        var nick, gender, allowType, image;
                         if (resp.UserProfileItem && resp.UserProfileItem.length > 0) {
                             for (var i in resp.UserProfileItem) {
                                 for (var j in resp.UserProfileItem[i].ProfileItem) {
@@ -4975,8 +4979,8 @@ var webim = { // namespace object webim
             //处理新的群系统消息
             //isNeedValidRepeatMsg 是否需要判重
             var handlerGroupSystemMsgs = function(groupSystemMsgs, isNeedValidRepeatMsg) {
-                for (var k in groupSystemMsgs.GroupTips) {
-                    var groupTip = groupSystemMsgs.GroupTips[k];
+                for (var k in groupSystemMsgs) {
+                    var groupTip = groupSystemMsgs[k];
                     var groupReportTypeMsg = groupTip.MsgBody;
                     var reportType = groupReportTypeMsg.ReportType;
                     //当长轮询返回的群系统消息，才需要更新群消息通知seq
@@ -5643,7 +5647,7 @@ var webim = { // namespace object webim
             var handlerApplyJoinGroupSystemMsgs = function(eventArray) {
                 for (var i in eventArray) {
                     var e = eventArray[i];
-                    handlerGroupSystemMsgs(e, true);
+                    handlerGroupSystemMsgs(e.GroupTips, true);
                     switch (e.Event) {
                         case LONG_POLLINNG_EVENT_TYPE.GROUP_SYSTEM: //（多终端同步）群系统消息
                             log.warn("handlerApplyJoinGroupSystemMsgs： handler new group system msg");
